@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Aplikasi RT</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        body { min-height: 100vh; overflow-x: hidden; background: #eef3ff; }
+        .left-section {
+            background: linear-gradient(to bottom, rgba(6, 31, 95, .94), rgba(18, 71, 176, .80)),
+                url('https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?q=80&w=1974&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+        }
+        .curve-left { border-top-right-radius: 96px; border-bottom-right-radius: 96px; }
+        .login-card {
+            width: 100%; max-width: 500px; background: rgba(255, 255, 255, .94);
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, .65); border-radius: 34px; padding: 44px;
+        }
+        .login-shadow { box-shadow: 0 24px 70px rgba(15, 23, 42, .10), 0 10px 26px rgba(37, 99, 235, .08); }
+        .login-icon-wrapper {
+            width: 96px; height: 96px; border-radius: 999px;
+            background: linear-gradient(180deg, #eff6ff, #dbeafe);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85);
+        }
+        .login-icon { font-size: 44px; }
+        .login-title { font-size: 36px; line-height: 1.12; font-weight: 800; letter-spacing: -.7px; }
+        .login-subtitle { max-width: 340px; margin: 14px auto 0; font-size: 15px; line-height: 28px; }
+        .login-label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 700; }
+        .input-custom { height: 56px; border-radius: 18px; border: 1px solid #dbe3f1; background: #ffffff; font-size: 14px; font-weight: 500; color: #1e293b; transition: .25s ease; }
+        .input-custom::placeholder { color: #94a3b8; font-weight: 400; }
+        .input-custom:focus { border-color: #3b82f6; box-shadow: 0 0 0 5px rgba(59, 130, 246, .12); outline: none; }
+        .input-icon { width: 18px; text-align: center; font-size: 15px; }
+        .btn-login { height: 56px; border-radius: 18px; background: linear-gradient(90deg, #2563eb, #3b82f6); font-size: 17px; transition: .25s ease; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(37, 99, 235, .28); }
+        .left-title { font-size: 38px; font-weight: 800; letter-spacing: -.6px; }
+        .left-desc { font-size: 15px; line-height: 32px; }
+        .security-title { font-size: 18px; font-weight: 700; }
+        .security-desc { font-size: 13px; line-height: 24px; }
+        .floating { animation: floating 5s ease-in-out infinite; }
+        @keyframes floating { 0% { transform: translateY(0); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
+        .form-spacing { margin-top: 34px; }
+        .form-group { margin-bottom: 22px; }
+        @media (max-width: 1280px) { .left-section { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="flex min-h-screen w-full">
+
+    <!-- LEFT -->
+    <div class="hidden xl:flex w-[36%] left-section curve-left relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-blue-950/40 to-blue-800/20"></div>
+        <div class="absolute -top-32 -right-32 h-[350px] w-[350px] rounded-full bg-blue-400/20"></div>
+        <div class="relative z-10 flex h-full flex-col justify-between px-10 py-12 text-white">
+            <div>
+                <div class="text-7xl leading-none">🏠</div>
+                <h1 class="left-title mt-6">Aplikasi <span class="text-blue-400">RT</span></h1>
+                <p class="left-desc mt-5 max-w-[300px] text-blue-100">Solusi digital untuk lingkungan yang lebih terhubung dan harmonis.</p>
+            </div>
+            <div class="w-[300px] rounded-[24px] border border-white/10 bg-white/10 p-5 backdrop-blur-md">
+                <div class="flex gap-4">
+                    <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-blue-500/20">
+                        <i class="fa-solid fa-shield-halved text-lg text-blue-300"></i>
+                    </div>
+                    <div>
+                        <h3 class="security-title">Keamanan Terjamin</h3>
+                        <p class="security-desc mt-2 text-blue-100">Data warga aman bersama kami dengan sistem terenkripsi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#f5f8ff] px-5 py-8 xl:w-[64%]">
+        <div class="absolute -left-20 -top-32 h-[360px] w-[360px] rounded-full bg-blue-100/75"></div>
+        <div class="absolute -bottom-36 -right-24 h-[340px] w-[340px] rounded-full bg-blue-100/65"></div>
+
+        <!-- LOGIN CARD -->
+        <div class="relative z-10 flex w-full justify-center">
+            <div class="login-card login-shadow relative overflow-hidden">
+                
+                <div class="flex justify-center">
+                    <div class="floating login-icon-wrapper flex items-center justify-center">
+                        <i class="fa-solid fa-people-roof login-icon text-blue-600"></i>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <h1 class="login-title text-[#132b63]">Selamat Datang!</h1>
+                    <p class="login-subtitle text-[#66708c]">Silakan masuk untuk melanjutkan ke aplikasi RT Anda.</p>
+                </div>
+
+                <!-- ERROR NOTIFICATION -->
+                <div id="error-alert" class="hidden mt-6 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+                    <div class="flex gap-3">
+                        <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
+                        <div id="error-alert-text">Email atau kata sandi yang Anda masukkan belum sesuai.</div>
+                    </div>
+                </div>
+
+                <!-- FORM -->
+                <form id="login-form" onsubmit="handleLogin(event)" class="form-spacing">
+                    <div class="form-group">
+                        <label for="email" class="login-label text-[#1d2942]">Email atau Nomor WhatsApp</label>
+                        <div class="relative">
+                            <i class="fa-regular fa-user input-icon absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="email" name="email" placeholder="Masukkan email atau nomor WhatsApp" class="input-custom w-full pl-14 pr-5" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="login-label text-[#1d2942]">Kata Sandi</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock input-icon absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="password" id="password" name="password" placeholder="Masukkan kata sandi" class="input-custom w-full pl-14 pr-14" required>
+                            <button type="button" onclick="togglePassword()" class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-blue-600">
+                                <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <a href="#" class="text-[13px] font-semibold text-blue-600 transition hover:text-blue-700 hover:underline">Lupa kata sandi?</a>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="btn-login mt-7 w-full font-bold text-white flex items-center justify-center">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk
+                    </button>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-[12.5px] leading-6 text-gray-500">Belum punya akun? <span class="font-semibold text-blue-600">Hubungi Super Admin atau Pengurus RT</span></p>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const password = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        if (password.type === 'password') {
+            password.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            password.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const submitBtn = document.getElementById('btn-submit');
+        const errorAlert = document.getElementById('error-alert');
+        const errorAlertText = document.getElementById('error-alert-text');
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memproses...';
+        errorAlert.classList.add('hidden');
+
+        // Fetch CSRF cookie if necessary, then call login endpoint
+        fetch('../backend/public/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN'))?.split('=')[1] || ''
+            },
+            body: JSON.stringify({ email, password })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = 'dashboard.html';
+            }
+        })
+        .catch(err => {
+            errorAlertText.innerText = err.message || 'Login gagal, silakan periksa kembali email dan password Anda.';
+            errorAlert.classList.remove('hidden');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk';
+        });
+    }
+</script>
+</body>
+</html>

@@ -49,19 +49,20 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        if ($request->expectsJson() || $request->wantsJson() || $request->ajax()) {
+        // Hanya kembalikan JSON jika memang AJAX request (dari frontend SPA login.html)
+        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Login berhasil!',
-                'redirect' => '/dashboard.html'
+                'status'   => 'success',
+                'message'  => 'Login berhasil!',
+                'redirect' => '/dashboard'
             ]);
         }
         return redirect()->intended('/dashboard');
     }
 
-    if ($request->expectsJson() || $request->wantsJson() || $request->ajax()) {
+    if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
         return response()->json([
-            'status' => 'error',
+            'status'  => 'error',
             'message' => 'Email atau password salah.'
         ], 422);
     }

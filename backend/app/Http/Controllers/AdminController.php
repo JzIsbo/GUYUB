@@ -241,8 +241,9 @@ class AdminController extends Controller
             // Degrade gracefully
         }
 
-        // 6. RENDER JSON FOR API / FRONTEND SEPARATION
-        if ($request->expectsJson() || $request->wantsJson() || $request->is('api/*') || $request->query('format') == 'json') {
+        // 6. RENDER JSON HANYA UNTUK ROUTE api/* ATAU QUERY ?format=json
+        //    (Jangan pakai wantsJson() — browser bisa kirim Accept: application/json secara otomatis)
+        if ($request->is('api/*') || $request->query('format') === 'json') {
             return response()->json(array_merge(['status' => 'success', 'page' => $page], $data));
         }
 

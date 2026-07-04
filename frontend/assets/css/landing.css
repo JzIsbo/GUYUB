@@ -1,0 +1,76 @@
+/* landing.css - Styles for Landing/Public page */
+
+.hero-bg {
+    background: linear-gradient(to right, rgba(5, 25, 75, .94), rgba(30, 64, 175, .82)),
+        url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1974&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-title {
+    font-size: 46px;
+    line-height: 1.2;
+}
+
+.hero-desc {
+    font-size: 15px;
+    line-height: 30px;
+}
+
+.dashboard-card {
+    max-width: 350px;
+}
+
+.section-title {
+    font-size: 34px;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 30px;
+        text-align: center;
+    }
+    .hero-desc {
+        text-align: center;
+    }
+    .mobile-center {
+        justify-content: center;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .section-title {
+        font-size: 28px;
+    }
+}
+
+/* Premium Public Tab Buttons */
+.public-tab-btn {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.public-tab-btn:hover {
+    transform: translateY(-2px);
+    background-color: #f8fafc;
+}
+
+.public-tab-btn.active {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    color: white !important;
+    border-color: transparent !important;
+    box-shadow: 0 12px 24px -6px rgba(37, 99, 235, 0.35) !important;
+}
+
+/* Public Card Hover Effects */
+.public-card {
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.public-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
+    border-color: rgba(59, 130, 246, 0.2);
+}

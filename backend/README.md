@@ -1,41 +1,34 @@
-# Sistem Informasi & Pelayanan Warga (Kas RT Digital)
+# Backend API - Kas RT Digital
 
-Aplikasi berbasis web untuk digitalisasi administrasi lingkungan RT. Dirancang untuk meningkatkan transparansi keuangan, efisiensi pelayanan warga, dan keteraturan manajemen data lingkungan.
+Bagian ini merupakan server backend berbasis **Laravel 11** yang berfungsi menyediakan REST API, manajemen database MySQL (ORM Eloquent), otentikasi sesi, serta sistem administrasi partial view untuk SPA (Single Page Application) klien.
 
-## 🚀 Fitur Utama
+## 🚀 Fitur Utama Backend
 
-### 💰 Manajemen Keuangan
-- **Pencatatan Transaksi:** Input Pemasukan dan Pengeluaran kas RT secara mudah.
-- **Kategorisasi:** Klasifikasi jenis transaksi untuk laporan yang lebih detail.
-- **Monitoring Real-time:** Dashboard interaktif dengan grafik bulanan untuk memantau kesehatan keuangan lingkungan.
-- **Transparansi:** Fasilitas laporan keuangan, iuran, dan kas yang siap diekspor/cetak.
+1. **REST API Endpoint:**
+   - `/api/public/data` - Mengambil data pengumuman, UMKM, kegiatan, posyandu, dan ronda untuk dipublikasikan.
+   - `/api/auth/user` - Pengecekan sesi login dan informasi detail role-based user.
+2. **Dashboard Engine:**
+   - Menghitung statistik kas masuk, kas keluar, saldo bersih, dan total warga terdaftar.
+   - Mengelompokkan riwayat pengumuman, iuran, inventaris perangkat sistem, dan log aktivitas pengguna.
+3. **Database Self-Healing:**
+   - Sistem akan mendeteksi dan secara otomatis memulihkan struktur database jika tabel yang dibutuhkan tidak ditemukan atau kolom belum lengkap saat inisialisasi boot.
 
-### 🌐 Interaksi Warga
-- **Surat Online:** Digitalisasi pengajuan surat pengantar warga, praktis dan efisien.
-- **Pengumuman:** Saluran informasi instan untuk agenda dan pengumuman lingkungan.
+## 🛠️ Langkah Inisialisasi
 
-### 🗄️ Master Data & Pengaturan
-- **Database Warga:** Pengelolaan data penduduk yang terpusat dan aman.
-- **Inventaris (Perangkat RT):** Pencatatan aset fisik milik lingkungan.
-- **Manajemen User:** Hak akses pengurus yang terukur.
-- **Keamanan:** Fitur *Backup & Restore* database serta log *Aktivitas Pengguna*.
-
-## 🛠️ Tech Stack
-* **Framework:** Laravel 12
-* **Frontend:** Bootstrap 5
-* **Database:** MySQL (via phpMyAdmin)
-* **Development Environment:** VS Code & XAMPP
-
-## 📖 Cara Penggunaan
-
-1.  **Dashboard:** Pantau ringkasan saldo global dan total warga terdaftar melalui panel utama.
-2.  **Transaksi:** Gunakan menu *Pemasukan* atau *Pengeluaran* untuk memperbarui posisi kas RT.
-3.  **Administrasi:** Kelola data warga dan ajukan layanan surat melalui menu *Interaksi Warga*.
-4.  **Pelaporan:** Ekspor laporan bulanan melalui menu *Laporan* untuk keperluan transparansi rapat warga.
-5.  **Pemeliharaan:** Lakukan *Backup* data secara berkala pada menu *Pengaturan* untuk keamanan data.
-
-## 🔒 Keamanan
-Aplikasi ini dilengkapi dengan fitur keamanan data terenkripsi untuk menjaga privasi data warga dan memastikan integritas data keuangan lingkungan.
-
----
-*Dikembangkan untuk digitalisasi pelayanan warga RT 2026.*
+1. Salin `.env.example` ke `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+2. Pastikan database MySQL sudah dibuat di phpMyAdmin Anda (default nama: `kas-rt`).
+3. Jalankan perintah instalasi dependency:
+   ```bash
+   composer install
+   ```
+4. Jalankan migrasi dan seeding database:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+5. Nyalakan server lokal:
+   ```bash
+   php artisan serve
+   ```

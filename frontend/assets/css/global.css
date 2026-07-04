@@ -1,0 +1,42 @@
+/* global.css - Global Styles & Tokens for Aplikasi RT */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow-x: hidden;
+    background: #f5f8ff;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Common utilities */
+.container-custom {
+    max-width: 1120px;
+    margin: auto;
+}
+
+.glass {
+    background: rgba(255, 255, 255, .10);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, .30);
+}

@@ -195,6 +195,8 @@ class SelfHealingDatabaseService
                 $table->unsignedBigInteger('posyandu_id');
                 $table->string('nama_peserta');
                 $table->string('usia')->nullable();
+                $table->string('tinggi_badan')->nullable(); // cm
+                $table->string('berat_badan')->nullable(); // kg
                 $table->string('kategori')->default('Balita'); // Balita, Lansia
                 $table->string('nama_pendaftar'); // user yang mendaftarkan
                 $table->string('hubungan')->default('Ibu'); // Ibu, Ayah, Cucu, dll
@@ -202,6 +204,14 @@ class SelfHealingDatabaseService
                 $table->string('status')->default('Terdaftar'); // Terdaftar, Hadir, Tidak Hadir
                 $table->timestamps();
             });
+        } else {
+            // Add columns if table already exists
+            if (!Schema::hasColumn('posyandu_pendaftarans', 'tinggi_badan')) {
+                Schema::table('posyandu_pendaftarans', function ($table) {
+                    $table->string('tinggi_badan')->nullable()->after('usia');
+                    $table->string('berat_badan')->nullable()->after('tinggi_badan');
+                });
+            }
         }
 
         // 13. Ronda & Keamanan table

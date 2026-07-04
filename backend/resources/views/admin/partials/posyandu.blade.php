@@ -85,7 +85,16 @@
                         </div>
                         <div>
                             <p class="font-bold text-gray-800 text-sm">{{ $peserta->nama_peserta }}</p>
-                            <p class="text-[10px] text-gray-400 font-medium">{{ $peserta->kategori }} · {{ $peserta->usia ?? '-' }} · Didaftarkan oleh {{ $peserta->nama_pendaftar }} ({{ $peserta->hubungan }})</p>
+                            <div class="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                <span class="text-[10px] text-gray-400 font-medium">{{ $peserta->kategori }} · {{ $peserta->usia ?? '-' }}</span>
+                                @if($peserta->tinggi_badan)
+                                <span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-bold">TB: {{ $peserta->tinggi_badan }} cm</span>
+                                @endif
+                                @if($peserta->berat_badan)
+                                <span class="text-[10px] bg-green-50 text-green-600 px-1.5 py-0.5 rounded font-bold">BB: {{ $peserta->berat_badan }} kg</span>
+                                @endif
+                                <span class="text-[10px] text-gray-400 font-medium">· oleh {{ $peserta->nama_pendaftar }} ({{ $peserta->hubungan }})</span>
+                            </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
@@ -204,6 +213,16 @@
                             <option value="Lansia">Lansia</option>
                             <option value="Ibu Hamil">Ibu Hamil</option>
                         </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tinggi Badan (cm)</label>
+                        <input type="text" name="tinggi_badan" placeholder="Cth: 75" class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Berat Badan (kg)</label>
+                        <input type="text" name="berat_badan" placeholder="Cth: 8.5" class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">

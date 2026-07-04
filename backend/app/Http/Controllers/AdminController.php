@@ -195,17 +195,32 @@ class AdminController extends Controller
             } elseif ($page == 'laporan-iuran') {
                 $data['list_laporan_iuran'] = DB::table('transactions')->where('kategori', 'LIKE', '%Iuran%')->orderBy('tanggal', 'desc')->get();
             } elseif ($page == 'tagihan-warga') {
-                $data['tagihans'] = Tagihan::orderBy('created_at', 'desc')->get();
+                $user = Auth::user();
+                if (in_array($user->role, ['Super Admin', 'RT', 'Bendahara'])) {
+                    $data['tagihans'] = Tagihan::orderBy('created_at', 'desc')->get();
+                } else {
+                    $data['tagihans'] = Tagihan::where('nama_warga', $user->name)->orderBy('created_at', 'desc')->get();
+                }
             } elseif ($page == 'pembayaran-online') {
                 $data['gateway'] = DB::table('payment_gateways')->first();
             } elseif ($page == 'status-pembayaran') {
-                $data['payments'] = DB::table('online_payments')->orderBy('created_at', 'desc')->get();
+                $user = Auth::user();
+                if (in_array($user->role, ['Super Admin', 'RT', 'Bendahara'])) {
+                    $data['payments'] = DB::table('online_payments')->orderBy('created_at', 'desc')->get();
+                } else {
+                    $data['payments'] = DB::table('online_payments')->where('nama_pembayar', $user->name)->orderBy('created_at', 'desc')->get();
+                }
             } elseif ($page == 'riwayat-gateway') {
                 $data['logs'] = DB::table('gateway_logs')->orderBy('created_at', 'desc')->take(50)->get();
             } elseif ($page == 'qris-va') {
                 $data['qris'] = DB::table('qris_settings')->first();
             } elseif ($page == 'surat-online') {
-                $data['list_surat'] = DB::table('surat_online')->orderBy('created_at', 'desc')->get();
+                $user = Auth::user();
+                if (in_array($user->role, ['Super Admin', 'RT'])) {
+                    $data['list_surat'] = DB::table('surat_online')->orderBy('created_at', 'desc')->get();
+                } else {
+                    $data['list_surat'] = DB::table('surat_online')->where('nama_warga', $user->name)->orderBy('created_at', 'desc')->get();
+                }
             } elseif ($page == 'pengumuman') {
                 $data['list_pengumuman'] = DB::table('pengumumans')->orderBy('created_at', 'desc')->get();
             }

@@ -4,10 +4,12 @@
             <h2 class="text-2xl font-bold text-gray-800">Tagihan Warga</h2>
             <p class="text-sm text-gray-500">Menampilkan data real-time dari database</p>
         </div>
+        @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
         <button onclick="document.getElementById('modal-tambah-tagihan').classList.remove('hidden')"
                 class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-sm">
             + Tambah Tagihan
         </button>
+        @endif
     </div>
 
     <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
@@ -75,13 +77,20 @@
     </div>
 </div>
 
+@php
+    $isAdminTagihan = in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']);
+    $readonlyTagihan = !$isAdminTagihan ? 'readonly disabled' : '';
+@endphp
+
 <div id="modal-detail-tagihan" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
     <div class="bg-white p-8 rounded-3xl w-[400px] shadow-xl">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">Detail Tagihan</h2>
+            @if($isAdminTagihan)
             <button onclick="hapusTagihan()" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Tagihan">
                 <i class="fa-solid fa-trash"></i>
             </button>
+            @endif
         </div>
 
         <form id="form-edit-tagihan" action="/tagihan/update" method="POST">
@@ -90,19 +99,19 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-xs text-gray-500 font-bold ml-1 mb-1 block">Nama Warga</label>
-                    <input type="text" name="nama_warga" id="detail_nama" class="w-full p-3 border rounded-xl bg-gray-50" required>
+                    <input type="text" name="nama_warga" id="detail_nama" class="w-full p-3 border rounded-xl bg-gray-50" {!! $readonlyTagihan !!} required>
                 </div>
                 <div>
                     <label class="text-xs text-gray-500 font-bold ml-1 mb-1 block">Jenis Tagihan</label>
-                    <input type="text" name="jenis_tagihan" id="detail_jenis" class="w-full p-3 border rounded-xl bg-gray-50" required>
+                    <input type="text" name="jenis_tagihan" id="detail_jenis" class="w-full p-3 border rounded-xl bg-gray-50" {!! $readonlyTagihan !!} required>
                 </div>
                 <div>
                     <label class="text-xs text-gray-500 font-bold ml-1 mb-1 block">Jumlah Tagihan (Rp)</label>
-                    <input type="number" name="jumlah" id="detail_jumlah" class="w-full p-3 border rounded-xl bg-gray-50" required>
+                    <input type="number" name="jumlah" id="detail_jumlah" class="w-full p-3 border rounded-xl bg-gray-50" {!! $readonlyTagihan !!} required>
                 </div>
                 <div>
                     <label class="text-xs text-gray-500 font-bold ml-1 mb-1 block">Status Pembayaran</label>
-                    <select name="status" id="detail_status" class="w-full p-3 border rounded-xl bg-gray-50 font-bold" required>
+                    <select name="status" id="detail_status" class="w-full p-3 border rounded-xl bg-gray-50 font-bold" {!! $readonlyTagihan !!} required>
                         <option value="menunggu">Menunggu</option>
                         <option value="berhasil">Berhasil</option>
                     </select>
@@ -110,7 +119,9 @@
 
                 <div class="flex gap-3 mt-6">
                     <button type="button" onclick="document.getElementById('modal-detail-tagihan').classList.add('hidden')" class="w-full bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition">Tutup</button>
+                    @if($isAdminTagihan)
                     <button type="button" onclick="simpanDataUmum(event, 'form-edit-tagihan', 'tagihan-warga')" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">Update</button>
+                    @endif
                 </div>
             </div>
         </form>

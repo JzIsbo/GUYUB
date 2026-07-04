@@ -4,9 +4,15 @@
             <h2 class="text-2xl font-bold text-gray-800">Layanan Surat Online</h2>
             <p class="text-sm text-gray-500">Kelola pengajuan surat pengantar dari warga</p>
         </div>
+        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
         <button onclick="document.getElementById('modal-tambah-surat').classList.remove('hidden')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition">
             + Buat Pengajuan Manual
         </button>
+        @else
+        <button onclick="document.getElementById('modal-tambah-surat').classList.remove('hidden')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-700 transition">
+            + Buat Pengajuan Surat
+        </button>
+        @endif
     </div>
 
     <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
@@ -17,7 +23,9 @@
                     <th class="p-5">Nama Warga</th>
                     <th class="p-5">Jenis Surat</th>
                     <th class="p-5">Status</th>
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                     <th class="p-5 text-center">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50 text-sm">
@@ -32,12 +40,14 @@
                         @else <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-600">DITOLAK</span>
                         @endif
                     </td>
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                     <td class="p-5 text-center flex justify-center gap-2">
                         @if($surat->status == 'Menunggu')
                         <button onclick="ubahStatusSurat({{ $surat->id }}, 'Disetujui')" class="bg-green-50 text-green-600 px-3 py-1.5 rounded-lg font-bold hover:bg-green-100">Setujui</button>
                         <button onclick="ubahStatusSurat({{ $surat->id }}, 'Ditolak')" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg font-bold hover:bg-red-100">Tolak</button>
                         @endif
                     </td>
+                    @endif
                 </tr>
                 @empty
                 <tr><td colspan="5" class="p-10 text-center text-gray-400 font-medium">Belum ada pengajuan surat.</td></tr>
@@ -49,11 +59,15 @@
 
 <div id="modal-tambah-surat" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
     <div class="bg-white p-8 rounded-3xl w-[400px]">
-        <h2 class="text-xl font-bold mb-4">Pengajuan Surat Manual</h2>
+        <h2 class="text-xl font-bold mb-4">{{ in_array(Auth::user()->role, ['Super Admin', 'RT']) ? 'Pengajuan Surat Manual' : 'Buat Pengajuan Surat' }}</h2>
         <form id="form-tambah-surat" action="/surat-online/store" method="POST">
             @csrf
             <div class="space-y-4">
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                 <input type="text" name="nama_warga" placeholder="Nama Warga" class="w-full p-3 border rounded-xl" required>
+                @else
+                <input type="text" name="nama_warga" value="{{ Auth::user()->name }}" readonly class="w-full p-3 border rounded-xl bg-gray-50 text-gray-500 font-semibold" required>
+                @endif
                 <select name="jenis_surat" class="w-full p-3 border rounded-xl" required>
                     <option value="Surat Pengantar Domisili">Surat Pengantar Domisili</option>
                     <option value="Surat Keterangan Tidak Mampu">Surat Keterangan Tidak Mampu (SKTM)</option>

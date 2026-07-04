@@ -4,9 +4,11 @@
             <h2 class="text-2xl font-black text-gray-800 tracking-tight">Data Pengurus RT</h2>
             <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Manajemen struktur organisasi pimpinan lingkungan</p>
         </div>
+        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
         <button type="button" onclick="document.getElementById('modal-tambah-pengurus').classList.remove('hidden')" class="bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold text-sm shadow-lg hover:bg-blue-700 transition-all">
             <i class="fa-solid fa-user-tie mr-2"></i> Tambah Pengurus
         </button>
+        @endif
     </div>
 
     <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
@@ -17,7 +19,9 @@
                     <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Jabatan</th>
                     <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mulai</th>
                     <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                     <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -32,6 +36,7 @@
                             {{ $item->status_aktif }}
                         </span>
                     </td>
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                     <td class="p-6 text-center flex justify-center gap-2">
                         <button type="button" onclick="bukaModalEdit('{{ $item->id }}', '{{ addslashes($item->jabatan) }}', '{{ $item->tanggal_mulai }}', '{{ $item->status_aktif }}')" class="text-blue-500 hover:text-blue-700 transition p-2">
                             <i class="fa-solid fa-pen"></i>
@@ -40,6 +45,7 @@
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
+                    @endif
                 </tr>
                 @empty
                 <tr><td colspan="5" class="p-12 text-center text-sm text-gray-400 italic">Belum ada pengurus RT.</td></tr>

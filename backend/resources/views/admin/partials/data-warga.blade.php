@@ -38,12 +38,14 @@
                         <p class="text-4xl font-black text-white">{{ $totalWarga }} <span class="text-sm text-gray-500 font-medium">Jiwa</span></p>
                     </div>
 
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                     <div class="pt-4 border-t border-white/5">
                         <button type="button" onclick="bukaModal('modal-form-warga', 'Tambah Warga / KK Baru', true)" class="inline-flex w-full items-center justify-center bg-blue-500 hover:bg-blue-400 text-white font-black text-[10px] uppercase tracking-widest py-3.5 px-6 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] hover:-translate-y-0.5 relative overflow-hidden group">
                             <div class="absolute inset-0 w-1/4 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[400%] transition-transform duration-700"></div>
                             <i class="fa-solid fa-user-plus mr-2 text-sm"></i> Tambah Warga Baru
                         </button>
                     </div>
+                    @endif
                 </div>
             </div>
             <i class="fa-solid fa-users absolute -bottom-10 -right-10 text-[150px] opacity-5 rotate-12"></i>
@@ -63,9 +65,11 @@
                             <h3 class="text-xl font-black text-gray-800 tracking-tight">Blok {{ $current_blok }}</h3>
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">NO. KK: {{ $current_kk }}</p>
                         </div>
+                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                         <button type="button" onclick="bukaModalAnggota('{{ $current_kk }}', '{{ $current_blok }}')" class="bg-blue-50 text-blue-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition whitespace-nowrap">
                             + Tambah Anggota
                         </button>
+                        @endif
                     </div>
 
                     <div class="overflow-x-auto">
@@ -78,7 +82,9 @@
                                     <th class="pb-3 pr-4">Telepon</th>
                                     <th class="pb-3 pr-4">Status</th>
                                     <th class="pb-3 pr-4">Domisili</th>
+                                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                                     <th class="pb-3 text-center">Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody class="text-gray-700 font-bold">
@@ -102,10 +108,12 @@
                                             {{ $w->status_domisili }}
                                         </span>
                                     </td>
+                                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                                     <td class="py-4 text-center flex justify-center gap-3">
                                         <button type="button" onclick="bukaModalEdit({{ $w->id }}, '{{ $w->nomor_kk }}', '{{ $w->nik }}', '{{ addslashes($w->nama_lengkap) }}', '{{ $w->no_telepon }}', '{{ $w->blok_rumah }}', '{{ $w->status_keluarga }}', '{{ $w->status_domisili }}')" class="text-blue-500 hover:text-blue-700 transition"><i class="fa-solid fa-pen"></i></button>
                                         <button type="button" onclick="hapusWarga({{ $w->id }})" class="text-red-500 hover:text-red-700 transition"><i class="fa-solid fa-trash"></i></button>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>

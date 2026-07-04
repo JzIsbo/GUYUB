@@ -56,7 +56,7 @@ function applyRoleBasedAccess(role) {
         'Super Admin': allPages,
         'RT': [
             'dashboard', 'data-warga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
-            'surat-online', 'pengumuman', 'tagihan-warga', 'pembayaran-online', 'status-pembayaran', 'riwayat-gateway', 'qris-va',
+            'surat-online', 'pengumuman', 'tagihan-warga', 'status-pembayaran', 'qris-va',
             'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'pengaturan',
             'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
         ],
@@ -67,7 +67,7 @@ function applyRoleBasedAccess(role) {
             'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi'
         ],
         'Warga': [
-            'dashboard', 'tagihan-warga', 'pembayaran-online', 'status-pembayaran', 'riwayat-gateway', 'qris-va',
+            'dashboard', 'tagihan-warga', 'status-pembayaran', 'qris-va',
             'surat-online', 'pengumuman', 'data-warga', 'data-pengurus-rt', 'pengaturan',
             'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
         ]
@@ -75,11 +75,32 @@ function applyRoleBasedAccess(role) {
 
     const allowed = aksesHalaman[role] || [];
 
-    // Filter single links
+    // Filter single links & customize labels
     document.querySelectorAll('.menu-link[data-page]').forEach(link => {
         const page = link.getAttribute('data-page');
         if (!allowed.includes(page)) {
             link.style.display = 'none';
+        } else {
+            link.style.display = '';
+
+            // Customize labels dynamically based on role
+            if (page === 'tagihan-warga') {
+                if (role === 'Warga') link.textContent = 'Tagihan Saya';
+                else if (role === 'RT') link.textContent = 'Daftar Tagihan Warga';
+                else link.textContent = 'Kelola Tagihan Warga';
+            } else if (page === 'pembayaran-online') {
+                link.textContent = 'Pengaturan Gateway';
+            } else if (page === 'status-pembayaran') {
+                if (role === 'Warga') link.textContent = 'Status Pembayaran Saya';
+                else if (role === 'RT') link.textContent = 'Daftar Pembayaran Warga';
+                else link.textContent = 'Daftar Pembayaran';
+            } else if (page === 'riwayat-gateway') {
+                link.textContent = 'Log Transaksi Gateway';
+            } else if (page === 'qris-va') {
+                if (role === 'Warga') link.textContent = 'Rekening & QRIS RT';
+                else if (role === 'RT') link.textContent = 'Daftar Rekening & QRIS';
+                else link.textContent = 'Kelola Rekening & QRIS';
+            }
         }
     });
 
@@ -92,6 +113,11 @@ function applyRoleBasedAccess(role) {
             // Hide next sibling if it's the dropdown menu container
             if (parent.nextElementSibling && parent.nextElementSibling.tagName === 'DIV') {
                 parent.nextElementSibling.style.display = 'none';
+            }
+        } else {
+            parent.style.display = '';
+            if (parent.nextElementSibling && parent.nextElementSibling.tagName === 'DIV') {
+                parent.nextElementSibling.style.display = '';
             }
         }
     });

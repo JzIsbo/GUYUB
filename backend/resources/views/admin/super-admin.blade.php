@@ -56,7 +56,7 @@
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
             ],
             'RT'          => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'status-pembayaran', 'riwayat-gateway', 'qris-va',
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'status-pembayaran', 'qris-va',
                 'surat-online', 'pengumuman', 'data-warga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
@@ -68,14 +68,14 @@
                 'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi'
             ],
             'Warga'       => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'status-pembayaran', 'riwayat-gateway', 'qris-va',
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'status-pembayaran', 'qris-va',
                 'surat-online', 'pengumuman', 'data-warga', 'data-pengurus-rt', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
             ]
         ];
 
         $can = function($menu) use ($aksesHalaman) {
-            $role = Auth::user()->role;
+            $role = Auth::check() ? Auth::user()->role : 'Warga';
             return isset($aksesHalaman[$role]) && in_array($menu, $aksesHalaman[$role]);
         };
     @endphp
@@ -98,6 +98,7 @@
             </a>
             @endif
 
+            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('status-pembayaran') || $can('riwayat-gateway') || $can('qris-va'))
             <div class="pt-8 pb-2 px-4">
                 <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pembayaran</p>
             </div>
@@ -110,36 +111,40 @@
                 </button>
 
                 <div id="pembayaran-menu" class="hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
-                    <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Tagihan Warga</a>
-                    <a href="javascript:void(0)" onclick="switchPage('pembayaran-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pembayaran Online</a>
-                    <a href="javascript:void(0)" onclick="switchPage('status-pembayaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Status Pembayaran</a>
-                    <a href="javascript:void(0)" onclick="switchPage('riwayat-gateway', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Riwayat Gateway</a>
-                    <a href="javascript:void(0)" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">QRIS & Virtual Account</a>
+                    @php
+                        $role = Auth::check() ? Auth::user()->role : 'Warga';
+                        $labelTagihan = ($role == 'Warga') ? 'Tagihan Saya' : (($role == 'RT') ? 'Daftar Tagihan Warga' : 'Kelola Tagihan Warga');
+                        $labelStatus = ($role == 'Warga') ? 'Status Pembayaran Saya' : (($role == 'RT') ? 'Daftar Pembayaran Warga' : 'Daftar Pembayaran');
+                        $labelQris = ($role == 'Warga') ? 'Rekening & QRIS RT' : (($role == 'RT') ? 'Daftar Rekening & QRIS' : 'Kelola Rekening & QRIS');
+                    @endphp
+
+                    @if($can('tagihan-warga'))
+                    <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelTagihan }}</a>
+                    @endif
+                    @if($can('pembayaran-online'))
+                    <a href="javascript:void(0)" onclick="switchPage('pembayaran-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengaturan Gateway</a>
+                    @endif
+                    @if($can('status-pembayaran'))
+                    <a href="javascript:void(0)" onclick="switchPage('status-pembayaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelStatus }}</a>
+                    @endif
+                    @if($can('riwayat-gateway'))
+                    <a href="javascript:void(0)" onclick="switchPage('riwayat-gateway', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Log Transaksi Gateway</a>
+                    @endif
+                    @if($can('qris-va'))
+                    <a href="javascript:void(0)" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelQris }}</a>
+                    @endif
                 </div>
             </div>
+            @endif
             <script>
                     function toggleDropdown(id) {
                         const menu = document.getElementById(id);
                         menu.classList.toggle('hidden');
                     }
             </script>
-            @php
-                // Definisikan daftar sub-menu pembayaran
-                $subMenusPembayaran = [
-                    ['key' => 'tagihan-warga', 'label' => 'Tagihan Warga'],
-                    ['key' => 'pembayaran-online', 'label' => 'Pembayaran Online'],
-                    ['key' => 'status-pembayaran', 'label' => 'Status Pembayaran'],
-                    ['key' => 'riwayat-gateway', 'label' => 'Riwayat Gateway'],
-                    ['key' => 'qris-va', 'label' => 'QRIS & Virtual Account']
-                ];
-
-                // Filter mana saja yang boleh diakses user saat ini
-                $allowedSubMenus = array_filter($subMenusPembayaran, function($item) use ($can) {
-                    return $can($item['key']);
-                });
-            @endphp
 
 
+            @if($can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori'))
             <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Transaksi</p></div>
 
             @if($can('pemasukan'))
@@ -162,7 +167,9 @@
                 <i class="fa-solid fa-folder-tree w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Kategori</span>
             </a>
             @endif
+            @endif
 
+            @if($can('surat-online') || $can('pengumuman'))
             <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Interaksi Warga</p></div>
 
             @if($can('surat-online'))
@@ -175,7 +182,9 @@
                 <i class="fa-solid fa-bullhorn w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengumuman</span>
             </a>
             @endif
+            @endif
 
+            @if($can('koperasi') || $can('bank-sampah') || $can('umkm') || $can('posyandu') || $can('keamanan') || $can('kegiatan') || $can('rukem') || $can('aspirasi'))
             <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Layanan Warga</p></div>
 
             @if($can('koperasi'))
@@ -225,7 +234,9 @@
                 <i class="fa-solid fa-comment-dots w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aspirasi & Keluhan</span>
             </a>
             @endif
+            @endif
 
+            @if($can('data-warga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem'))
             <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Master Data</p></div>
 
             @if($can('data-warga'))
@@ -258,7 +269,9 @@
                 <i class="fa-solid fa-display w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Perangkat RT</span>
             </a>
             @endif
+            @endif
 
+            @if($can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
             <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Laporan</p></div>
 
             @if($can('laporan-keuangan'))
@@ -281,7 +294,9 @@
                 <i class="fa-solid fa-file-export w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Export Laporan</span>
             </a>
             @endif
+            @endif
 
+            @if($can('pengaturan') || $can('backup-restore') || $can('aktivitas-pengguna'))
             <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pengaturan</p></div>
 
             @if($can('pengaturan'))
@@ -298,6 +313,7 @@
             <a href="javascript:void(0)" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link {{ isset($page) && $page == 'aktivitas-pengguna' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
                 <i class="fa-solid fa-clock-rotate-left w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aktivitas Pengguna</span>
             </a>
+            @endif
             @endif
         </nav>
 

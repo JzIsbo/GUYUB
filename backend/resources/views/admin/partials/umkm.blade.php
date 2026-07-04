@@ -32,7 +32,7 @@
                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->kontak) }}" target="_blank" class="text-xs font-bold text-emerald-600 hover:underline flex items-center gap-1.5">
                     <i class="fa-brands fa-whatsapp text-sm"></i> Hubungi WhatsApp
                 </a>
-                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']) || Auth::user()->name == $item->pemilik)
                 <button onclick="hapusUmkm({{ $item->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center">
                     <i class="fa-solid fa-trash text-xs"></i>
                 </button>

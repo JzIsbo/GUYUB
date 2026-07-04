@@ -165,6 +165,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/umkm/delete', [UmkmController::class, 'destroy']);
     Route::post('/posyandu/store', [PosyanduController::class, 'store']);
     Route::post('/posyandu/delete', [PosyanduController::class, 'destroy']);
+    Route::post('/posyandu/daftar', [PosyanduController::class, 'daftarStore']);
+    Route::post('/posyandu/daftar/delete', [PosyanduController::class, 'daftarDestroy']);
+    Route::post('/posyandu/daftar/status', [PosyanduController::class, 'daftarStatus']);
     Route::post('/ronda/store', [RondaController::class, 'storeRonda']);
     Route::post('/ronda/delete', [RondaController::class, 'destroyRonda']);
     Route::post('/incident/store', [RondaController::class, 'storeIncident']);

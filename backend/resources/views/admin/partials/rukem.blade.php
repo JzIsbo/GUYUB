@@ -10,7 +10,7 @@
             </h1>
             <p class="text-sm text-gray-500 font-medium mt-1">Sistem informasi santunan duka cita, kepedulian sosial, & kas duka warga.</p>
         </div>
-        @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
+        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
         <button onclick="document.getElementById('modal-tambah-rukem').classList.remove('hidden')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-amber-200 transition-all flex items-center gap-2 cursor-pointer self-start md:self-auto text-sm">
             <i class="fa-solid fa-plus"></i> Catat Santunan Duka
         </button>
@@ -67,7 +67,7 @@
                             <span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">{{ $item->status_santunan }}</span>
                         </td>
                         <td class="py-4 px-6 text-right">
-                            @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
+                            @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
                             <button onclick="hapusRukem({{ $item->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center">
                                 <i class="fa-solid fa-trash text-xs"></i>
                             </button>

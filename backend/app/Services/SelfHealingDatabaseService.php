@@ -188,6 +188,22 @@ class SelfHealingDatabaseService
             });
         }
 
+        // 12b. Posyandu Pendaftaran table
+        if (!Schema::hasTable('posyandu_pendaftarans')) {
+            Schema::create('posyandu_pendaftarans', function ($table) {
+                $table->id();
+                $table->unsignedBigInteger('posyandu_id');
+                $table->string('nama_peserta');
+                $table->string('usia')->nullable();
+                $table->string('kategori')->default('Balita'); // Balita, Lansia
+                $table->string('nama_pendaftar'); // user yang mendaftarkan
+                $table->string('hubungan')->default('Ibu'); // Ibu, Ayah, Cucu, dll
+                $table->text('catatan')->nullable();
+                $table->string('status')->default('Terdaftar'); // Terdaftar, Hadir, Tidak Hadir
+                $table->timestamps();
+            });
+        }
+
         // 13. Ronda & Keamanan table
         if (!Schema::hasTable('rondas')) {
             Schema::create('rondas', function ($table) {

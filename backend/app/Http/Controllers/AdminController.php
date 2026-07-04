@@ -235,6 +235,12 @@ class AdminController extends Controller
                 $data['list_umkm'] = DB::table('umkms')->orderBy('created_at', 'desc')->get();
             } elseif ($page == 'posyandu') {
                 $data['list_posyandu'] = DB::table('posyandus')->orderBy('tanggal', 'asc')->get();
+                // Load pendaftaran peserta
+                $pendaftaranQuery = DB::table('posyandu_pendaftarans')->orderBy('created_at', 'desc');
+                if (Auth::user()->role === 'Warga') {
+                    $pendaftaranQuery->where('nama_pendaftar', Auth::user()->name);
+                }
+                $data['list_pendaftaran'] = $pendaftaranQuery->get();
             } elseif ($page == 'keamanan') {
                 $data['list_ronda'] = DB::table('rondas')->get();
                 $data['list_incidents'] = DB::table('incidents')->orderBy('created_at', 'desc')->get();

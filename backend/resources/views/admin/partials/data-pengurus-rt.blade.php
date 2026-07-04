@@ -85,7 +85,10 @@
                     </select>
                 </div>
             </div>
-            <button type="submit" class="w-full p-3 bg-blue-600 text-white rounded-xl font-bold">Simpan</button>
+            <div class="flex gap-3 mt-2">
+                <button type="button" onclick="document.getElementById('modal-tambah-pengurus').classList.add('hidden')" class="flex-1 p-3 bg-gray-100 text-gray-500 rounded-xl font-bold hover:bg-gray-200 transition">Batal</button>
+                <button type="submit" class="flex-1 p-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">Simpan</button>
+            </div>
         </form>
     </div>
 </div>
@@ -113,7 +116,10 @@
                     </select>
                 </div>
             </div>
-            <button type="submit" class="w-full p-3 bg-amber-500 text-white rounded-xl font-bold">Update Data</button>
+            <div class="flex gap-3 mt-2">
+                <button type="button" onclick="document.getElementById('modal-edit-pengurus').classList.add('hidden')" class="flex-1 p-3 bg-gray-100 text-gray-500 rounded-xl font-bold hover:bg-gray-200 transition">Batal</button>
+                <button type="submit" class="flex-1 p-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition">Update Data</button>
+            </div>
         </form>
     </div>
 </div>

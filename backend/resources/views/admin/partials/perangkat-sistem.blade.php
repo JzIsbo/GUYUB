@@ -2,9 +2,9 @@
     <div class="bg-gradient-to-br from-[#0F172A] to-[#1E293B] p-8 rounded-[2.5rem] shadow-xl text-white h-fit relative overflow-hidden">
         <div class="relative z-10">
             <span class="bg-blue-500/10 text-blue-400 text-[10px] px-3 py-1.5 rounded-xl font-black border border-blue-500/20 uppercase tracking-widest">Sistem Inventaris</span>
-            <h2 class="text-3xl font-black mt-4 tracking-tight">Perangkat RT</h2>
+            <h2 class="text-3xl font-black mt-4 tracking-tight">Aset RT</h2>
             <div class="mt-8 pt-6 border-t border-white/5 space-y-3">
-                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest leading-none">Total Perangkat:</p>
+                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest leading-none">Total Aset:</p>
                 <p class="text-4xl font-black text-white">{{ count($list_perangkat ?? []) }} <span class="text-sm text-gray-500 font-medium">Unit</span></p>
             </div>
         </div>
@@ -13,12 +13,12 @@
 
     <div class="lg:col-span-2 space-y-8">
         <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.02)]">
-            <h3 class="text-xl font-black text-gray-800 mb-6 tracking-tight">Daftar Perangkat</h3>
+            <h3 class="text-xl font-black text-gray-800 mb-6 tracking-tight">Daftar Aset</h3>
             <table class="w-full text-sm text-left">
                 <thead class="text-gray-400 uppercase text-[10px] font-bold tracking-widest">
                     <tr class="border-b border-gray-100">
                         <th class="pb-3">No</th>
-                        <th class="pb-3">Nama Perangkat</th>
+                        <th class="pb-3">Nama Aset</th>
                         <th class="pb-3">Jenis</th>
                         <th class="pb-3">Kondisi</th>
                         <th class="pb-3 text-center">Aksi</th>
@@ -48,11 +48,11 @@
         </div>
 
         <div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.02)]">
-            <h3 class="text-xl font-black text-gray-800 mb-6">Tambah Perangkat Baru</h3>
+            <h3 class="text-xl font-black text-gray-800 mb-6">Tambah Aset Baru</h3>
             <form id="form-perangkat" action="{{ url('/admin/perangkat/store') }}" method="POST" onsubmit="simpanDataUmum(event, 'form-perangkat', 'perangkat-sistem')">
                 @csrf
                 <div class="grid grid-cols-2 gap-4 mb-4">
-                    <input type="text" name="nama_perangkat" placeholder="Nama Perangkat" required class="w-full bg-gray-50 border p-3 rounded-2xl">
+                    <input type="text" name="nama_perangkat" placeholder="Nama Aset" required class="w-full bg-gray-50 border p-3 rounded-2xl">
                     <input type="text" name="jenis_perangkat" placeholder="Jenis" required class="w-full bg-gray-50 border p-3 rounded-2xl">
                 </div>
                 <select name="kondisi" class="w-full bg-gray-50 border p-3 rounded-2xl mb-4">
@@ -67,7 +67,7 @@
 
 <div id="modal-edit-perangkat" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
     <div class="bg-white p-8 rounded-[2rem] w-full max-w-sm shadow-2xl">
-        <h3 class="font-bold mb-6 text-lg">Ubah Data Perangkat</h3>
+        <h3 class="font-bold mb-6 text-lg">Ubah Data Aset</h3>
         <form id="form-edit-perangkat" action="{{ url('/admin/perangkat/update') }}" onsubmit="simpanDataUmum(event, 'form-edit-perangkat', 'perangkat-sistem')">
             @csrf
             <input type="hidden" name="id" id="edit-id">

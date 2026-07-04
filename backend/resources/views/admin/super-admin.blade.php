@@ -266,7 +266,7 @@
             @endif
             @if($can('perangkat-sistem'))
             <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link {{ isset($page) && $page == 'perangkat-sistem' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-display w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Perangkat RT</span>
+                <i class="fa-solid fa-boxes-stacked w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aset RT</span>
             </a>
             @endif
             @endif

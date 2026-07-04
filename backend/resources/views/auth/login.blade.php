@@ -484,7 +484,7 @@
 
                     {{-- FORGOT --}}
                     <div class="flex justify-end">
-                        <a href="#"
+                        <a href="/welcome#kontak"
                            class="text-[13px] font-semibold text-blue-600 transition hover:text-blue-700 hover:underline">
                             Lupa kata sandi?
                         </a>
@@ -504,9 +504,9 @@
                         <p class="text-[12.5px] leading-6 text-gray-500">
                             Belum punya akun?
 
-                            <span class="font-semibold text-blue-600">
-                                Hubungi Super Admin atau Pengurus RT
-                            </span>
+                            <a href="/welcome#kontak" class="font-semibold text-blue-600 hover:underline transition">
+                                Hubungi Pengurus RT
+                            </a>
                         </p>
                     </div>
 

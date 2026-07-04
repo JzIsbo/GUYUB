@@ -18,6 +18,7 @@
                         <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email</th>
                         <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hak Akses / Role</th>
                         <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                        <th class="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -36,10 +37,22 @@
                                 {{ $user->status }}
                             </span>
                         </td>
+                        <td class="p-6 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="editPengguna({{ $user->id }}, '{{ $user->name }}', '{{ $user->role }}', '{{ $user->status ?? 'Aktif' }}')" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer" title="Edit Role">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                                @if($user->id !== Auth::id())
+                                <button onclick="hapusPengguna({{ $user->id }}, '{{ addslashes($user->name) }}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer" title="Hapus Akun">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                                @endif
+                            </div>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="p-12 text-center text-sm font-medium text-gray-400">Belum ada data akun pengguna terdaftar.</td>
+                        <td colspan="5" class="p-12 text-center text-sm font-medium text-gray-400">Belum ada data akun pengguna terdaftar.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -120,25 +133,43 @@ function simpanPengguna(event) {
         if (data.status === 'success') {
             document.getElementById('modal-pengguna').classList.add('hidden');
             form.reset();
-
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, showConfirmButton: false, timer: 1500 });
-            } else {
-                alert("🎉 " + data.message);
-            }
-
-            setTimeout(() => {
-                if (typeof menuKlik === 'function') menuKlik('pengguna');
-                else if (typeof loadPage === 'function') loadPage('pengguna');
-                else window.location.reload();
-            }, 1500);
+            alert('Berhasil! ' + data.message);
+            switchPage('pengguna', document.querySelector('.menu-active'));
         } else {
-            alert("Gagal: " + data.message);
+            alert('Gagal: ' + data.message);
         }
     })
     .catch(err => {
         console.error(err);
-        alert("Terjadi kesalahan sistem saat menghubungi server.");
+        alert('Terjadi kesalahan sistem saat menghubungi server.');
     });
+}
+
+function editPengguna(id, name, role, status) {
+    const newRole = prompt('Ubah Role untuk "' + name + '"\n\nPilihan: Super Admin, RT, Bendahara, Warga\n\nRole saat ini: ' + role, role);
+    if (!newRole || newRole === role) return;
+    if (!['Super Admin', 'RT', 'Bendahara', 'Warga'].includes(newRole)) {
+        alert('Role tidak valid. Pilih: Super Admin, RT, Bendahara, atau Warga');
+        return;
+    }
+    const fd = new FormData();
+    fd.append('id', id);
+    fd.append('role', newRole);
+    fd.append('_token', window.csrfToken);
+    fetch('{{ route("pengguna.update") }}', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(r => r.json())
+    .then(d => { alert(d.message || 'Role diperbarui'); switchPage('pengguna', document.querySelector('.menu-active')); })
+    .catch(() => alert('Gagal memperbarui role.'));
+}
+
+function hapusPengguna(id, name) {
+    if (!confirm('Hapus akun "' + name + '"? Akun yang dihapus tidak bisa dikembalikan.')) return;
+    const fd = new FormData();
+    fd.append('id', id);
+    fd.append('_token', window.csrfToken);
+    fetch('{{ route("pengguna.delete") }}', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(r => r.json())
+    .then(d => { alert(d.message || 'Akun dihapus'); switchPage('pengguna', document.querySelector('.menu-active')); })
+    .catch(() => alert('Gagal menghapus akun.'));
 }
 </script>

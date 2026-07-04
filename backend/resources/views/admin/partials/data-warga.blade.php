@@ -14,7 +14,7 @@
             }
         }
     }
-    $cardsPerPage = 6;
+    $cardsPerPage = 8;
 @endphp
 
 <div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
@@ -38,7 +38,6 @@
             </div>
 
             <div class="flex items-center gap-3 flex-wrap">
-                <!-- Stats Cards -->
                 <div class="grid grid-cols-3 gap-3">
                     <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3 text-center min-w-[80px]">
                         <p class="text-2xl font-black text-white leading-none">{{ $totalKK }}</p>
@@ -80,8 +79,8 @@
         </div>
     </div>
 
-    <!-- Family Cards Grid -->
-    <div id="familyCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <!-- Family Cards - SINGLE COLUMN for full width -->
+    <div id="familyCardsContainer" class="space-y-4">
         @forelse($warga_grouped ?? [] as $group_key => $anggota)
             @php
                 $kepala = $anggota->firstWhere('status_keluarga', 'Kepala Keluarga') ?? $anggota->first();
@@ -93,31 +92,31 @@
                 $c = $colors[abs($colorIdx)];
             @endphp
 
-            <div class="family-card bg-white rounded-[1.8rem] border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+            <div class="family-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
                  data-search="{{ strtolower($anggota->pluck('nama_lengkap')->join(' ') . ' ' . $current_kk . ' ' . $current_blok . ' ' . $anggota->pluck('nik')->join(' ')) }}">
 
-                <!-- Card Header -->
-                <div class="bg-gradient-to-r from-{{ $c }}-600 to-{{ $c }}-700 px-5 py-4 text-white relative overflow-hidden">
-                    <div class="absolute -right-3 -top-3 w-20 h-20 bg-white/5 rounded-full"></div>
-                    <div class="relative z-10 flex items-center justify-between">
+                <!-- Compact Header Strip -->
+                <div class="bg-gradient-to-r from-{{ $c }}-600 to-{{ $c }}-700 px-5 py-3 text-white flex items-center justify-between">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10">
+                            <i class="fa-solid fa-house-chimney text-sm"></i>
+                        </div>
                         <div class="min-w-0">
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <i class="fa-solid fa-house-chimney text-white/50 text-[10px]"></i>
-                                <span class="text-[10px] font-black uppercase tracking-[2px] text-white/60">{{ $current_blok }}</span>
-                            </div>
-                            <h3 class="text-base font-black tracking-tight truncate">{{ $kepala->nama_lengkap }}</h3>
-                            <p class="text-[10px] font-medium text-white/40 mt-0.5">KK: {{ $current_kk }}</p>
+                            <h3 class="text-sm font-black tracking-tight truncate">{{ $kepala->nama_lengkap }}</h3>
+                            <p class="text-[10px] text-white/50 font-medium">{{ $current_blok }} · KK: {{ $current_kk }}</p>
                         </div>
-                        <div class="text-center shrink-0 ml-3">
-                            <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/10">
-                                <span class="text-base font-black">{{ $jumlahAnggota }}</span>
-                            </div>
-                            <p class="text-[8px] font-bold uppercase tracking-wider text-white/40 mt-0.5">Orang</p>
-                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <span class="bg-white/10 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-white/10">{{ $jumlahAnggota }} Anggota</span>
+                        @if($isAdmin)
+                        <button type="button" onclick="bukaModalAnggota('{{ $current_kk }}', '{{ $current_blok }}')" class="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer border border-white/10">
+                            <i class="fa-solid fa-plus text-[8px]"></i> Anggota
+                        </button>
+                        @endif
                     </div>
                 </div>
 
-                <!-- Members List -->
+                <!-- Members as compact rows -->
                 <div class="divide-y divide-gray-50">
                     @foreach($anggota as $index => $w)
                     @php
@@ -132,14 +131,24 @@
                             $avatarIcon = 'fa-child'; $avatarColor = 'emerald'; $statusLabel = 'Anak';
                         }
                     @endphp
-                    <div class="px-5 py-3 flex items-center justify-between hover:bg-gray-50/50 transition group/member">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-8 h-8 rounded-lg bg-{{ $avatarColor }}-50 text-{{ $avatarColor }}-500 flex items-center justify-center shrink-0">
-                                <i class="fa-solid {{ $avatarIcon }} text-xs"></i>
+                    <div class="px-5 py-2.5 flex items-center justify-between hover:bg-gray-50/50 transition group/member">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="w-7 h-7 rounded-lg bg-{{ $avatarColor }}-50 text-{{ $avatarColor }}-500 flex items-center justify-center shrink-0">
+                                <i class="fa-solid {{ $avatarIcon }} text-[10px]"></i>
                             </div>
-                            <div class="min-w-0">
-                                <p class="font-bold text-gray-800 text-sm truncate">{{ $w->nama_lengkap }}</p>
-                                <div class="flex items-center gap-1.5 flex-wrap mt-0.5">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <p class="font-bold text-gray-800 text-sm truncate">{{ $w->nama_lengkap }}</p>
+                                    @if($w->status_keluarga == 'Kepala Keluarga')
+                                        <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-blue-100 text-blue-700">{{ $statusLabel }}</span>
+                                    @elseif($w->status_keluarga == 'Istri')
+                                        <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-pink-100 text-pink-700">{{ $statusLabel }}</span>
+                                    @else
+                                        <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700">{{ $statusLabel }}</span>
+                                    @endif
+                                    <span class="px-1.5 py-0.5 rounded text-[8px] font-bold {{ $w->status_domisili == 'Tetap' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600' }}">{{ $w->status_domisili }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 mt-0.5">
                                     <span class="text-[10px] font-medium text-gray-400">{{ $w->nik }}</span>
                                     @if($w->no_telepon)
                                     <span class="text-[10px] font-medium text-gray-300">·</span>
@@ -148,39 +157,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            @if($w->status_keluarga == 'Kepala Keluarga')
-                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-700">{{ $statusLabel }}</span>
-                            @elseif($w->status_keluarga == 'Istri')
-                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-pink-100 text-pink-700">{{ $statusLabel }}</span>
-                            @else
-                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700">{{ $statusLabel }}</span>
-                            @endif
-                            <span class="px-2 py-0.5 rounded-md text-[9px] font-bold {{ $w->status_domisili == 'Tetap' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600' }}">{{ $w->status_domisili }}</span>
-
-                            @if($isAdmin)
-                            <div class="flex items-center gap-1 opacity-0 group-hover/member:opacity-100 transition">
-                                <button type="button" onclick="bukaModalEdit({{ $w->id }}, '{{ $w->nomor_kk }}', '{{ $w->nik }}', '{{ addslashes($w->nama_lengkap) }}', '{{ $w->no_telepon }}', '{{ $w->blok_rumah }}', '{{ $w->status_keluarga }}', '{{ $w->status_domisili }}')" class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer">
-                                    <i class="fa-solid fa-pen text-[9px]"></i>
-                                </button>
-                                <button type="button" onclick="hapusWarga({{ $w->id }})" class="w-6 h-6 rounded-md bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer">
-                                    <i class="fa-solid fa-trash text-[9px]"></i>
-                                </button>
-                            </div>
-                            @endif
+                        @if($isAdmin)
+                        <div class="flex items-center gap-1 opacity-0 group-hover/member:opacity-100 transition shrink-0 ml-2">
+                            <button type="button" onclick="bukaModalEdit({{ $w->id }}, '{{ $w->nomor_kk }}', '{{ $w->nik }}', '{{ addslashes($w->nama_lengkap) }}', '{{ $w->no_telepon }}', '{{ $w->blok_rumah }}', '{{ $w->status_keluarga }}', '{{ $w->status_domisili }}')" class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer">
+                                <i class="fa-solid fa-pen text-[9px]"></i>
+                            </button>
+                            <button type="button" onclick="hapusWarga({{ $w->id }})" class="w-6 h-6 rounded-md bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer">
+                                <i class="fa-solid fa-trash text-[9px]"></i>
+                            </button>
                         </div>
+                        @endif
                     </div>
                     @endforeach
                 </div>
-
-                <!-- Card Footer -->
-                @if($isAdmin)
-                <div class="px-5 py-2.5 bg-gray-50/50 border-t border-gray-100">
-                    <button type="button" onclick="bukaModalAnggota('{{ $current_kk }}', '{{ $current_blok }}')" class="text-[11px] font-bold text-blue-600 hover:text-blue-700 transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-plus text-[9px]"></i> Tambah Anggota
-                    </button>
-                </div>
-                @endif
             </div>
         @empty
             <div class="col-span-2 bg-white p-12 rounded-[2rem] border border-gray-50 shadow-sm text-center">

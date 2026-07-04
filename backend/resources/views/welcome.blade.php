@@ -241,13 +241,19 @@
 
         </div>
 
-        {{-- LOGIN --}}
+        {{-- LOGIN / DASHBOARD --}}
+        @auth
+        <a href="/dashboard"
+           class="px-5 py-2 rounded-xl bg-white text-blue-700 text-sm font-semibold hover:bg-blue-50 transition flex items-center gap-2">
+            <i class="fa-solid fa-gauge-high text-xs"></i>
+            Dashboard
+        </a>
+        @else
         <a href="{{ route('login') }}"
            class="px-5 py-2 rounded-xl bg-white text-blue-700 text-sm font-semibold hover:bg-blue-50 transition">
-
             Login
-
         </a>
+        @endauth
 
     </nav>
 
@@ -292,13 +298,19 @@
                 {{-- BUTTON --}}
                 <div class="flex flex-wrap mobile-center gap-4 mt-8">
 
+                    @auth
+                    <a href="/dashboard"
+                       class="btn-primary px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300">
+                        <i class="fa-solid fa-gauge-high mr-2"></i>
+                        Buka Dashboard
+                    </a>
+                    @else
                     <a href="{{ route('login') }}"
                        class="btn-primary px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300">
-
                         <i class="fa-solid fa-right-to-bracket mr-2"></i>
                         Masuk Sekarang
-
                     </a>
+                    @endauth
 
                     <a href="#fitur"
                        class="px-6 py-3 rounded-xl glass text-white text-sm font-semibold hover:bg-white/20 transition">

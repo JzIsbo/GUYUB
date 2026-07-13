@@ -356,6 +356,12 @@
     {{-- RIGHT --}}
     <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#f5f8ff] px-5 py-8 xl:w-[64%]">
 
+        <!-- Back to Public Page Button -->
+        <a href="{{ route('welcome') }}" class="absolute left-6 top-6 z-20 flex items-center gap-2 px-4 py-2.5 bg-white/80 hover:bg-white text-gray-600 hover:text-blue-600 rounded-2xl border border-gray-100 shadow-sm backdrop-blur-md transition-all text-xs font-bold">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Kembali ke Beranda</span>
+        </a>
+
         <div class="absolute -left-20 -top-32 h-[360px] w-[360px] rounded-full bg-blue-100/75"></div>
 
         <div class="absolute -bottom-36 -right-24 h-[340px] w-[340px] rounded-full bg-blue-100/65"></div>

@@ -80,7 +80,15 @@
         };
     @endphp
 
-    <aside class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto">
+    <!-- Sidebar Backdrop Overlay for Mobile -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300"></div>
+
+    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out">
+        <!-- Close button inside sidebar for Mobile -->
+        <button onclick="toggleSidebar(false)" class="md:hidden p-2 text-gray-400 hover:text-white rounded-lg absolute top-6 right-6 focus:outline-none transition-colors">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
         <div class="p-8 flex items-center shrink-0">
             <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center">
                 <i class="fa-solid fa-house-chimney-window text-[#0F172A] text-xl"></i>
@@ -336,29 +344,36 @@
     </aside>
 
     <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 shrink-0">
-            <div class="flex flex-col">
-                <h2 class="text-xl font-bold text-gray-800 tracking-tight italic">Halo, {{ Auth::user()->name }} 👋</h2>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[1.5px]">Status: Verified Online</p>
+        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-10 shrink-0">
+            <div class="flex items-center gap-3">
+                <!-- Hamburger Menu Button -->
+                <button onclick="toggleSidebar(true)" class="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl mr-1 focus:outline-none transition-colors">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <div class="flex flex-col">
+                    <h2 class="text-base md:text-xl font-bold text-gray-800 tracking-tight italic line-clamp-1">Halo, {{ Auth::user()->name }} 👋</h2>
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                        <p class="text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-[1.5px]">Status: Verified Online</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-6">
-                <div class="bg-gray-50 p-2.5 rounded-xl text-gray-400 relative cursor-pointer hover:bg-gray-100 transition">
+            <div class="flex items-center gap-3 md:gap-6">
+                <div class="bg-gray-50 p-2.5 rounded-xl text-gray-400 relative cursor-pointer hover:bg-gray-100 transition hidden sm:block">
+                </div>
 
-                <div class="flex items-center gap-4 pl-6 border-l border-gray-100">
-                    <div class="text-right">
+                <div class="flex items-center gap-3 md:gap-4 pl-3 md:pl-6 border-l border-gray-100">
+                    <div class="text-right hidden sm:block">
                         <p class="text-sm font-black text-gray-800 leading-none lowercase tracking-tighter">{{ Auth::user()->name }}</p>
                         <p class="text-[9px] text-blue-600 font-black uppercase mt-1 italic tracking-widest leading-none">{{ Auth::user()->role }}</p>
                     </div>
-                    <img src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" class="h-11 w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover" alt="Avatar">
+                    <img src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" class="h-10 w-10 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover" alt="Avatar">
                 </div>
             </div>
         </header>
 
-        <main id="main-content" class="flex-1 overflow-y-auto p-10 bg-[#F8FAFC]">
+        <main id="main-content" class="flex-1 overflow-y-auto p-4 md:p-10 bg-[#F8FAFC]">
             @if(isset($page) && view()->exists('admin.partials.' . $page))
                 @include('admin.partials.' . $page)
             @else
@@ -372,6 +387,28 @@
     </div>
 
     <script>
+        // ==========================================
+        // 0. FUNGSI TOGGLE SIDEBAR MOBILE
+        // ==========================================
+        window.toggleSidebar = function(forceOpen) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar || !backdrop) return;
+
+            const isCurrentlyClosed = sidebar.classList.contains('-translate-x-full');
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : isCurrentlyClosed;
+
+            if (shouldOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        };
+
         // ==========================================
         // 1. FUNGSI NAVIGASI AJAX
         // ==========================================
@@ -400,6 +437,11 @@
         }
 
         function switchPage(pageName, element) {
+            // Close sidebar on mobile after selecting a page
+            if (window.innerWidth < 768) {
+                window.toggleSidebar(false);
+            }
+
             const mainContent = document.getElementById('main-content');
             if (!mainContent) return;
 

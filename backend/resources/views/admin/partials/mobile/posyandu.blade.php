@@ -1,3 +1,8 @@
+@php
+    $isAdmin = in_array(Auth::user()->role, ['Super Admin', 'RT']);
+    $userName = Auth::user()->name;
+@endphp
+
 <div class="p-3 space-y-3">
     <!-- Hero Banner -->
     <div class="bg-gradient-to-br from-[#4c0519] via-[#881337] to-[#0f172a] rounded-2xl p-4 text-white relative overflow-hidden shadow-xl">

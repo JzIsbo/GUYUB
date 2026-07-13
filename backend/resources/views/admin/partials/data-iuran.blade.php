@@ -1,56 +1,86 @@
-<div class="bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.02)] relative">
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
 
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-            <h2 class="text-2xl font-black text-gray-800 tracking-tight">Master Data Iuran</h2>
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Konfigurasi jenis dan tarif iuran warga</p>
+    {{-- ============ HERO BANNER ============ --}}
+    <div class="bg-gradient-to-br from-[#1e3a5f] via-[#1a2e4a] to-[#0f172a] rounded-[2rem] p-6 lg:p-8 relative overflow-hidden">
+
+        {{-- Decorative background icon --}}
+        <i class="fa-solid fa-wallet absolute -right-6 -bottom-6 text-[10rem] text-white/[0.03] rotate-12 pointer-events-none"></i>
+        <i class="fa-solid fa-wallet absolute right-20 top-4 text-[4rem] text-white/[0.04] -rotate-12 pointer-events-none"></i>
+
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            {{-- Left: Text content --}}
+            <div class="space-y-3">
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 text-blue-200 text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full">
+                    <i class="fa-solid fa-wallet text-xs"></i>
+                    KONFIGURASI IURAN
+                </div>
+                <h1 class="text-2xl lg:text-3xl font-black text-white tracking-tight">Master Data Iuran</h1>
+                <p class="text-sm text-blue-200/70 font-medium max-w-md">Konfigurasi jenis dan tarif iuran warga</p>
+            </div>
+
+            {{-- Right: Stats badge + Action button --}}
+            <div class="flex flex-wrap items-center gap-3">
+                {{-- Stats badge --}}
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[100px]">
+                    <p class="text-2xl font-black text-white">{{ count($list_iuran) }}</p>
+                    <p class="text-[10px] font-bold text-blue-300/60 uppercase tracking-widest mt-0.5">Jenis Iuran</p>
+                </div>
+
+                {{-- Add button --}}
+                <button onclick="document.getElementById('modal-tambah-iuran').classList.remove('hidden')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3.5 rounded-2xl font-bold transition-all hover:scale-[1.03] shadow-lg shadow-blue-500/25 flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-plus-circle text-lg"></i> Tambah Jenis Iuran
+                </button>
+            </div>
         </div>
-        <button onclick="document.getElementById('modal-tambah-iuran').classList.remove('hidden')" class="bg-[#EFF6FF] text-[#2563EB] px-6 py-3 rounded-2xl font-bold hover:scale-[1.03] transition shadow-sm flex items-center shrink-0">
-            <i class="fa-solid fa-plus-circle mr-2 text-lg"></i> Tambah Jenis Iuran
-        </button>
     </div>
 
-    <div class="overflow-x-auto min-h-[200px]">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-gray-50/80 text-gray-400 text-[10px] uppercase tracking-widest">
-                    <th class="p-4 rounded-l-2xl font-bold">Nama Iuran</th>
-                    <th class="p-4 font-bold">Periode Penagihan</th>
-                    <th class="p-4 font-bold text-center">Sifat</th>
-                    <th class="p-4 rounded-r-2xl font-bold text-right">Tarif / Nominal</th>
-                </tr>
-            </thead>
-            <tbody class="text-sm">
-                @forelse($list_iuran as $item)
-                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                        <td class="p-4">
-                            <p class="font-bold text-gray-800">{{ $item->nama_iuran }}</p>
-                            <p class="text-[10px] text-gray-400 font-medium tracking-wide mt-0.5">{{ $item->deskripsi ?? '-' }}</p>
-                        </td>
-                        <td class="p-4 font-bold text-gray-600">{{ $item->periode_penagihan }}</td>
-                        <td class="p-4 text-center">
-                            @if($item->sifat == 'Wajib')
-                                <span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">Wajib</span>
-                            @else
-                                <span class="bg-green-50 text-green-600 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">Sukarela</span>
-                            @endif
-                        </td>
-                        <td class="p-4 font-black text-gray-900 text-right tracking-tight">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center p-10">
-                            <div class="flex flex-col items-center justify-center text-gray-400">
-                                <i class="fa-solid fa-wallet text-4xl mb-3 text-gray-300"></i>
-                                <p class="font-medium italic">Belum ada jenis penagihan iuran yang diatur...</p>
-                            </div>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    {{-- ============ TABLE CARD ============ --}}
+    <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm">
+        <div class="p-6 lg:p-8">
+            <div class="overflow-x-auto min-h-[200px]">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50/80 text-gray-400 text-[10px] uppercase tracking-widest">
+                            <th class="p-4 rounded-l-2xl font-bold">Nama Iuran</th>
+                            <th class="p-4 font-bold">Periode Penagihan</th>
+                            <th class="p-4 font-bold text-center">Sifat</th>
+                            <th class="p-4 rounded-r-2xl font-bold text-right">Tarif / Nominal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        @forelse($list_iuran as $item)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
+                                <td class="p-4">
+                                    <p class="font-bold text-gray-800">{{ $item->nama_iuran }}</p>
+                                    <p class="text-[10px] text-gray-400 font-medium tracking-wide mt-0.5">{{ $item->deskripsi ?? '-' }}</p>
+                                </td>
+                                <td class="p-4 font-bold text-gray-600">{{ $item->periode_penagihan }}</td>
+                                <td class="p-4 text-center">
+                                    @if($item->sifat == 'Wajib')
+                                        <span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">Wajib</span>
+                                    @else
+                                        <span class="bg-green-50 text-green-600 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider">Sukarela</span>
+                                    @endif
+                                </td>
+                                <td class="p-4 font-black text-gray-900 text-right tracking-tight">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center p-10">
+                                    <div class="flex flex-col items-center justify-center text-gray-400">
+                                        <i class="fa-solid fa-wallet text-4xl mb-3 text-gray-300"></i>
+                                        <p class="font-medium italic">Belum ada jenis penagihan iuran yang diatur...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
+    {{-- ============ MODAL (unchanged) ============ --}}
     <div id="modal-tambah-iuran" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm transition-all">
         <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl relative m-4">
 
@@ -103,4 +133,5 @@
             </form>
         </div>
     </div>
+
 </div>

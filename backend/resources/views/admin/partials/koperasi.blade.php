@@ -1,49 +1,41 @@
-<div class="p-8 space-y-8">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-store"></i>
-                </div>
-                Koperasi Warga RT
-            </h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Kelola usaha simpan pinjam dan produk sembako wirausaha warga.</p>
-        </div>
-        @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
-        <button onclick="document.getElementById('modal-tambah-koperasi').classList.remove('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-blue-200 transition-all flex items-center gap-2 cursor-pointer self-start md:self-auto text-sm">
-            <i class="fa-solid fa-plus"></i> Tambah Produk / Item
-        </button>
-        @endif
-    </div>
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
 
-    <!-- Grid Statistik -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-box"></i>
-            </div>
+    <!-- Hero Banner & Stats Header -->
+    <div class="bg-gradient-to-br from-[#1e3a5f] via-[#1a2e4a] to-[#0f172a] rounded-[2rem] p-6 lg:p-8 text-white relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-blue-500/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/10 rounded-full translate-y-1/2 -translate-x-1/4 blur-lg"></div>
+        <i class="fa-solid fa-store absolute -bottom-6 -right-4 text-[130px] opacity-[0.03] rotate-12"></i>
+
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Item Produk</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">{{ count($list_koperasi ?? []) }} Barang</h3>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-400/20 flex items-center justify-center">
+                        <i class="fa-solid fa-store text-blue-300 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-[3px] text-blue-300/80">Layanan Warga</span>
+                </div>
+                <h1 class="text-2xl lg:text-3xl font-black tracking-tight">Koperasi Warga RT</h1>
+                <p class="text-sm text-white/50 font-medium mt-1">Kelola usaha simpan pinjam dan produk sembako wirausaha warga.</p>
             </div>
-        </div>
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-hand-holding-dollar"></i>
-            </div>
-            <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status Koperasi</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">Aktif Melayani</h3>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-users"></i>
-            </div>
-            <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Anggota Terdaftar</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">{{ $warga ?? 0 }} Warga</h3>
+
+            <div class="flex items-center gap-4 flex-wrap">
+                <!-- Quick Stats Badge 1 -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none">{{ count($list_koperasi ?? []) }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-blue-300/70 mt-1">Barang</p>
+                </div>
+
+                <!-- Quick Stats Badge 2 -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none">{{ $warga ?? 0 }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-blue-300/70 mt-1">Anggota</p>
+                </div>
+
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
+                <button onclick="document.getElementById('modal-tambah-koperasi').classList.remove('hidden')" class="bg-blue-500 hover:bg-blue-400 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center gap-2.5 cursor-pointer text-sm shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 border border-blue-400/30">
+                    <i class="fa-solid fa-plus-circle text-base"></i> Tambah Produk
+                </button>
+                @endif
             </div>
         </div>
     </div>

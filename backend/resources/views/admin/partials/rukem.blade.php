@@ -1,40 +1,41 @@
-<div class="p-8 space-y-8">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-hands-holding-child"></i>
-                </div>
-                Rukun Kematian (Rukem) RT
-            </h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Sistem informasi santunan duka cita, kepedulian sosial, & kas duka warga.</p>
-        </div>
-        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-        <button onclick="document.getElementById('modal-tambah-rukem').classList.remove('hidden')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-amber-200 transition-all flex items-center gap-2 cursor-pointer self-start md:self-auto text-sm">
-            <i class="fa-solid fa-plus"></i> Catat Santunan Duka
-        </button>
-        @endif
-    </div>
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
 
-    <!-- Grid Statistik -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-money-bill-wave"></i>
-            </div>
+    <!-- Hero Banner & Stats Header -->
+    <div class="bg-gradient-to-br from-[#78350f] via-[#92400e] to-[#0f172a] rounded-[2rem] p-6 lg:p-8 text-white relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-amber-500/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-yellow-500/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-lg"></div>
+        <i class="fa-solid fa-hands-holding-child absolute -bottom-6 -right-4 text-[130px] opacity-[0.03] rotate-12"></i>
+
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Santunan Disalurkan</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">Rp {{ number_format($total_santunan ?? 0, 0, ',', '.') }}</h3>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-400/20 flex items-center justify-center">
+                        <i class="fa-solid fa-hands-holding-child text-amber-300 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-[3px] text-amber-300/80">Layanan Sosial Warga</span>
+                </div>
+                <h1 class="text-2xl lg:text-3xl font-black tracking-tight">Rukun Kematian (Rukem)</h1>
+                <p class="text-sm text-white/50 font-medium mt-1">Sistem informasi santunan duka cita, kepedulian sosial, & kas duka warga.</p>
             </div>
-        </div>
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-gray-50 text-gray-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-users-slash"></i>
-            </div>
-            <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Riwayat Berita Duka</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">{{ count($list_rukem ?? []) }} Kejadian</h3>
+
+            <div class="flex items-center gap-4 flex-wrap">
+                <!-- Quick Stats Badge 1 -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none"><span class="text-xs font-normal">Rp</span> {{ number_format($total_santunan ?? 0, 0, ',', '.') }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-amber-300/70 mt-1">Santunan Disalurkan</p>
+                </div>
+
+                <!-- Quick Stats Badge 2 -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none">{{ count($list_rukem ?? []) }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-amber-300/70 mt-1">Kejadian Duka</p>
+                </div>
+
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                <button onclick="document.getElementById('modal-tambah-rukem').classList.remove('hidden')" class="bg-amber-500 hover:bg-amber-400 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center gap-2.5 cursor-pointer text-sm shadow-lg shadow-amber-500/30 hover:-translate-y-0.5 border border-amber-400/30">
+                    <i class="fa-solid fa-plus-circle text-base"></i> Catat Santunan Duka
+                </button>
+                @endif
             </div>
         </div>
     </div>

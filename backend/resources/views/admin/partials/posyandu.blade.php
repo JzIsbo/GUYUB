@@ -1,25 +1,41 @@
-<div class="p-8 space-y-8">
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
     @php
         $isAdmin = in_array(Auth::user()->role, ['Super Admin', 'RT']);
         $userName = Auth::user()->name;
     @endphp
 
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-heart-pulse"></i>
+    <!-- Hero Banner & Stats Header -->
+    <div class="bg-gradient-to-br from-[#4c0519] via-[#881337] to-[#0f172a] rounded-[2rem] p-6 lg:p-8 text-white relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-rose-500/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/10 rounded-full translate-y-1/2 -translate-x-1/4 blur-lg"></div>
+        <i class="fa-solid fa-heart-pulse absolute -bottom-6 -right-4 text-[130px] opacity-[0.03] rotate-12"></i>
+
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-400/20 flex items-center justify-center">
+                        <i class="fa-solid fa-heart-pulse text-rose-300 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-[3px] text-rose-300/80">Layanan Kesehatan Warga</span>
                 </div>
-                Posyandu Balita & Lansia RT
-            </h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Jadwal pemeriksaan kesehatan, imunisasi, & suplemen gizi rutin warga.</p>
+                <h1 class="text-2xl lg:text-3xl font-black tracking-tight">Posyandu Balita & Lansia</h1>
+                <p class="text-sm text-white/50 font-medium mt-1">Jadwal pemeriksaan kesehatan, imunisasi, & suplemen gizi rutin warga.</p>
+            </div>
+
+            <div class="flex items-center gap-4 flex-wrap">
+                <!-- Quick Stats Badge -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none">{{ count($list_posyandu ?? []) }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-rose-300/70 mt-1">Total Jadwal</p>
+                </div>
+
+                @if($isAdmin)
+                <button onclick="document.getElementById('modal-tambah-posyandu').classList.remove('hidden')" class="bg-rose-500 hover:bg-rose-400 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center gap-2.5 cursor-pointer text-sm shadow-lg shadow-rose-500/30 hover:-translate-y-0.5 border border-rose-400/30">
+                    <i class="fa-solid fa-plus-circle text-base"></i> Tambah Jadwal
+                </button>
+                @endif
+            </div>
         </div>
-        @if($isAdmin)
-        <button onclick="document.getElementById('modal-tambah-posyandu').classList.remove('hidden')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-rose-200 transition-all flex items-center gap-2 cursor-pointer self-start md:self-auto text-sm">
-            <i class="fa-solid fa-plus"></i> Tambah Jadwal Posyandu
-        </button>
-        @endif
     </div>
 
     <!-- Jadwal Posyandu Cards -->

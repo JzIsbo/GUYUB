@@ -85,8 +85,11 @@ class AdminController extends Controller
         $chart_pemasukan = array_fill(0, 12, 0);
         $chart_pengeluaran = array_fill(0, 12, 0);
 
-        try {
-            $array_pemasukan = DB::table('transactions')->where('jenis', 'pemasukan')->pluck('nominal')->toArray();
+        $isAjax = $request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest';
+
+        if (!$isAjax || $page === 'dashboard') {
+            try {
+                $array_pemasukan = DB::table('transactions')->where('jenis', 'pemasukan')->pluck('nominal')->toArray();
             $array_pengeluaran = DB::table('transactions')->where('jenis', 'pengeluaran')->pluck('nominal')->toArray();
 
             $pemasukan = array_sum($array_pemasukan);
@@ -115,10 +118,11 @@ class AdminController extends Controller
                     $pengeluaran_bulanan[$row->bulan] = (float)$row->total;
                 }
             }
-            $chart_pemasukan = array_values($pemasukan_bulanan);
-            $chart_pengeluaran = array_values($pengeluaran_bulanan);
-        } catch (\Exception $e) {
-            // Degrade gracefully
+                $chart_pemasukan = array_values($pemasukan_bulanan);
+                $chart_pengeluaran = array_values($pengeluaran_bulanan);
+            } catch (\Exception $e) {
+                // Degrade gracefully
+            }
         }
 
         $saldo_bersih = $pemasukan - $pengeluaran;

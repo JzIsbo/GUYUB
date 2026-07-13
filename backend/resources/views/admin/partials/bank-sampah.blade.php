@@ -1,49 +1,41 @@
-<div class="p-8 space-y-8">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-recycle"></i>
-                </div>
-                Bank Sampah RT Lingkungan Sehat
-            </h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Kelola penimbangan setoran daur ulang plastik, kertas, & logam warga.</p>
-        </div>
-        @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
-        <button onclick="document.getElementById('modal-tambah-sampah').classList.remove('hidden')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 cursor-pointer self-start md:self-auto text-sm">
-            <i class="fa-solid fa-plus"></i> Catat Setoran Sampah
-        </button>
-        @endif
-    </div>
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
 
-    <!-- Grid Statistik -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-scale-balanced"></i>
-            </div>
+    <!-- Hero Banner & Stats Header -->
+    <div class="bg-gradient-to-br from-[#064e3b] via-[#065f46] to-[#0f172a] rounded-[2rem] p-6 lg:p-8 text-white relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-emerald-500/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/10 rounded-full translate-y-1/2 -translate-x-1/4 blur-lg"></div>
+        <i class="fa-solid fa-recycle absolute -bottom-6 -right-4 text-[130px] opacity-[0.03] rotate-12"></i>
+
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Sampah Terkumpul</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">{{ number_format($total_berat ?? 0, 1, ',', '.') }} Kg</h3>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/20 flex items-center justify-center">
+                        <i class="fa-solid fa-recycle text-emerald-300 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-[3px] text-emerald-300/80">Layanan Warga</span>
+                </div>
+                <h1 class="text-2xl lg:text-3xl font-black tracking-tight">Bank Sampah RT</h1>
+                <p class="text-sm text-white/50 font-medium mt-1">Kelola penimbangan setoran daur ulang plastik, kertas, & logam warga.</p>
             </div>
-        </div>
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-wallet"></i>
-            </div>
-            <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Nilai Tabungan</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">Rp {{ number_format($total_rupiah ?? 0, 0, ',', '.') }}</h3>
-            </div>
-        </div>
-        <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
-                <i class="fa-solid fa-receipt"></i>
-            </div>
-            <div>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Transaksi</p>
-                <h3 class="text-2xl font-black text-gray-800 mt-0.5">{{ count($list_deposit ?? []) }} Setoran</h3>
+
+            <div class="flex items-center gap-4 flex-wrap">
+                <!-- Quick Stats Badge 1 -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none">{{ number_format($total_berat ?? 0, 1, ',', '.') }} <span class="text-xs font-normal">Kg</span></p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-emerald-300/70 mt-1">Terkumpul</p>
+                </div>
+
+                <!-- Quick Stats Badge 2 -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none"><span class="text-xs font-normal">Rp</span> {{ number_format($total_rupiah ?? 0, 0, ',', '.') }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-emerald-300/70 mt-1">Nilai Tabungan</p>
+                </div>
+
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
+                <button onclick="document.getElementById('modal-tambah-sampah').classList.remove('hidden')" class="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center gap-2.5 cursor-pointer text-sm shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 border border-emerald-400/30">
+                    <i class="fa-solid fa-plus-circle text-base"></i> Catat Setoran
+                </button>
+                @endif
             </div>
         </div>
     </div>

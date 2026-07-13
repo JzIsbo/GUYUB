@@ -1,50 +1,111 @@
-<div class="p-8 space-y-8">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-calendar-check"></i>
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+
+    <!-- ============================================================== -->
+    <!-- HERO BANNER                                                    -->
+    <!-- ============================================================== -->
+    <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#134e4a] via-[#115e59] to-[#0f172a] shadow-xl">
+        <!-- Decorative background icon -->
+        <i class="fa-solid fa-calendar-check absolute -right-6 -bottom-6 text-[11rem] text-white/[0.04] rotate-12 pointer-events-none select-none"></i>
+        <i class="fa-solid fa-calendar-check absolute right-28 top-4 text-[5rem] text-white/[0.06] -rotate-6 pointer-events-none select-none"></i>
+
+        <div class="relative z-10 px-6 py-8 sm:px-10 sm:py-10 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            <!-- Left: text content -->
+            <div class="space-y-4">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5">
+                    <i class="fa-solid fa-calendar-check text-teal-300 text-xs"></i>
+                    <span class="text-[11px] font-bold tracking-widest text-teal-100 uppercase">Agenda Kemasyarakatan</span>
                 </div>
-                Agenda Kegiatan & Event RT
-            </h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Jadwal kerja bakti, rapat warga, pengajian, & acara kemasyarakatan.</p>
+
+                <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+                    Agenda Kegiatan & Event RT
+                </h1>
+                <p class="text-sm text-teal-100/80 font-medium max-w-xl leading-relaxed">
+                    Jadwal kerja bakti, rapat warga, pengajian, & acara kemasyarakatan
+                </p>
+
+                <!-- Stats badges -->
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <div class="flex items-center gap-2.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-teal-400/20 flex items-center justify-center">
+                            <i class="fa-solid fa-calendar-day text-teal-300 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-black text-white leading-none">{{ count($list_kegiatan ?? []) }}</p>
+                            <p class="text-[10px] text-teal-200/70 font-semibold uppercase tracking-wider">Agenda</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-400/20 flex items-center justify-center">
+                            <i class="fa-solid fa-users text-emerald-300 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-black text-white leading-none">Aktif</p>
+                            <p class="text-[10px] text-teal-200/70 font-semibold uppercase tracking-wider">Status</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: action button -->
+            @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+            <div class="flex-shrink-0">
+                <button onclick="document.getElementById('modal-tambah-kegiatan').classList.remove('hidden')" class="bg-teal-500 hover:bg-teal-400 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-teal-900/30 hover:shadow-teal-400/30 transition-all flex items-center gap-2.5 cursor-pointer text-sm group">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition">
+                        <i class="fa-solid fa-plus text-sm"></i>
+                    </div>
+                    Buat Agenda Kegiatan
+                </button>
+            </div>
+            @endif
         </div>
-        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-        <button onclick="document.getElementById('modal-tambah-kegiatan').classList.remove('hidden')" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-teal-200 transition-all flex items-center gap-2 cursor-pointer self-start md:self-auto text-sm">
-            <i class="fa-solid fa-plus"></i> Buat Agenda Kegiatan
-        </button>
-        @endif
     </div>
 
-    <!-- Grid Kegiatan -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- ============================================================== -->
+    <!-- GRID KEGIATAN                                                  -->
+    <!-- ============================================================== -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse($list_kegiatan ?? [] as $item)
-        <div class="bg-white rounded-[2.5rem] p-6 border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+        <div class="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
             <div>
-                <div class="flex items-center justify-between mb-3">
-                    <span class="bg-teal-50 text-teal-600 px-3 py-1 rounded-full text-xs font-bold"><i class="fa-solid fa-clock mr-1"></i> {{ $item->waktu }}</span>
-                    <span class="text-xs text-gray-400 font-bold">{{ $item->tanggal }}</span>
+                <div class="flex items-center justify-between mb-4">
+                    <span class="bg-teal-50 text-teal-700 px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock text-[10px]"></i> {{ $item->waktu }}
+                    </span>
+                    <span class="text-xs text-gray-400 font-bold bg-gray-50 px-3 py-1.5 rounded-full">{{ $item->tanggal }}</span>
                 </div>
-                <h3 class="text-lg font-black text-gray-800 mb-2">{{ $item->nama_kegiatan }}</h3>
-                <p class="text-xs font-bold text-gray-500 mb-3"><i class="fa-solid fa-location-dot text-teal-500 mr-1"></i> Lokasi: {{ $item->lokasi }}</p>
-                <p class="text-xs text-gray-600 line-clamp-3 mb-6">{{ $item->deskripsi ?? 'Kegiatan kebersamaan warga RT.' }}</p>
+                <h3 class="text-lg font-black text-gray-800 mb-2 leading-snug">{{ $item->nama_kegiatan }}</h3>
+                <p class="text-xs font-bold text-gray-500 mb-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-location-dot text-teal-500"></i> Lokasi: {{ $item->lokasi }}
+                </p>
+                <p class="text-xs text-gray-500 line-clamp-3 mb-6 leading-relaxed">{{ $item->deskripsi ?? 'Kegiatan kebersamaan warga RT.' }}</p>
             </div>
-            <div class="pt-4 border-t border-gray-50 flex items-center justify-between">
-                <span class="text-xs font-bold text-teal-600">Terbuka untuk Warga</span>
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-xs font-bold text-teal-600 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i> Terbuka untuk Warga
+                </span>
                 @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                <button onclick="hapusKegiatan({{ $item->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center">
+                <button onclick="hapusKegiatan({{ $item->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all inline-flex items-center justify-center" title="Hapus agenda">
                     <i class="fa-solid fa-trash text-xs"></i>
                 </button>
                 @endif
             </div>
         </div>
         @empty
-        <div class="col-span-3 bg-white p-12 rounded-[2.5rem] border border-gray-100 text-center text-gray-400 italic">
-            Belum ada agenda kegiatan RT terjadwal saat ini.
+        <div class="col-span-full bg-white p-16 rounded-[2rem] border border-gray-100 shadow-sm text-center">
+            <div class="flex flex-col items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-teal-50 flex items-center justify-center">
+                    <i class="fa-solid fa-calendar-xmark text-2xl text-teal-300"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-400">Belum ada agenda kegiatan RT</p>
+                    <p class="text-sm text-gray-300 mt-1">Jadwal kegiatan yang dibuat akan tampil di sini</p>
+                </div>
+            </div>
         </div>
         @endforelse
     </div>
+
 </div>
 
 <!-- Modal Tambah -->

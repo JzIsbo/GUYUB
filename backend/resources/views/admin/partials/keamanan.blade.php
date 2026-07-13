@@ -1,24 +1,34 @@
-<div class="p-8 space-y-8">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-shield-halved"></i>
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+
+    <!-- Hero Banner & Stats Header -->
+    <div class="bg-gradient-to-br from-[#1e293b] via-[#0f172a] to-[#020617] rounded-[2rem] p-6 lg:p-8 text-white relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-slate-500/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-red-500/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-lg"></div>
+        <i class="fa-solid fa-shield-halved absolute -bottom-6 -right-4 text-[130px] opacity-[0.03] rotate-12"></i>
+
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-slate-500/20 border border-slate-400/20 flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved text-slate-300 text-sm"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase tracking-[3px] text-slate-300/80">Keamanan Lingkungan</span>
                 </div>
-                Keamanan & Ronda Malam RT
-            </h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Jadwal siskamling ronda malam warga dan pusat pelaporan kejadian darurat.</p>
-        </div>
-        <div class="flex gap-3">
-            <button onclick="document.getElementById('modal-laporkan-kejadian').classList.remove('hidden')" class="bg-red-500 hover:bg-red-600 text-white font-bold px-5 py-3 rounded-2xl shadow-lg shadow-red-200 transition-all flex items-center gap-2 cursor-pointer text-sm">
-                <i class="fa-solid fa-triangle-exclamation"></i> Lapor Kejadian / Darurat
-            </button>
-            @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-            <button onclick="document.getElementById('modal-tambah-ronda').classList.remove('hidden')" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-5 py-3 rounded-2xl shadow-lg shadow-slate-200 transition-all flex items-center gap-2 cursor-pointer text-sm">
-                <i class="fa-solid fa-plus"></i> Tambah Jadwal Ronda
-            </button>
-            @endif
+                <h1 class="text-2xl lg:text-3xl font-black tracking-tight">Keamanan & Ronda Malam</h1>
+                <p class="text-sm text-white/50 font-medium mt-1">Jadwal siskamling ronda malam warga dan pusat pelaporan kejadian darurat.</p>
+            </div>
+
+            <div class="flex items-center gap-3 flex-wrap">
+                <button onclick="document.getElementById('modal-laporkan-kejadian').classList.remove('hidden')" class="bg-red-500 hover:bg-red-400 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center gap-2 cursor-pointer text-sm shadow-lg shadow-red-500/30 hover:-translate-y-0.5 border border-red-400/30">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Lapor Darurat
+                </button>
+
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                <button onclick="document.getElementById('modal-tambah-ronda').classList.remove('hidden')" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center gap-2.5 cursor-pointer text-sm border border-slate-600/30">
+                    <i class="fa-solid fa-plus-circle text-base"></i> Tambah Ronda
+                </button>
+                @endif
+            </div>
         </div>
     </div>
 

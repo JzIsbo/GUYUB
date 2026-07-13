@@ -7,8 +7,12 @@ use Illuminate\Support\Facades\DB;
 
 class SelfHealingDatabaseService
 {
+    private static $checked = false;
+
     public static function checkAndCreateTables()
     {
+        if (self::$checked) return;
+        self::$checked = true;
         try {
             DB::connection()->getPdo();
         } catch (\Exception $e) {

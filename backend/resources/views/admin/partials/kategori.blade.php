@@ -5,7 +5,7 @@
             <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Klasifikasi sumber dana & pengeluaran</p>
         </div>
         <button onclick="document.getElementById('modal-tambah-kategori').classList.remove('hidden')" class="bg-[#EFF6FF] text-[#2563EB] px-6 py-3 rounded-2xl font-bold hover:scale-[1.03] transition shadow-sm flex items-center">
-            <i class="fa-solid fa-folder-plus mr-2 text-lg"></i> Tambah Kategori
+            <i class="fa-solid fa-coins mr-2 text-lg"></i> Tambah Kategori
         </button>
     </div>
 
@@ -24,7 +24,7 @@
                 @forelse($list_kategori as $item)
                     <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
                         <td class="p-4 font-bold text-gray-800">
-                            <i class="fa-solid fa-folder text-gray-300 mr-2"></i> {{ $item->nama }}
+                            <i class="fa-solid fa-money-bill-wave text-emerald-400 mr-2"></i> {{ $item->nama }}
                         </td>
                         <td class="p-4 font-medium text-gray-500 text-xs">{{ $item->deskripsi ?? '-' }}</td>
                         <td class="p-4 text-center">

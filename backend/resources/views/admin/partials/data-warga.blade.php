@@ -96,7 +96,7 @@
                  data-search="{{ strtolower($anggota->pluck('nama_lengkap')->join(' ') . ' ' . $current_kk . ' ' . $current_blok . ' ' . $anggota->pluck('nik')->join(' ')) }}">
 
                 <!-- Compact Header Strip -->
-                <div class="bg-gradient-to-r from-{{ $c }}-600 to-{{ $c }}-700 px-5 py-3 text-white flex items-center justify-between">
+                <div class="bg-gradient-to-r from-{{ $c }}-600 to-{{ $c }}-700 px-5 py-3 text-white flex items-center justify-between cursor-pointer select-none" onclick="toggleFamilyCard('card-members-{{ $loop->index }}', this)">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10">
                             <i class="fa-solid fa-house-chimney text-sm"></i>
@@ -106,18 +106,21 @@
                             <p class="text-[10px] text-white/50 font-medium">{{ $current_blok }} · KK: {{ $current_kk }}</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 shrink-0">
+                    <div class="flex items-center gap-2 shrink-0">
                         <span class="bg-white/10 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-white/10">{{ $jumlahAnggota }} Anggota</span>
                         @if($isAdmin)
-                        <button type="button" onclick="bukaModalAnggota('{{ $current_kk }}', '{{ $current_blok }}')" class="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer border border-white/10">
+                        <button type="button" onclick="event.stopPropagation(); bukaModalAnggota('{{ $current_kk }}', '{{ $current_blok }}')" class="bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer border border-white/10">
                             <i class="fa-solid fa-plus text-[8px]"></i> Anggota
                         </button>
                         @endif
+                        <button type="button" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition border border-white/10 focus:outline-none" title="Minimize / Maximize">
+                            <i class="fa-solid fa-chevron-up text-xs transition-transform duration-300 card-toggle-icon"></i>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Members as compact rows -->
-                <div class="divide-y divide-gray-50">
+                <div id="card-members-{{ $loop->index }}" class="divide-y divide-gray-50 transition-all duration-300">
                     @foreach($anggota as $index => $w)
                     @php
                         $avatarIcon = 'fa-user';
@@ -256,6 +259,23 @@
 
 <script>
     var csrfToken = window.csrfToken || (document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '{{ csrf_token() }}');
+
+    // ========== TOGGLE MINIMIZE / MAXIMIZE FAMILY CARD ==========
+    function toggleFamilyCard(id, headerEl) {
+        var body = document.getElementById(id);
+        if (!body) return;
+        var isHidden = body.classList.toggle('hidden');
+        var icon = headerEl.querySelector('.card-toggle-icon');
+        if (icon) {
+            if (isHidden) {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        }
+    }
 
     // ========== PAGINATION ==========
     var currentPage = 1;

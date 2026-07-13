@@ -1,73 +1,94 @@
-<div class="p-4 lg:p-8 space-y-8 max-w-[1400px] mx-auto">
+<div class="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
 
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-widest mb-2">
-                <i class="fa-solid fa-bullhorn text-blue-500"></i> Informasi Lingkungan
-            </div>
-            <h1 class="text-2xl lg:text-3xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-                Pengumuman Warga
-            </h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Pusat informasi resmi, imbauan, dan pengumuman kegiatan warga RT.</p>
-        </div>
+    <!-- Hero Banner & Stats Header -->
+    <div class="bg-gradient-to-br from-[#1e3a5f] via-[#1a2e4a] to-[#0f172a] rounded-[2rem] p-6 lg:p-8 text-white relative overflow-hidden shadow-xl">
+        <div class="absolute top-0 right-0 w-72 h-72 bg-blue-500/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/10 rounded-full translate-y-1/2 -translate-x-1/4 blur-lg"></div>
+        <i class="fa-solid fa-bullhorn absolute -bottom-6 -right-4 text-[130px] opacity-[0.03] rotate-12"></i>
 
-        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-        <button onclick="document.getElementById('modal-tambah-pengumuman').classList.remove('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg shadow-blue-200 hover:shadow-blue-300 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer text-sm shrink-0">
-            <i class="fa-solid fa-plus-circle text-base"></i> Buat Pengumuman Baru
-        </button>
-        @endif
-    </div>
-
-    <!-- Announcement Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @forelse($list_pengumuman as $info)
-        <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden relative group">
-
-            <!-- Decorative Top Gradient Accent -->
-            <div class="h-2 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500"></div>
-
-            <div class="p-6 lg:p-7 flex-1">
-                <!-- Date & Action Header -->
-                <div class="flex items-center justify-between gap-2 mb-4">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-50 text-gray-500 rounded-xl text-[11px] font-bold border border-gray-100">
-                        <i class="fa-regular fa-calendar-check text-blue-500"></i>
-                        {{ \Carbon\Carbon::parse($info->created_at)->translatedFormat('d M Y') }}
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-400/20 flex items-center justify-center">
+                        <i class="fa-solid fa-bullhorn text-blue-300 text-sm"></i>
                     </div>
+                    <span class="text-[10px] font-black uppercase tracking-[3px] text-blue-300/80">Pusat Informasi Lingkungan</span>
+                </div>
+                <h1 class="text-2xl lg:text-3xl font-black tracking-tight">Pengumuman Warga</h1>
+                <p class="text-sm text-white/50 font-medium mt-1">Imbauan resmi, jadwal kegiatan, dan pengumuman lingkungan RT</p>
+            </div>
 
-                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                    <button onclick="hapusPengumuman({{ $info->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer opacity-80 group-hover:opacity-100" title="Hapus Pengumuman">
-                        <i class="fa-solid fa-trash text-xs"></i>
-                    </button>
-                    @endif
+            <div class="flex items-center gap-4 flex-wrap">
+                <!-- Quick Stats Badge -->
+                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="text-2xl font-black text-white leading-none">{{ count($list_pengumuman) }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-blue-300/70 mt-1">Total Siaran</p>
                 </div>
 
-                <!-- Title -->
-                <h3 class="text-lg font-black text-gray-800 leading-snug mb-3 group-hover:text-blue-600 transition-colors">
-                    {{ $info->judul }}
-                </h3>
-
-                <!-- Divider -->
-                <div class="w-10 h-1 bg-blue-100 rounded-full mb-4"></div>
-
-                <!-- Content Body -->
-                <p class="text-sm text-gray-600 font-normal leading-relaxed whitespace-pre-line">
-                    {{ $info->isi }}
-                </p>
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                <button onclick="document.getElementById('modal-tambah-pengumuman').classList.remove('hidden')" class="bg-blue-500 hover:bg-blue-400 text-white font-bold px-6 py-3.5 rounded-2xl transition-all flex items-center gap-2.5 cursor-pointer text-sm shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 border border-blue-400/30">
+                    <i class="fa-solid fa-plus-circle text-base"></i> Buat Pengumuman Baru
+                </button>
+                @endif
             </div>
+        </div>
+    </div>
 
-            <!-- Card Footer Pin Info -->
-            <div class="px-6 lg:px-7 py-3.5 bg-gray-50/70 border-t border-gray-50 flex items-center justify-between text-xs text-gray-400 font-medium">
-                <span class="flex items-center gap-1.5 text-blue-600 font-bold">
-                    <i class="fa-solid fa-circle-check text-[10px]"></i> Pengumuman Resmi
-                </span>
-                <span class="text-[11px] text-gray-400 font-semibold">
-                    <i class="fa-solid fa-bullhorn mr-1 text-[10px]"></i> RT/RW
-                </span>
+    <!-- Search Input Bar -->
+    <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
+        <input type="text" id="searchPengumuman" onkeyup="filterPengumuman()" placeholder="Cari judul atau isi pengumuman..." class="w-full bg-white border border-gray-100 pl-12 pr-6 py-3.5 rounded-2xl font-medium text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition">
+    </div>
+
+    <!-- Announcement Feed / Cards Container -->
+    <div id="pengumumanFeedContainer" class="space-y-4">
+        @forelse($list_pengumuman as $info)
+        <div class="pengumuman-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+             data-search="{{ strtolower($info->judul . ' ' . $info->isi) }}">
+
+            <div class="p-6 lg:p-7 flex flex-col md:flex-row md:items-start justify-between gap-5">
+                <!-- Left Icon & Main Info -->
+                <div class="flex items-start gap-4 min-w-0 flex-1">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-500/20 mt-0.5">
+                        <i class="fa-solid fa-bullhorn text-lg"></i>
+                    </div>
+
+                    <div class="min-w-0 flex-1">
+                        <!-- Date Badge & Meta Tag -->
+                        <div class="flex items-center gap-2 flex-wrap mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[11px] font-bold">
+                                <i class="fa-regular fa-calendar-check text-[10px]"></i>
+                                {{ \Carbon\Carbon::parse($info->created_at)->translatedFormat('d M Y') }}
+                            </span>
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-bold">
+                                <i class="fa-solid fa-circle-check text-[8px]"></i> Pengumuman Resmi
+                            </span>
+                        </div>
+
+                        <!-- Announcement Title -->
+                        <h3 class="text-lg lg:text-xl font-black text-gray-800 tracking-tight leading-snug mb-3">
+                            {{ $info->judul }}
+                        </h3>
+
+                        <!-- Announcement Content Box -->
+                        <div class="bg-gray-50/80 border border-gray-100 rounded-xl p-4 lg:p-5 text-sm text-gray-700 font-normal leading-relaxed whitespace-pre-line">
+                            {{ $info->isi }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Actions -->
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                <div class="shrink-0 flex md:flex-col items-center gap-2 justify-end self-start">
+                    <button onclick="hapusPengumuman({{ $info->id }})" class="w-9 h-9 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer border border-red-100/50" title="Hapus Pengumuman">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
+                </div>
+                @endif
             </div>
         </div>
         @empty
-        <div class="col-span-full bg-white rounded-[2.5rem] border border-gray-100 p-12 text-center shadow-sm">
+        <div class="bg-white rounded-[2rem] border border-gray-100 p-12 text-center shadow-sm">
             <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <i class="fa-solid fa-bullhorn text-2xl"></i>
             </div>
@@ -118,6 +139,14 @@
 </div>
 
 <script>
+function filterPengumuman() {
+    const query = document.getElementById('searchPengumuman').value.toLowerCase();
+    document.querySelectorAll('.pengumuman-card').forEach(card => {
+        const data = card.getAttribute('data-search');
+        card.style.display = data.includes(query) ? '' : 'none';
+    });
+}
+
 function hapusPengumuman(id) {
     if(!confirm('Apakah Anda yakin ingin menghapus pengumuman ini?')) return;
 

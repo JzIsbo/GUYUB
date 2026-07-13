@@ -19,13 +19,10 @@
             </div>
 
             <div class="flex items-center gap-2 flex-wrap">
-                <!-- Quick Stats Badge 1 -->
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 text-center min-w-[90px] flex-1">
                     <p class="text-lg font-black text-white leading-none"><span class="text-[8px] font-normal">Rp</span> {{ number_format($total_santunan ?? 0, 0, ',', '.') }}</p>
                     <p class="text-[7px] font-bold uppercase tracking-widest text-amber-300/70 mt-0.5">Santunan Disalurkan</p>
                 </div>
-
-                <!-- Quick Stats Badge 2 -->
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 text-center min-w-[70px]">
                     <p class="text-lg font-black text-white leading-none">{{ count($list_rukem ?? []) }}</p>
                     <p class="text-[7px] font-bold uppercase tracking-widest text-amber-300/70 mt-0.5">Kejadian Duka</p>
@@ -40,51 +37,36 @@
         </div>
     </div>
 
-    <!-- Tabel Rukem -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
-            <h3 class="font-black text-gray-800 text-xs">Riwayat Berita Duka & Santunan</h3>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-[10px]">
-                <thead>
-                    <tr class="bg-gray-50/50 text-gray-400 uppercase text-[8px] font-extrabold tracking-widest border-b border-gray-100">
-                        <th class="py-2.5 px-3">Tanggal</th>
-                        <th class="py-2.5 px-3">Almarhum/ah</th>
-                        <th class="py-2.5 px-3">Ahli Waris</th>
-                        <th class="py-2.5 px-3">Santunan</th>
-                        <th class="py-2.5 px-3">Status</th>
-                        <th class="py-2.5 px-3 text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 font-medium text-gray-700">
-                    @forelse($list_rukem ?? [] as $item)
-                    <tr class="hover:bg-gray-50/50 transition">
-                        <td class="py-2.5 px-3 text-gray-500 whitespace-nowrap">{{ $item->tanggal_duka }}</td>
-                        <td class="py-2.5 px-3 font-bold text-gray-800">{{ $item->nama_almarhum }}</td>
-                        <td class="py-2.5 px-3 text-gray-600">{{ $item->keluarga_duka }}</td>
-                        <td class="py-2.5 px-3 font-bold text-amber-600 whitespace-nowrap">Rp {{ number_format($item->santunan_diserahkan, 0, ',', '.') }}</td>
-                        <td class="py-2.5 px-3">
-                            <span class="bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-bold">{{ $item->status_santunan }}</span>
-                        </td>
-                        <td class="py-2.5 px-3 text-right">
-                            @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                            <button onclick="hapusRukem({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center">
-                                <i class="fa-solid fa-trash text-[10px]"></i>
-                            </button>
-                            @else
-                            <span class="text-[9px] text-gray-400 italic">Tercatat</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="py-8 text-center text-gray-400 italic text-xs">Belum ada catatan berita duka/rukem.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    {{-- ========== CARD LIST ========== --}}
+    <div class="space-y-2">
+        @forelse($list_rukem ?? [] as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama_almarhum }}</p>
+                        <p class="text-[9px] text-gray-500 mt-0.5"><i class="fa-solid fa-users text-[7px] mr-0.5"></i> {{ $item->keluarga_duka }}</p>
+                        <div class="flex items-center gap-2 mt-1 flex-wrap">
+                            <span class="text-[11px] font-bold text-amber-600">Rp {{ number_format($item->santunan_diserahkan, 0, ',', '.') }}</span>
+                            <span class="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded text-[8px] font-bold">{{ $item->status_santunan }}</span>
+                        </div>
+                        <p class="text-[9px] text-gray-400 mt-0.5"><i class="fa-regular fa-calendar text-[7px] mr-0.5"></i> {{ $item->tanggal_duka }}</p>
+                    </div>
+                    <div class="shrink-0">
+                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                        <button onclick="hapusRukem({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+                            <i class="fa-solid fa-trash text-[9px]"></i>
+                        </button>
+                        @else
+                        <span class="text-[9px] text-gray-400 italic">Tercatat</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada catatan berita duka/rukem.
+            </div>
+        @endforelse
     </div>
 </div>
 

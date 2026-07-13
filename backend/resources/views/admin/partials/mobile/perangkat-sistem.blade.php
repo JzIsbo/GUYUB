@@ -11,38 +11,34 @@
         <i class="fa-solid fa-laptop-house absolute -bottom-6 -right-6 text-[80px] opacity-5 rotate-12"></i>
     </div>
 
-    <!-- List -->
-    <div class="bg-white p-3 rounded-xl border border-gray-50 shadow-sm">
-        <h3 class="text-xs font-black text-gray-800 mb-2">Daftar Aset</h3>
-        <div class="overflow-x-auto -mx-3">
-            <table class="w-full text-[10px] text-left min-w-[300px]">
-                <thead class="text-[9px] text-gray-400 uppercase tracking-wider">
-                    <tr class="border-b border-gray-100">
-                        <th class="px-3 pb-2">#</th>
-                        <th class="px-3 pb-2">Nama</th>
-                        <th class="px-3 pb-2">Jenis</th>
-                        <th class="px-3 pb-2">Kondisi</th>
-                        <th class="px-3 pb-2 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700 font-bold">
-                    @forelse($list_perangkat ?? [] as $index => $item)
-                    <tr class="border-b border-gray-50">
-                        <td class="px-3 py-2">{{ $index + 1 }}</td>
-                        <td class="px-3 py-2 truncate max-w-[80px]">{{ $item->nama_perangkat }}</td>
-                        <td class="px-3 py-2">{{ $item->jenis_perangkat ?? '-' }}</td>
-                        <td class="px-3 py-2"><span class="px-1.5 py-0.5 rounded text-[8px] {{ $item->kondisi == 'Baik' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $item->kondisi }}</span></td>
-                        <td class="px-3 py-2 text-center flex justify-center gap-1">
-                            <button onclick="editPerangkat({{ $item->id }}, '{{ addslashes($item->nama_perangkat) }}', '{{ addslashes($item->jenis_perangkat) }}', '{{ $item->kondisi }}')" class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 inline-flex items-center justify-center"><i class="fa-solid fa-pen text-[8px]"></i></button>
-                            <button onclick="hapusPerangkat({{ $item->id }})" class="w-6 h-6 rounded-md bg-red-50 text-red-500 inline-flex items-center justify-center"><i class="fa-solid fa-trash text-[8px]"></i></button>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="5" class="py-4 text-center text-gray-400 text-xs">Data kosong</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    {{-- ========== CARD LIST ========== --}}
+    <div class="space-y-2">
+        @forelse($list_perangkat ?? [] as $index => $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 bg-gradient-to-br from-slate-500 to-slate-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-[11px] font-bold">{{ $index + 1 }}</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama_perangkat }}</p>
+                            <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                <span class="text-[9px] text-gray-500">{{ $item->jenis_perangkat ?? '-' }}</span>
+                                <span class="px-1.5 py-0.5 rounded text-[8px] font-bold {{ $item->kondisi == 'Baik' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $item->kondisi }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button onclick="editPerangkat({{ $item->id }}, '{{ addslashes($item->nama_perangkat) }}', '{{ addslashes($item->jenis_perangkat) }}', '{{ $item->kondisi }}')" class="w-7 h-7 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center"><i class="fa-solid fa-pen text-[9px]"></i></button>
+                        <button onclick="hapusPerangkat({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center"><i class="fa-solid fa-trash text-[9px]"></i></button>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Data kosong
+            </div>
+        @endforelse
     </div>
 
     <!-- Add Form -->

@@ -11,43 +11,35 @@
         @endif
     </div>
 
-    <!-- Table List -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto -mx-3">
-            <table class="w-full text-left min-w-[360px]">
-                <thead>
-                    <tr class="bg-gray-50 text-[9px] text-gray-600 uppercase tracking-wider">
-                        <th class="px-3 py-2">ID</th>
-                        <th class="px-3 py-2">Warga</th>
-                        <th class="px-3 py-2">Jumlah</th>
-                        <th class="px-3 py-2">Status</th>
-                        <th class="px-3 py-2 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 text-[10px]">
-                    @forelse($tagihans as $item)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-3 py-2 font-mono text-gray-500">#{{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}</td>
-                        <td class="px-3 py-2">
-                            <p class="font-bold text-gray-800 truncate max-w-[80px]">{{ $item->nama_warga }}</p>
-                            <p class="text-[8px] text-gray-400 truncate max-w-[80px]">{{ $item->jenis_tagihan }}</p>
-                        </td>
-                        <td class="px-3 py-2 font-bold text-gray-800 whitespace-nowrap">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
-                        <td class="px-3 py-2">
-                            <span class="px-1.5 py-0.5 rounded text-[8px] font-bold {{ strtolower($item->status) == 'berhasil' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600' }}">
-                                {{ strtoupper($item->status) }}
-                            </span>
-                        </td>
-                        <td class="px-3 py-2 text-center">
-                            <button onclick="bukaModalDetail({{ $item->id }}, '{{ addslashes($item->nama_warga) }}', '{{ addslashes($item->jenis_tagihan) }}', {{ $item->jumlah }}, '{{ $item->batas_bayar }}', '{{ $item->status }}')" class="text-blue-600 font-bold hover:underline bg-blue-50 px-2 py-1 rounded text-[9px]">Detail</button>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="5" class="px-3 py-6 text-center text-gray-400 text-xs">Belum ada tagihan.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <!-- Card List -->
+    <div class="space-y-2">
+        @forelse($tagihans as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-gray-800 text-[11px] truncate">{{ $item->nama_warga }}</span>
+                        <span class="text-[8px] text-gray-400 font-semibold bg-gray-100 px-1.5 py-0.5 rounded">#TG-{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 font-medium mt-0.5">{{ $item->jenis_tagihan }}</p>
+                    <div class="flex items-center gap-2 mt-1.5">
+                        <span class="px-1.5 py-0.5 rounded text-[8px] font-bold {{ strtolower($item->status) == 'berhasil' ? 'bg-green-50 text-green-600' : 'bg-yellow-50 text-yellow-600' }}">
+                            {{ strtoupper($item->status) }}
+                        </span>
+                        @if($item->batas_bayar)
+                        <span class="text-[9px] text-gray-400 font-medium"><i class="fa-regular fa-clock mr-0.5"></i> Batas: {{ \Carbon\Carbon::parse($item->batas_bayar)->format('d/m/y') }}</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="text-right shrink-0 flex flex-col items-end gap-1.5">
+                    <p class="font-black text-gray-800 text-xs">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</p>
+                    <button onclick="bukaModalDetail({{ $item->id }}, '{{ addslashes($item->nama_warga) }}', '{{ addslashes($item->jenis_tagihan) }}', {{ $item->jumlah }}, '{{ $item->batas_bayar }}', '{{ $item->status }}')" class="text-blue-600 font-bold hover:underline bg-blue-50 px-2 py-1 rounded text-[9px]">Detail</button>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada data tagihan.
+            </div>
+        @endforelse
     </div>
 </div>
 

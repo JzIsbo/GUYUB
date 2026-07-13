@@ -9,55 +9,40 @@
         </button>
     </div>
 
-    <!-- Users List Card -->
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto -mx-3">
-            <table class="w-full text-left min-w-[360px]">
-                <thead>
-                    <tr class="border-b border-gray-100 bg-gray-50/70 text-[9px] font-bold text-gray-400 uppercase tracking-wider">
-                        <th class="px-3 py-2">Nama</th>
-                        <th class="px-3 py-2">Role</th>
-                        <th class="px-3 py-2">Status</th>
-                        <th class="px-3 py-2 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 text-[11px]">
-                    @forelse($list_pengguna ?? [] as $user)
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-3 py-2">
-                            <p class="font-bold text-gray-800 truncate max-w-[80px]">{{ $user->name }}</p>
-                            <p class="text-[8px] text-gray-400 truncate max-w-[80px]">{{ $user->email }}</p>
-                        </td>
-                        <td class="px-3 py-2">
-                            <span class="px-1.5 py-0.5 rounded text-[8px] font-bold border {{ $user->badge_class ?? 'bg-gray-50 text-gray-600 border-gray-100' }}">
-                                {{ $user->role }}
-                            </span>
-                        </td>
-                        <td class="px-3 py-2">
-                            <span class="inline-flex items-center gap-1 text-[9px] font-bold {{ ($user->is_aktif) ? 'text-emerald-600' : 'text-gray-400' }}">
-                                <span class="w-1.5 h-1.5 rounded-full {{ ($user->is_aktif) ? 'bg-emerald-500' : 'bg-gray-300' }}"></span>
-                                {{ $user->status }}
-                            </span>
-                        </td>
-                        <td class="px-3 py-2 text-center">
-                            <div class="flex items-center justify-center gap-1">
-                                <button onclick="editPengguna({{ $user->id }}, '{{ $user->name }}', '{{ $user->role }}', '{{ $user->status ?? 'Aktif' }}')" class="w-6 h-6 rounded-lg bg-blue-50 text-blue-500 inline-flex items-center justify-center" title="Edit">
-                                    <i class="fa-solid fa-pen text-[9px]"></i>
-                                </button>
-                                @if($user->id !== Auth::id())
-                                <button onclick="hapusPengguna({{ $user->id }}, '{{ addslashes($user->name) }}')" class="w-6 h-6 rounded-lg bg-red-50 text-red-500 inline-flex items-center justify-center" title="Hapus">
-                                    <i class="fa-solid fa-trash text-[9px]"></i>
-                                </button>
-                                @endif
+    {{-- ========== CARD LIST ========== --}}
+    <div class="space-y-2">
+        @forelse($list_pengguna ?? [] as $user)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-[11px] font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-gray-800 text-[12px] truncate">{{ $user->name }}</p>
+                            <p class="text-[9px] text-gray-400 truncate">{{ $user->email }}</p>
+                            <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                                <span class="px-1.5 py-0.5 rounded text-[8px] font-bold border {{ $user->badge_class ?? 'bg-gray-50 text-gray-600 border-gray-100' }}">{{ $user->role }}</span>
+                                <span class="inline-flex items-center gap-0.5 text-[8px] font-bold {{ ($user->is_aktif) ? 'text-emerald-600' : 'text-gray-400' }}">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ ($user->is_aktif) ? 'bg-emerald-500' : 'bg-gray-300' }}"></span>
+                                    {{ $user->status }}
+                                </span>
                             </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="4" class="px-3 py-6 text-center text-gray-400 text-xs">Belum ada data.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button onclick="editPengguna({{ $user->id }}, '{{ $user->name }}', '{{ $user->role }}', '{{ $user->status ?? 'Aktif' }}')" class="w-7 h-7 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center"><i class="fa-solid fa-pen text-[9px]"></i></button>
+                        @if($user->id !== Auth::id())
+                        <button onclick="hapusPengguna({{ $user->id }}, '{{ addslashes($user->name) }}')" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center"><i class="fa-solid fa-trash text-[9px]"></i></button>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada data pengguna.
+            </div>
+        @endforelse
     </div>
 </div>
 

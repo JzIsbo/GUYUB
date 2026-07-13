@@ -19,13 +19,10 @@
             </div>
 
             <div class="flex items-center gap-2 flex-wrap">
-                <!-- Quick Stats Badge 1 -->
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 text-center min-w-[70px]">
                     <p class="text-lg font-black text-white leading-none">{{ count($list_koperasi ?? []) }}</p>
                     <p class="text-[7px] font-bold uppercase tracking-widest text-blue-300/70 mt-0.5">Barang</p>
                 </div>
-
-                <!-- Quick Stats Badge 2 -->
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 text-center min-w-[70px]">
                     <p class="text-lg font-black text-white leading-none">{{ $warga ?? 0 }}</p>
                     <p class="text-[7px] font-bold uppercase tracking-widest text-blue-300/70 mt-0.5">Anggota</p>
@@ -40,49 +37,38 @@
         </div>
     </div>
 
-    <!-- Tabel Produk -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
-            <h3 class="font-black text-gray-800 text-xs">Katalog Produk Koperasi</h3>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-[10px]">
-                <thead>
-                    <tr class="bg-gray-50/50 text-gray-400 uppercase text-[8px] font-extrabold tracking-widest border-b border-gray-100">
-                        <th class="py-2.5 px-3">Produk</th>
-                        <th class="py-2.5 px-3">Kategori</th>
-                        <th class="py-2.5 px-3">Harga</th>
-                        <th class="py-2.5 px-3">Stok</th>
-                        <th class="py-2.5 px-3">Penjual</th>
-                        <th class="py-2.5 px-3 text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 font-medium text-gray-700">
-                    @forelse($list_koperasi ?? [] as $item)
-                    <tr class="hover:bg-gray-50/50 transition">
-                        <td class="py-2.5 px-3 font-bold text-gray-800">{{ $item->nama_produk }}</td>
-                        <td class="py-2.5 px-3"><span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-[9px] font-bold">{{ $item->kategori }}</span></td>
-                        <td class="py-2.5 px-3 font-bold text-emerald-600">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                        <td class="py-2.5 px-3">{{ $item->stok }} Pcs</td>
-                        <td class="py-2.5 px-3 text-gray-500">{{ $item->penjual }}</td>
-                        <td class="py-2.5 px-3 text-right">
-                            @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
-                            <button onclick="hapusKoperasi({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center">
-                                <i class="fa-solid fa-trash text-[9px]"></i>
-                            </button>
-                            @else
-                            <span class="text-[9px] text-gray-400 italic">Lihat Saja</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="py-8 text-center text-gray-400 italic text-xs">Belum ada produk koperasi terdaftar.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    {{-- ========== CARD LIST ========== --}}
+    <div class="space-y-2">
+        @forelse($list_koperasi ?? [] as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama_produk }}</p>
+                            <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[8px] font-bold shrink-0">{{ $item->kategori }}</span>
+                        </div>
+                        <div class="flex items-center gap-3 mt-1">
+                            <span class="text-[11px] font-bold text-emerald-600">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
+                            <span class="text-[9px] text-gray-500">Stok: {{ $item->stok }} Pcs</span>
+                        </div>
+                        <p class="text-[9px] text-gray-400 mt-0.5"><i class="fa-solid fa-user text-[7px] mr-0.5"></i> {{ $item->penjual }}</p>
+                    </div>
+                    <div class="shrink-0">
+                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
+                        <button onclick="hapusKoperasi({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+                            <i class="fa-solid fa-trash text-[9px]"></i>
+                        </button>
+                        @else
+                        <span class="text-[9px] text-gray-400 italic">Lihat</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada produk koperasi terdaftar.
+            </div>
+        @endforelse
     </div>
 </div>
 

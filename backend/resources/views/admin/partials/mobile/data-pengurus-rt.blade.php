@@ -37,87 +37,40 @@
         </div>
     </div>
 
-    {{-- ========== TABLE CARD ========== --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        {{-- Card Header --}}
-        <div class="px-3.5 py-2.5 border-b border-gray-100 flex items-center gap-2.5">
-            <div class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-                <i class="fa-solid fa-list-ul text-blue-500 text-[10px]"></i>
+    {{-- ========== CARD LIST ========== --}}
+    <div class="space-y-2">
+        @forelse($list_pengurus ?? [] as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-[11px] font-bold">{{ strtoupper(substr($item->nama_warga ?? 'N', 0, 1)) }}</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama_warga ?? 'N/A' }}</p>
+                            <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                <span class="bg-blue-50 text-blue-600 text-[8px] font-bold px-1.5 py-0.5 rounded"><i class="fa-solid fa-briefcase text-[7px] mr-0.5"></i> {{ $item->jabatan }}</span>
+                                <span class="inline-flex items-center gap-0.5 text-[8px] font-bold px-1.5 py-0.5 rounded {{ $item->status_aktif == 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400' }}">
+                                    <span class="w-1 h-1 rounded-full {{ $item->status_aktif == 'Aktif' ? 'bg-emerald-500' : 'bg-gray-300' }}"></span>
+                                    {{ $item->status_aktif }}
+                                </span>
+                            </div>
+                            <p class="text-[9px] text-gray-400 mt-1"><i class="fa-regular fa-calendar mr-0.5"></i> Mulai: {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</p>
+                        </div>
+                    </div>
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" onclick="bukaModalEdit('{{ $item->id }}', '{{ addslashes($item->jabatan) }}', '{{ $item->tanggal_mulai }}', '{{ $item->status_aktif }}')" class="w-7 h-7 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center"><i class="fa-solid fa-pen text-[9px]"></i></button>
+                        <button type="button" onclick="hapusPengurus('{{ $item->id }}')" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center"><i class="fa-solid fa-trash text-[9px]"></i></button>
+                    </div>
+                    @endif
+                </div>
             </div>
-            <div>
-                <h3 class="text-xs font-bold text-gray-800">Daftar Pengurus</h3>
-                <p class="text-[10px] text-gray-400 font-medium">Seluruh jabatan pengurus RT</p>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada pengurus RT yang terdaftar.
             </div>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b border-gray-100 bg-gray-50/60">
-                        <th class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nama</th>
-                        <th class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Jabatan</th>
-                        <th class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mulai</th>
-                        <th class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                        <th class="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Aksi</th>
-                        @endif
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50">
-                    @forelse($list_pengurus ?? [] as $item)
-                    <tr class="hover:bg-blue-50/30 transition-colors duration-150">
-                        <td class="px-3 py-2">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <span class="text-white text-[10px] font-bold">{{ strtoupper(substr($item->nama_warga ?? 'N', 0, 1)) }}</span>
-                                </div>
-                                <span class="text-xs font-bold text-gray-800">{{ $item->nama_warga ?? 'N/A' }}</span>
-                            </div>
-                        </td>
-                        <td class="px-3 py-2">
-                            <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-md">
-                                <i class="fa-solid fa-briefcase text-[8px]"></i>
-                                {{ $item->jabatan }}
-                            </span>
-                        </td>
-                        <td class="px-3 py-2 text-[10px] font-medium text-gray-500">{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
-                        <td class="px-3 py-2">
-                            <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md {{ $item->status_aktif == 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400' }}">
-                                <span class="w-1 h-1 rounded-full {{ $item->status_aktif == 'Aktif' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-300' }}"></span>
-                                {{ $item->status_aktif }}
-                            </span>
-                        </td>
-                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                        <td class="px-3 py-2">
-                            <div class="flex items-center justify-center gap-1">
-                                <button type="button" onclick="bukaModalEdit('{{ $item->id }}', '{{ addslashes($item->jabatan) }}', '{{ $item->tanggal_mulai }}', '{{ $item->status_aktif }}')" class="w-7 h-7 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-100 hover:text-blue-700 transition-all flex items-center justify-center" title="Edit">
-                                    <i class="fa-solid fa-pen text-[10px]"></i>
-                                </button>
-                                <button type="button" onclick="hapusPengurus('{{ $item->id }}')" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition-all flex items-center justify-center" title="Hapus">
-                                    <i class="fa-solid fa-trash text-[10px]"></i>
-                                </button>
-                            </div>
-                        </td>
-                        @endif
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="px-3 py-10 text-center">
-                            <div class="flex flex-col items-center gap-2">
-                                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
-                                    <i class="fa-solid fa-user-tie text-gray-300 text-sm"></i>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-semibold text-gray-400">Belum ada pengurus RT</p>
-                                    <p class="text-[10px] text-gray-300 mt-0.5">Tambahkan pengurus untuk memulai</p>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        @endforelse
     </div>
 </div>
 

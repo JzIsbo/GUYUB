@@ -41,47 +41,31 @@
         </div>
     </div>
 
-    {{-- ============ TABLE CARD ============ --}}
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto min-h-[150px]">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/80 text-gray-400 text-[9px] uppercase tracking-widest">
-                        <th class="px-3 py-2 rounded-l-xl font-bold">Kategori</th>
-                        <th class="px-3 py-2 font-bold">Deskripsi</th>
-                        <th class="px-3 py-2 font-bold text-center">Tipe</th>
-                        <th class="px-3 py-2 font-bold text-center">Transaksi</th>
-                        <th class="px-3 py-2 font-bold text-center rounded-r-xl">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="text-xs">
-                    @forelse($list_kategori as $item)
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="px-3 py-2 font-bold text-gray-800 text-[11px]">
-                                <i class="fa-solid fa-money-bill-wave text-emerald-400 mr-1 text-[10px]"></i> {{ $item->nama }}
-                            </td>
-                            <td class="px-3 py-2 font-medium text-gray-500 text-[10px] max-w-[100px] truncate">{{ $item->deskripsi ?? '-' }}</td>
-                            <td class="px-3 py-2 text-center">
-                                @if($item->tipe == 'pemasukan')
-                                    <span class="bg-[#DCFCE7] text-[#16A34A] px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider">Pemasukan</span>
-                                @else
-                                    <span class="bg-[#FEE2E2] text-[#DC2626] px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider">Pengeluaran</span>
-                                @endif
-                            </td>
-                            <td class="px-3 py-2 font-bold text-gray-600 text-center text-[10px]">{{ $item->total_dipakai ?? 0 }}x</td>
-
-                            <td class="px-3 py-2 text-center">
-                                <button onclick="hapusKategori({{ $item->id }}, 'kategori')" class="text-red-500 hover:text-red-700 transition w-7 h-7 inline-flex items-center justify-center rounded-lg hover:bg-red-50">
-                                    <i class="fa-solid fa-trash text-[10px]"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="5" class="text-center p-5 italic text-gray-400 text-xs">Belum ada kategori yang ditambahkan...</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    {{-- ============ CARD LIST ============ --}}
+    <div class="space-y-2">
+        @forelse($list_kategori as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama }}</span>
+                        @if($item->tipe == 'pemasukan')
+                            <span class="bg-[#DCFCE7] text-[#16A34A] px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Pemasukan</span>
+                        @else
+                            <span class="bg-[#FEE2E2] text-[#DC2626] px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Pengeluaran</span>
+                        @endif
+                    </div>
+                    <p class="text-[10px] text-gray-500 font-medium mt-0.5 truncate">{{ $item->deskripsi ?? '-' }}</p>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Dipakai: <span class="text-gray-600 font-extrabold">{{ $item->total_dipakai ?? 0 }}x</span></p>
+                </div>
+                <button onclick="hapusKategori({{ $item->id }}, 'kategori')" class="text-red-500 bg-red-50 hover:bg-red-100 transition w-7 h-7 flex items-center justify-center rounded-lg shrink-0">
+                    <i class="fa-solid fa-trash text-[10px]"></i>
+                </button>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada kategori yang ditambahkan...
+            </div>
+        @endforelse
     </div>
 
     {{-- ============ MODAL TAMBAH KATEGORI ============ --}}

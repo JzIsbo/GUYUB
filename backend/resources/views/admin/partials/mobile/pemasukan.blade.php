@@ -32,48 +32,32 @@
         </div>
     </div>
 
-    <!-- Table Card -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
-        <div class="overflow-x-auto min-h-[120px]">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/80 text-gray-400 text-[8px] uppercase tracking-widest">
-                        <th class="px-2 py-2 rounded-l-xl font-bold">Tanggal</th>
-                        <th class="px-2 py-2 font-bold">Kategori</th>
-                        <th class="px-2 py-2 font-bold hidden sm:table-cell">Keterangan</th>
-                        <th class="px-2 py-2 font-bold text-right">Jumlah</th>
-                        <th class="px-2 py-2 rounded-r-xl font-bold text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="text-[10px]">
-                    @forelse($list_pemasukan ?? [] as $item)
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="px-2 py-2 font-bold text-gray-800 whitespace-nowrap">{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
-                            <td class="px-2 py-2 font-bold text-[#059669]">{{ $item->kategori }}</td>
-                            <td class="px-2 py-2 text-gray-600 font-medium hidden sm:table-cell">{{ $item->keterangan }}</td>
-                            <td class="px-2 py-2 font-black text-gray-800 text-right whitespace-nowrap">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                            <td class="px-2 py-2 text-center">
-                                <div class="flex justify-center gap-1">
-                                    <button onclick="siapkanEditPemasukan('{{ $item->id }}', '{{ \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d') }}', '{{ $item->kategori }}', '{{ addslashes($item->keterangan) }}', '{{ $item->nominal }}')" class="w-7 h-7 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-colors">
-                                        <i class="fa-solid fa-pen text-[9px]"></i>
-                                    </button>
-                                    <button onclick="hapusTransaksi({{ $item->id }}, 'pemasukan')" class="w-7 h-7 flex items-center justify-center bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-colors">
-                                        <i class="fa-solid fa-trash text-[9px]"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center p-6 text-gray-400">
-                                <i class="fa-solid fa-folder-open text-2xl mb-2 text-gray-300"></i>
-                                <p class="font-medium italic text-xs">Belum ada data pemasukan...</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <!-- Card List -->
+    <div class="space-y-2">
+        @forelse($list_pemasukan ?? [] as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-gray-800 text-[11px] truncate">{{ $item->keterangan }}</span>
+                        <span class="text-[8px] text-[#059669] font-bold bg-[#DCFCE7] px-1.5 py-0.5 rounded">{{ $item->kategori }}</span>
+                    </div>
+                    <p class="text-[9px] text-gray-400 mt-1 font-medium"><i class="fa-regular fa-calendar mr-0.5"></i> {{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</p>
+                    <p class="font-black text-gray-800 text-[11px] mt-1">Rp {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button onclick="siapkanEditPemasukan('{{ $item->id }}', '{{ \Carbon\Carbon::parse($item->tanggal)->format('Y-m-d') }}', '{{ $item->kategori }}', '{{ addslashes($item->keterangan) }}', '{{ $item->nominal }}')" class="w-7 h-7 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-colors">
+                        <i class="fa-solid fa-pen text-[9px]"></i>
+                    </button>
+                    <button onclick="hapusTransaksi({{ $item->id }}, 'pemasukan')" class="w-7 h-7 flex items-center justify-center bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-colors">
+                        <i class="fa-solid fa-trash text-[9px]"></i>
+                    </button>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white p-6 rounded-xl border border-gray-100 text-center text-gray-400 italic text-xs">
+                Belum ada data pemasukan...
+            </div>
+        @endforelse
     </div>
 </div>
 

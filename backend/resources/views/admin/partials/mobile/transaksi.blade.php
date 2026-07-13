@@ -41,56 +41,32 @@
         </div>
     </div>
 
-    {{-- ========== TABLE CARD ========== --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-3">
-        <div class="overflow-x-auto min-h-[150px]">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/80 text-gray-400 text-[9px] uppercase tracking-widest">
-                        <th class="px-2.5 py-2 rounded-l-xl font-bold">Tanggal</th>
-                        <th class="px-2.5 py-2 font-bold">Keterangan</th>
-                        <th class="px-2.5 py-2 font-bold text-center">Tipe</th>
-                        <th class="px-2.5 py-2 font-bold text-right rounded-r-xl">Nominal</th>
-                    </tr>
-                </thead>
-                <tbody class="text-xs">
-                    @forelse($list_transaksi as $item)
-                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                            <td class="px-2.5 py-2 font-medium text-gray-500 text-[10px] whitespace-nowrap">{{ date('d/m/y', strtotime($item->tanggal)) }}</td>
-                            <td class="px-2.5 py-2 font-bold text-gray-800 text-[11px]">
-                                <div class="max-w-[120px] truncate">{{ $item->keterangan }}</div>
-                                <span class="text-[8px] text-gray-400 font-semibold uppercase">{{ $item->kategori }}</span>
-                            </td>
-
-                            @if(strtolower($item->jenis) == 'pemasukan')
-                                <td class="px-2.5 py-2 text-center">
-                                    <span class="bg-[#DCFCE7] text-[#16A34A] px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest">
-                                        <i class="fa-solid fa-arrow-down mr-0.5"></i> Masuk
-                                    </span>
-                                </td>
-                                <td class="px-2.5 py-2 font-black text-[#16A34A] text-right tracking-tight text-[11px] whitespace-nowrap">+ Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                            @else
-                                <td class="px-2.5 py-2 text-center">
-                                    <span class="bg-[#FEE2E2] text-[#DC2626] px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest">
-                                        <i class="fa-solid fa-arrow-up mr-0.5"></i> Keluar
-                                    </span>
-                                </td>
-                                <td class="px-2.5 py-2 font-black text-[#DC2626] text-right tracking-tight text-[11px] whitespace-nowrap">- Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                            @endif
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center p-6">
-                                <div class="flex flex-col items-center justify-center text-gray-400">
-                                    <i class="fa-solid fa-folder-open text-2xl mb-2 text-gray-300"></i>
-                                    <p class="font-medium italic text-xs">Belum ada riwayat transaksi...</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    {{-- ========== CARD LIST ========== --}}
+    <div class="space-y-2">
+        @forelse($list_transaksi as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-gray-800 text-[11px] truncate">{{ $item->keterangan }}</span>
+                        <span class="text-[8px] text-gray-400 font-semibold uppercase bg-gray-100 px-1.5 py-0.5 rounded">{{ $item->kategori }}</span>
+                    </div>
+                    <p class="text-[9px] text-gray-400 mt-1 font-medium"><i class="fa-regular fa-calendar mr-0.5"></i> {{ date('d M Y', strtotime($item->tanggal)) }}</p>
+                </div>
+                <div class="text-right shrink-0">
+                    @if(strtolower($item->jenis) == 'pemasukan')
+                        <p class="font-black text-[#16A34A] text-xs">+ Rp {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                        <span class="inline-block bg-[#DCFCE7] text-[#16A34A] px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wider mt-0.5">Masuk</span>
+                    @else
+                        <p class="font-black text-[#DC2626] text-xs">- Rp {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                        <span class="inline-block bg-[#FEE2E2] text-[#DC2626] px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wider mt-0.5">Keluar</span>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada riwayat transaksi...
+            </div>
+        @endforelse
     </div>
 
 </div>

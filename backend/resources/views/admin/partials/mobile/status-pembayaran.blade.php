@@ -9,41 +9,34 @@
         </button>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left min-w-[400px]">
-                <thead class="bg-gray-50 text-[9px] text-gray-600 uppercase tracking-wider">
-                    <tr>
-                        <th class="px-3 py-2">Order ID</th>
-                        <th class="px-3 py-2">Nama</th>
-                        <th class="px-3 py-2">Nominal</th>
-                        <th class="px-3 py-2">Status</th>
-                        <th class="px-3 py-2">Waktu</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 text-[10px]">
-                    @forelse($payments as $pay)
-                    <tr>
-                        <td class="px-3 py-2 font-mono text-gray-500 font-bold truncate max-w-[80px]">{{ $pay->order_id }}</td>
-                        <td class="px-3 py-2 font-bold text-gray-800 truncate max-w-[80px]">{{ $pay->nama_pembayar }}</td>
-                        <td class="px-3 py-2 font-bold text-gray-800 whitespace-nowrap">{{ number_format($pay->nominal, 0, ',', '.') }}</td>
-                        <td class="px-3 py-2">
-                            @if(strtolower($pay->status) == 'settlement' || strtolower($pay->status) == 'success')
-                                <span class="px-2 py-0.5 rounded text-[8px] font-bold bg-green-100 text-green-600">OK</span>
-                            @elseif(strtolower($pay->status) == 'pending')
-                                <span class="px-2 py-0.5 rounded text-[8px] font-bold bg-yellow-100 text-yellow-600">PENDING</span>
-                            @else
-                                <span class="px-2 py-0.5 rounded text-[8px] font-bold bg-red-100 text-red-600">{{ strtoupper($pay->status) }}</span>
-                            @endif
-                        </td>
-                        <td class="px-3 py-2 text-gray-500 text-[9px] whitespace-nowrap">{{ \Carbon\Carbon::parse($pay->created_at)->diffForHumans() }}</td>
-                    </tr>
-                    @empty
-                    <tr><td colspan="5" class="px-3 py-6 text-center text-gray-400 text-xs">Belum ada transaksi.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <!-- Card List -->
+    <div class="space-y-2">
+        @forelse($payments as $pay)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-gray-800 text-[11px] truncate">{{ $pay->nama_pembayar }}</span>
+                        <span class="text-[8px] text-gray-400 font-semibold bg-gray-100 px-1.5 py-0.5 rounded font-mono">{{ $pay->order_id }}</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 font-medium mt-0.5">{{ $pay->metode_pembayaran ?? 'Belum Dipilih' }}</p>
+                    <p class="text-[9px] text-gray-400 mt-1 font-medium"><i class="fa-regular fa-clock mr-0.5"></i> {{ \Carbon\Carbon::parse($pay->created_at)->diffForHumans() }}</p>
+                </div>
+                <div class="text-right shrink-0 flex flex-col items-end gap-1">
+                    <p class="font-black text-gray-800 text-xs">Rp {{ number_format($pay->nominal, 0, ',', '.') }}</p>
+                    @if(strtolower($pay->status) == 'settlement' || strtolower($pay->status) == 'success')
+                        <span class="bg-green-50 text-green-600 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Berhasil</span>
+                    @elseif(strtolower($pay->status) == 'pending')
+                        <span class="bg-yellow-50 text-yellow-600 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Pending</span>
+                    @else
+                        <span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">{{ strtoupper($pay->status) }}</span>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada transaksi pembayaran online.
+            </div>
+        @endforelse
     </div>
 </div>
 

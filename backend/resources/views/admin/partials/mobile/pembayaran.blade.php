@@ -27,38 +27,33 @@
         </div>
     </div>
 
-    <!-- Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3">
-        <h2 class="text-xs font-black text-gray-800 mb-2">Daftar Pembayaran</h2>
-        <div class="overflow-x-auto -mx-3">
-            <table class="w-full min-w-[350px]">
-                <thead>
-                    <tr class="border-b border-gray-100">
-                        <th class="text-left py-2 px-3 text-[9px] text-gray-400 uppercase">Invoice</th>
-                        <th class="text-left py-2 px-3 text-[9px] text-gray-400 uppercase">Nama</th>
-                        <th class="text-left py-2 px-3 text-[9px] text-gray-400 uppercase">Jumlah</th>
-                        <th class="text-left py-2 px-3 text-[9px] text-gray-400 uppercase">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($tagihan as $item)
-                    <tr class="border-b border-gray-50">
-                        <td class="py-2 px-3 font-bold text-gray-700 text-[10px] truncate max-w-[70px]">{{ $item->invoice_id }}</td>
-                        <td class="py-2 px-3 text-[10px] truncate max-w-[70px]">{{ $item->nama }}</td>
-                        <td class="py-2 px-3 font-bold text-blue-600 text-[10px] whitespace-nowrap">Rp{{ number_format($item->jumlah) }}</td>
-                        <td class="py-2 px-3">
-                            @if($item->status == 'success')
-                                <span class="bg-green-100 text-green-600 px-2 py-0.5 rounded text-[8px] font-bold">OK</span>
-                            @elseif($item->status == 'failed')
-                                <span class="bg-red-100 text-red-600 px-2 py-0.5 rounded text-[8px] font-bold">FAIL</span>
-                            @else
-                                <span class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded text-[8px] font-bold">PEND</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+    <!-- Card List -->
+    <div class="space-y-2">
+        <h2 class="text-xs font-black text-gray-800 px-1">Daftar Pembayaran</h2>
+        @forelse($tagihan as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-gray-800 text-[11px] truncate">{{ $item->nama }}</span>
+                        <span class="text-[8px] text-gray-400 font-semibold bg-gray-100 px-1.5 py-0.5 rounded">{{ $item->invoice_id }}</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 font-medium mt-0.5">{{ $item->jenis }}</p>
+                </div>
+                <div class="text-right shrink-0 flex flex-col items-end gap-1">
+                    <p class="font-black text-blue-600 text-xs">Rp{{ number_format($item->jumlah, 0, ',', '.') }}</p>
+                    @if($item->status == 'success')
+                        <span class="bg-green-100 text-green-600 px-1.5 py-0.5 rounded text-[8px] font-bold">SUCCESS</span>
+                    @elseif($item->status == 'failed')
+                        <span class="bg-red-100 text-red-600 px-1.5 py-0.5 rounded text-[8px] font-bold">FAILED</span>
+                    @else
+                        <span class="bg-yellow-100 text-yellow-600 px-1.5 py-0.5 rounded text-[8px] font-bold">PENDING</span>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada data pembayaran.
+            </div>
+        @endforelse
     </div>
 </div>

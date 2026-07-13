@@ -33,50 +33,31 @@
         </div>
     </div>
 
-    {{-- ============ TABLE CARD ============ --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div class="p-3">
-            <div class="overflow-x-auto min-h-[120px]">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50/80 text-gray-400 text-[9px] uppercase tracking-widest">
-                            <th class="px-3 py-2 rounded-l-xl font-bold">Nama Iuran</th>
-                            <th class="px-3 py-2 font-bold">Periode</th>
-                            <th class="px-3 py-2 font-bold text-center">Sifat</th>
-                            <th class="px-3 py-2 rounded-r-xl font-bold text-right">Tarif</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-xs">
-                        @forelse($list_iuran as $item)
-                            <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                                <td class="px-3 py-2">
-                                    <p class="font-bold text-gray-800 text-xs">{{ $item->nama_iuran }}</p>
-                                    <p class="text-[9px] text-gray-400 font-medium tracking-wide mt-0.5 line-clamp-1">{{ $item->deskripsi ?? '-' }}</p>
-                                </td>
-                                <td class="px-3 py-2 font-bold text-gray-600 text-[10px]">{{ $item->periode_penagihan }}</td>
-                                <td class="px-3 py-2 text-center">
-                                    @if($item->sifat == 'Wajib')
-                                        <span class="bg-red-50 text-red-600 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider">Wajib</span>
-                                    @else
-                                        <span class="bg-green-50 text-green-600 px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider">Sukarela</span>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2 font-black text-gray-900 text-right text-[11px] tracking-tight">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center p-6">
-                                    <div class="flex flex-col items-center justify-center text-gray-400">
-                                        <i class="fa-solid fa-wallet text-2xl mb-2 text-gray-300"></i>
-                                        <p class="font-medium italic text-xs">Belum ada jenis penagihan iuran yang diatur...</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    {{-- ============ CARD LIST ============ --}}
+    <div class="space-y-2">
+        @forelse($list_iuran as $item)
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex items-center justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama_iuran }}</span>
+                        @if($item->sifat == 'Wajib')
+                            <span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Wajib</span>
+                        @else
+                            <span class="bg-green-50 text-green-600 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider">Sukarela</span>
+                        @endif
+                    </div>
+                    <p class="text-[10px] text-gray-500 font-medium mt-0.5 truncate">{{ $item->deskripsi ?? '-' }}</p>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Periode: <span class="text-gray-600 font-extrabold">{{ $item->periode_penagihan }}</span></p>
+                </div>
+                <div class="text-right shrink-0">
+                    <p class="font-black text-gray-900 text-xs font-mono">Rp {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                </div>
             </div>
-        </div>
+        @empty
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm text-center text-gray-400 italic text-xs">
+                Belum ada jenis penagihan iuran yang diatur...
+            </div>
+        @endforelse
     </div>
 
     {{-- ============ MODAL (unchanged logic) ============ --}}

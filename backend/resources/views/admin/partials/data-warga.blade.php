@@ -114,13 +114,13 @@
                         </button>
                         @endif
                         <button type="button" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition border border-white/10 focus:outline-none" title="Minimize / Maximize">
-                            <i class="fa-solid fa-chevron-up text-xs transition-transform duration-300 card-toggle-icon"></i>
+                            <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300 card-toggle-icon"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Members as compact rows -->
-                <div id="card-members-{{ $loop->index }}" class="divide-y divide-gray-50 transition-all duration-300">
+                <div id="card-members-{{ $loop->index }}" class="divide-y divide-gray-50 transition-all duration-300 hidden">
                     @foreach($anggota as $index => $w)
                     @php
                         $avatarIcon = 'fa-user';

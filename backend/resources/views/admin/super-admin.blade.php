@@ -80,10 +80,14 @@
         };
     @endphp
 
-    <!-- Sidebar Backdrop Overlay for Mobile -->
-    <div id="sidebar-backdrop" class="hidden"></div>
+    <!-- Sidebar Backdrop Overlay -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"></div>
 
-    <aside id="sidebar" class="hidden md:flex w-[300px] bg-[#0F172A] text-[#94A3B8] flex-col shrink-0 sidebar-scroll overflow-y-auto static">
+    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <!-- Close button inside sidebar -->
+        <button onclick="toggleSidebar(false)" class="p-2 text-gray-400 hover:text-white rounded-lg absolute top-6 right-6 focus:outline-none transition-colors">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
 
         <div class="p-8 flex items-center shrink-0">
             <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center">
@@ -342,7 +346,11 @@
     <div class="flex-1 flex flex-col overflow-hidden">
         <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-10 shrink-0">
             <div class="flex items-center gap-3">
-
+                <!-- Sidebar Toggle Button -->
+                <button onclick="toggleSidebar(true)" class="flex items-center justify-center px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl mr-2 focus:outline-none transition-all border border-slate-200 shadow-sm gap-2">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Menu Halaman</span>
+                </button>
                 <div class="flex flex-col">
                     <h2 class="text-base md:text-xl font-bold text-gray-800 tracking-tight italic line-clamp-1">Halo, {{ Auth::user()->name }} 👋</h2>
                     <div class="flex items-center gap-2">
@@ -667,7 +675,29 @@
 
     <script>
         // ==========================================
-        // 0. FUNGSI TOGGLE MOBILE MENU SHEET
+        // 0. FUNGSI TOGGLE SIDEBAR MOBILE & DESKTOP
+        // ==========================================
+        window.toggleSidebar = function(forceOpen) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (!sidebar || !backdrop) return;
+
+            const isCurrentlyClosed = sidebar.classList.contains('-translate-x-full');
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : isCurrentlyClosed;
+
+            if (shouldOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        };
+
+        // ==========================================
+        // 0.5. FUNGSI TOGGLE MOBILE MENU SHEET
         // ==========================================
         window.toggleMobileMenuSheet = function(isOpen) {
             const sheet = document.getElementById('mobile-menu-sheet');
@@ -716,6 +746,9 @@
         }
 
         function switchPage(pageName, element) {
+            // Auto hide sidebar on page switch (both mobile and desktop)
+            try { toggleSidebar(false); } catch(e) {}
+
             const mainContent = document.getElementById('main-content');
             if (!mainContent) return;
 

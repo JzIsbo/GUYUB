@@ -378,18 +378,22 @@
         function executeScripts(container) {
             const scripts = Array.from(container.querySelectorAll('script'));
             scripts.forEach(oldScript => {
-                if (oldScript.src) {
-                    if (!document.querySelector(`script[src="${oldScript.src}"]`)) {
+                try {
+                    if (oldScript.src) {
+                        if (!document.querySelector(`script[src="${oldScript.src}"]`)) {
+                            const newScript = document.createElement('script');
+                            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                            document.head.appendChild(newScript);
+                        }
+                    } else {
                         const newScript = document.createElement('script');
                         Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                        document.head.appendChild(newScript);
+                        newScript.text = oldScript.innerHTML;
+                        document.body.appendChild(newScript);
+                        document.body.removeChild(newScript);
                     }
-                } else {
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                    newScript.text = oldScript.innerHTML;
-                    document.body.appendChild(newScript);
-                    document.body.removeChild(newScript);
+                } catch (scriptError) {
+                    console.warn('Inline script execution warning:', scriptError);
                 }
                 oldScript.remove();
             });
@@ -397,6 +401,7 @@
 
         function switchPage(pageName, element) {
             const mainContent = document.getElementById('main-content');
+            if (!mainContent) return;
 
             document.querySelectorAll('.menu-link').forEach(item => {
                 item.classList.remove('menu-active', 'text-white');
@@ -423,7 +428,7 @@
                 }
                 const text = await response.text();
                 if (!response.ok) {
-                    throw new Error(text || `HTTP Error ${response.status}`);
+                    throw new Error(`HTTP ${response.status}: Halaman tidak ditemukan atau terjadi kesalahan server.`);
                 }
                 return text;
             })
@@ -432,12 +437,19 @@
                 mainContent.innerHTML = html;
                 window.history.pushState({}, '', `/${pageName}`);
 
-                // Eksekusi semua script yang ada di dalam HTML partial
-                executeScripts(mainContent);
+                try {
+                    executeScripts(mainContent);
+                } catch (scriptErr) {
+                    console.warn('Script execution notice:', scriptErr);
+                }
 
                 // Pemicu Grafik Dashboard
                 if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
-                    window.renderDashboard();
+                    try {
+                        window.renderDashboard();
+                    } catch (dashErr) {
+                        console.warn('Dashboard render notice:', dashErr);
+                    }
                 }
             })
             .catch(error => {
@@ -445,7 +457,10 @@
                     <div class="p-10 bg-white rounded-[2.5rem] border border-red-100 shadow-sm text-center min-h-[400px] flex flex-col justify-center items-center">
                         <i class="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
                         <h3 class="text-xl font-bold text-gray-800">Gagal Memuat Halaman</h3>
-                        <p class="text-gray-500 mt-2 max-w-lg">${error.message || 'Pastikan route dan file Blade sudah dibuat.'}</p>
+                        <p class="text-gray-500 mt-2 max-w-lg">${error.message || 'Pastikan koneksi lancar dan route halaman sudah terdaftar.'}</p>
+                        <button onclick="switchPage('${pageName}', document.querySelector('.menu-active'))" class="mt-4 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20">
+                            Coba Lagi
+                        </button>
                     </div>`;
             });
         }

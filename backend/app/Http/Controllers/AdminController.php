@@ -272,13 +272,21 @@ class AdminController extends Controller
             return response()->json(array_merge(['status' => 'success', 'page' => $page], $data));
         }
 
-        // 7. RENDER VIEW
+        // 7. RESOLVE RESOLVED VIEW PATH BASED ON DEVICE
+        $userAgent = $request->header('User-Agent');
+        $isMobile = preg_match('/Mobile|Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i', $userAgent);
+
+        $viewPath = "admin.partials." . $page;
+        if ($isMobile && view()->exists("admin.partials.mobile." . $page)) {
+            $viewPath = "admin.partials.mobile." . $page;
+        }
+        $data['resolvedView'] = $viewPath;
+
         if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
-            $viewPath = "admin.partials." . $page;
             if (view()->exists($viewPath)) {
                 return view($viewPath, $data)->render();
             }
-            return "<div class='p-10 bg-white text-center rounded-[2rem] border border-gray-100 shadow-sm'>File view resources/views/admin/partials/{$page}.blade.php belum dibuat.</div>";
+            return "<div class='p-10 bg-white text-center rounded-[2rem] border border-gray-100 shadow-sm'>File view {$viewPath}.blade.php belum dibuat.</div>";
         }
 
         return view('admin.super-admin', array_merge(['page' => $page], $data));

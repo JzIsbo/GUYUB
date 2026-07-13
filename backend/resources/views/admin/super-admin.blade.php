@@ -374,13 +374,16 @@
         </header>
 
         <main id="main-content" class="flex-1 overflow-y-auto p-4 md:p-10 bg-[#F8FAFC]">
-            @if(isset($page) && view()->exists('admin.partials.' . $page))
-                @include('admin.partials.' . $page)
+            @php
+                $currentView = $resolvedView ?? ('admin.partials.' . ($page ?? 'dashboard'));
+            @endphp
+            @if(view()->exists($currentView))
+                @include($currentView)
             @else
                 <div class="p-10 bg-white rounded-[2.5rem] shadow-sm border border-gray-100 text-center min-h-[400px] flex flex-col justify-center items-center">
                     <i class="fa-solid fa-code text-5xl text-blue-200 mb-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Konten Kosong</h3>
-                    <p class="text-gray-500 mt-2">Silakan buat file <code class="text-red-400 bg-red-50 px-2 py-1 rounded">resources/views/admin/partials/{{ $page ?? 'dashboard' }}.blade.php</code> terlebih dahulu.</p>
+                    <p class="text-gray-500 mt-2">Silakan buat file <code class="text-red-400 bg-red-50 px-2 py-1 rounded">{{ str_replace('.', '/', $currentView) }}.blade.php</code> terlebih dahulu.</p>
                 </div>
             @endif
         </main>

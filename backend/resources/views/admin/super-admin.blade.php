@@ -354,15 +354,15 @@
             <i class="fa-solid fa-xmark text-lg"></i>
         </button>
 
-        <div class="p-8 flex items-center shrink-0">
-            <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center">
+        <a href="{{ route('welcome') }}" title="Lihat Halaman Publik GUYUB" class="p-8 flex items-center shrink-0 hover:opacity-90 transition cursor-pointer group">
+            <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center group-hover:scale-105 transition-transform">
                 <i class="fa-solid fa-house-chimney-window text-[#0F172A] text-xl"></i>
             </div>
             <div>
-                <h1 class="text-white font-extrabold text-xl leading-none italic uppercase tracking-tighter">GUYUB</h1>
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[2px] mt-1.5 text-nowrap">Super Admin Panel</p>
+                <h1 class="text-white font-extrabold text-xl leading-none italic uppercase tracking-tighter group-hover:text-blue-400 transition-colors">GUYUB</h1>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[2px] mt-1.5 text-nowrap">Super Admin Panel</p>
             </div>
-        </div>
+        </a>
 
         <nav class="flex-1 px-4 space-y-1 mt-2 pb-10">
             @if($can('dashboard'))
@@ -672,12 +672,6 @@
         </nav>
 
         <div class="p-6 border-t border-white/5 bg-[#0F172A] sticky bottom-0 shrink-0 flex flex-col gap-3">
-            {{-- Tombol kembali ke halaman publik --}}
-            <a href="{{ route('welcome') }}" class="flex items-center w-full px-5 py-3 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group" data-tooltip="Halaman Publik">
-                <i class="fa-solid fa-globe mr-3 group-hover:-translate-x-1 transition-transform duration-300"></i>
-                <span>Halaman Publik</span>
-                <i class="fa-solid fa-arrow-up-right-from-square ml-auto text-xs opacity-60 group-hover:opacity-100"></i>
-            </a>
             {{-- Tombol logout --}}
             <form id="logout-form" action="{{ route('logout') }}" method="POST">
                 @csrf

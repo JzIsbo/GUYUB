@@ -13,6 +13,14 @@ class SelfHealingDatabaseService
     {
         if (self::$checked) return;
         self::$checked = true;
+
+        // Throttle: only run expensive schema checks once per hour
+        try {
+            if (\Illuminate\Support\Facades\Cache::get('db_selfheal_ok')) return;
+        } catch (\Exception $e) {
+            // Cache driver may not be available, continue
+        }
+
         try {
             DB::connection()->getPdo();
         } catch (\Exception $e) {
@@ -426,5 +434,10 @@ class SelfHealingDatabaseService
         } catch (\Exception $e) {
             // Ignore seeding errors
         }
+
+        // Mark self-healing as done for the next 60 minutes
+        try {
+            \Illuminate\Support\Facades\Cache::put('db_selfheal_ok', true, 3600);
+        } catch (\Exception $e) {}
     }
 }

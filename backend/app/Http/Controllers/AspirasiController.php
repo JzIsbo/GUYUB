@@ -15,14 +15,17 @@ class AspirasiController extends Controller
         ]);
 
         try {
+            $namaWarga = $request->nama_warga ?? 'Anonim';
             DB::table('aspirasis')->insert([
-                'nama_warga'   => $request->nama_warga ?? 'Anonim',
+                'nama_warga'   => $namaWarga,
                 'topik'        => $request->topik,
                 'isi_aspirasi' => $request->isi_aspirasi,
                 'status'       => 'Menunggu Response',
                 'created_at'   => now(),
                 'updated_at'   => now()
             ]);
+
+            self::logActivity('AJU ASPIRASI', "Mengirim aspirasi baru oleh {$namaWarga} dengan topik: {$request->topik}");
 
             return response()->json(['status' => 'success', 'message' => 'Aspirasi / Masukan Anda berhasil dikirim ke Pengurus RT!']);
         } catch (\Exception $e) {
@@ -40,11 +43,17 @@ class AspirasiController extends Controller
         ]);
 
         try {
+            $asp = DB::table('aspirasis')->where('id', $request->id)->first();
+
             DB::table('aspirasis')->where('id', $request->id)->update([
                 'tanggapan_rt' => $request->tanggapan_rt,
                 'status'       => $request->status,
                 'updated_at'   => now()
             ]);
+
+            if ($asp) {
+                self::logActivity('RESPON ASPIRASI', "Tanggapan diberikan untuk aspirasi dari " . ($asp->nama_warga ?? 'Anonim') . " (Topik: {$asp->topik})");
+            }
 
             return response()->json(['status' => 'success', 'message' => 'Tanggapan aspirasi berhasil disimpan!']);
         } catch (\Exception $e) {
@@ -57,6 +66,11 @@ class AspirasiController extends Controller
         abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
         $request->validate(['id' => 'required|integer']);
         try {
+            $asp = DB::table('aspirasis')->where('id', $request->id)->first();
+            if ($asp) {
+                self::logActivity('HAPUS ASPIRASI', "Menghapus aspirasi dari " . ($asp->nama_warga ?? 'Anonim') . " (Topik: {$asp->topik})");
+            }
+
             DB::table('aspirasis')->where('id', $request->id)->delete();
             return response()->json(['status' => 'success', 'message' => 'Aspirasi berhasil dihapus!']);
         } catch (\Exception $e) {

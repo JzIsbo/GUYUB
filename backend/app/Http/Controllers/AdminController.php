@@ -89,14 +89,10 @@ class AdminController extends Controller
 
         if (!$isAjax || $page === 'dashboard') {
             try {
-                $array_pemasukan = DB::table('transactions')->where('jenis', 'pemasukan')->pluck('nominal')->toArray();
-            $array_pengeluaran = DB::table('transactions')->where('jenis', 'pengeluaran')->pluck('nominal')->toArray();
+                $pemasukan = (float) DB::table('transactions')->where('jenis', 'pemasukan')->sum('nominal');
+            $pengeluaran = (float) DB::table('transactions')->where('jenis', 'pengeluaran')->sum('nominal');
 
-            $pemasukan = array_sum($array_pemasukan);
-            $pengeluaran = array_sum($array_pengeluaran);
-
-            $hitung_warga = DB::table('wargas')->selectRaw('COUNT(*) as total')->first();
-            $total_warga = $hitung_warga->total ?? 0;
+            $total_warga = DB::table('wargas')->count();
 
             $transaksi_terbaru = DB::table('transactions')->orderBy('tanggal', 'desc')->take(5)->get();
             $rt_info = DB::table('rt_details')->first();
@@ -150,11 +146,11 @@ class AdminController extends Controller
             } elseif ($page == 'transaksi') {
                 $data['list_transaksi'] = DB::table('transactions')->orderBy('tanggal', 'desc')->get();
             } elseif ($page == 'kategori') {
-                $kategori = DB::table('categories')->get();
-                foreach ($kategori as $kat) {
-                    $kat->total_dipakai = DB::table('transactions')->where('kategori', $kat->nama)->count();
-                }
-                $data['list_kategori'] = $kategori;
+                $data['list_kategori'] = DB::table('categories')
+                    ->leftJoin('transactions', 'categories.nama', '=', 'transactions.kategori')
+                    ->select('categories.*', DB::raw('COUNT(transactions.id) as total_dipakai'))
+                    ->groupBy('categories.id', 'categories.nama', 'categories.tipe', 'categories.created_at', 'categories.updated_at')
+                    ->get();
             } elseif ($page == 'data-warga') {
                 $warga_raw = Warga::orderBy('blok_rumah', 'asc')->orderBy('nomor_kk', 'asc')->get();
                 $data['warga_grouped'] = $warga_raw->groupBy(function($item) {
@@ -195,7 +191,7 @@ class AdminController extends Controller
                     $kas->saldo_akhir = $saldo;
                 }
                 $data['list_kas'] = $list_kas;
-                $data['list_transaksi'] = DB::table('transactions')->orderBy('tanggal', 'desc')->get();
+                $data['list_transaksi'] = $list_kas->reverse()->values();
             } elseif ($page == 'laporan-iuran') {
                 $data['list_laporan_iuran'] = DB::table('transactions')->where('kategori', 'LIKE', '%Iuran%')->orderBy('tanggal', 'desc')->get();
             } elseif ($page == 'tagihan-warga') {

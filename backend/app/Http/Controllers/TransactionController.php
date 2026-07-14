@@ -52,6 +52,8 @@ class TransactionController extends Controller
                 }
             });
 
+            self::logActivity('BUAT TRANSAKSI', "Mencatat transaksi " . ($request->jenis == 'pemasukan' ? 'Pemasukan' : 'Pengeluaran') . " baru: {$request->kategori} - {$request->keterangan} sebesar Rp " . number_format($nominal, 0, ',', '.'));
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Data transaksi berhasil disimpan dan masuk ke database!'
@@ -95,6 +97,8 @@ class TransactionController extends Controller
                 'nominal'    => $request->nominal
             ]);
 
+            self::logActivity('UPDATE TRANSAKSI', "Memperbarui data transaksi: {$transaction->kategori} - {$transaction->keterangan} menjadi Rp " . number_format($request->nominal, 0, ',', '.'));
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Data transaksi berhasil diperbarui!'
@@ -117,7 +121,12 @@ class TransactionController extends Controller
 
         try {
             $transaction = Transaction::findOrFail($request->id);
+            $cat = $transaction->kategori;
+            $ket = $transaction->keterangan;
+            $nom = $transaction->nominal;
             $transaction->delete();
+
+            self::logActivity('HAPUS TRANSAKSI', "Menghapus data transaksi: {$cat} - {$ket} sebesar Rp " . number_format($nom, 0, ',', '.'));
 
             return response()->json([
                 'status'  => 'success',
@@ -158,6 +167,8 @@ class TransactionController extends Controller
         $rt_info = DB::table('rt_details')->first();
         $namaRT = $rt_info->nama_rt ?? 'RT 01 / RW 02';
         $alamatRT = $rt_info->alamat ?? 'Kelurahan Asri, Kecamatan Jaya';
+
+        self::logActivity('EKSPOR LAPORAN', "Mengekspor laporan " . strtoupper($tipe) . " dalam format " . strtoupper($format));
 
         if ($format == 'pdf') {
             // Generate elegant PDF print layout

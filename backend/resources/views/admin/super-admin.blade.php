@@ -41,6 +41,170 @@
         .sidebar-scroll::-webkit-scrollbar { width: 3px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
         .menu-active { background-color: #2563EB !important; color: white !important; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4); font-weight: 700; }
+        
+        #sidebar {
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out !important;
+        }
+
+        @media (min-width: 768px) {
+            /* Collapsed state */
+            .sidebar-collapsed {
+                width: 80px !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+            }
+            .sidebar-collapsed .p-8 > div:last-child,
+            .sidebar-collapsed .pt-8.pb-2.px-4,
+            .sidebar-collapsed .menu-link span,
+            .sidebar-collapsed .menu-link i.fa-chevron-down,
+            .sidebar-collapsed .sticky.bottom-0 span,
+            .sidebar-collapsed .sticky.bottom-0 i.fa-arrow-up-right-from-square,
+            .sidebar-collapsed .sidebar-close-btn {
+                display: none !important;
+            }
+            /* Submenu hidden by default in collapsed */
+            .sidebar-collapsed .submenu-container {
+                display: none !important;
+            }
+            /* Dropdown group relative */
+            .sidebar-collapsed .dropdown-group {
+                position: relative;
+            }
+        }
+        /* Flyout popup - rendered outside sidebar on body */
+        #flyout-popup {
+            position: fixed;
+            left: 80px;
+            min-width: 220px;
+            max-width: 260px;
+            background: #1E293B;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 8px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            z-index: 99999;
+            display: none;
+        }
+        #flyout-popup.open {
+            display: block;
+        }
+        #flyout-popup a {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #94A3B8;
+            border-radius: 8px;
+            margin: 2px 6px;
+            text-decoration: none;
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+        #flyout-popup a:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+        }
+        @media (min-width: 768px) {
+            .sidebar-collapsed .p-8 {
+                padding: 1.5rem 0.75rem !important;
+                justify-content: center !important;
+            }
+            .sidebar-collapsed .p-8 div:first-child {
+                margin-right: 0 !important;
+            }
+            .sidebar-collapsed nav.px-4 {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            .sidebar-collapsed .menu-link {
+                justify-content: center !important;
+                padding: 0.75rem 0 !important;
+                border-radius: 1rem !important;
+                position: relative;
+            }
+            .sidebar-collapsed .menu-link i {
+                margin-right: 0 !important;
+                font-size: 1.15rem !important;
+                width: auto !important;
+            }
+            /* Tooltip on hover for collapsed menu items */
+            .sidebar-collapsed .menu-link:hover::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                left: calc(100% + 12px);
+                top: 50%;
+                transform: translateY(-50%);
+                background: #1E293B;
+                color: #F1F5F9;
+                padding: 6px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 600;
+                white-space: nowrap;
+                z-index: 999;
+                pointer-events: none;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+            .sidebar-collapsed .menu-link:hover::before {
+                content: '';
+                position: absolute;
+                left: calc(100% + 4px);
+                top: 50%;
+                transform: translateY(-50%);
+                border: 5px solid transparent;
+                border-right-color: #1E293B;
+                z-index: 999;
+                pointer-events: none;
+            }
+            /* Hide tooltip when flyout is open to prevent overlap */
+            .sidebar-collapsed .dropdown-group .menu-link:hover::after,
+            .sidebar-collapsed .dropdown-group .menu-link:hover::before {
+                display: none !important;
+            }
+            .sidebar-collapsed .sticky.bottom-0 {
+                padding: 1rem 0.5rem !important;
+            }
+            .sidebar-collapsed .sticky.bottom-0 a,
+            .sidebar-collapsed .sticky.bottom-0 button {
+                justify-content: center !important;
+                padding: 0.75rem 0 !important;
+                border-radius: 1rem !important;
+                position: relative;
+            }
+            .sidebar-collapsed .sticky.bottom-0 i {
+                margin-right: 0 !important;
+                font-size: 1.1rem !important;
+            }
+            /* Tooltip for footer items */
+            .sidebar-collapsed .sticky.bottom-0 a:hover::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                left: calc(100% + 12px);
+                top: 50%;
+                transform: translateY(-50%);
+                background: #1E293B;
+                color: #F1F5F9;
+                padding: 6px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 600;
+                white-space: nowrap;
+                z-index: 999;
+                pointer-events: none;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #mobile-menu-sheet button,
+            #mobile-menu-sheet a {
+                padding: 0.5rem !important;
+                gap: 0.25rem !important;
+            }
+            #mobile-menu-sheet h4 {
+                margin-bottom: 0.5rem !important;
+            }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -81,11 +245,11 @@
     @endphp
 
     <!-- Sidebar Backdrop Overlay -->
-    <div id="sidebar-backdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"></div>
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"></div>
 
-    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static transition-all duration-300 ease-in-out sidebar-collapsed">
         <!-- Close button inside sidebar -->
-        <button onclick="toggleSidebar(false)" class="p-2 text-gray-400 hover:text-white rounded-lg absolute top-6 right-6 focus:outline-none transition-colors">
+        <button onclick="toggleSidebar()" class="sidebar-close-btn md:hidden p-2 text-gray-400 hover:text-white rounded-lg absolute top-6 right-6 focus:outline-none transition-colors">
             <i class="fa-solid fa-xmark text-lg"></i>
         </button>
 
@@ -101,31 +265,32 @@
 
         <nav class="flex-1 px-4 space-y-1 mt-2 pb-10">
             @if($can('dashboard'))
-            <a href="javascript:void(0)" onclick="switchPage('dashboard', this)" class="menu-link {{ isset($page) && $page == 'dashboard' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all">
+            <a href="javascript:void(0)" onclick="switchPage('dashboard', this)" class="menu-link {{ isset($page) && $page == 'dashboard' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Dashboard">
                 <i class="fa-solid fa-th-large w-6 text-lg"></i> <span class="ml-3 text-sm font-bold">Dashboard</span>
             </a>
             @endif
 
-            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('status-pembayaran') || $can('riwayat-gateway') || $can('qris-va'))
+            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('status-pembayaran') || $can('riwayat-gateway') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori') || $can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
+            {{-- 1. KATEGORI: KEUANGAN & LAPORAN --}}
             <div class="pt-8 pb-2 px-4">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pembayaran</p>
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Keuangan & Laporan</p>
             </div>
 
-            <div class="space-y-1">
-                <button onclick="toggleDropdown('pembayaran-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group">
+            {{-- ===== DROPDOWN: Pembayaran ===== --}}
+            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('status-pembayaran') || $can('riwayat-gateway') || $can('qris-va'))
+            <div class="space-y-1 dropdown-group">
+                <button onclick="toggleDropdown('pembayaran-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Pembayaran">
                     <i class="fa-solid fa-wallet w-6 opacity-50 group-hover:opacity-100"></i>
                     <span class="ml-3 font-semibold flex-1 text-left">Pembayaran</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-
-                <div id="pembayaran-menu" class="hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="pembayaran-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @php
                         $role = Auth::check() ? Auth::user()->role : 'Warga';
                         $labelTagihan = ($role == 'Warga') ? 'Tagihan Saya' : (($role == 'RT') ? 'Daftar Tagihan Warga' : 'Kelola Tagihan Warga');
                         $labelStatus = ($role == 'Warga') ? 'Status Pembayaran Saya' : (($role == 'RT') ? 'Daftar Pembayaran Warga' : 'Daftar Pembayaran');
                         $labelQris = ($role == 'Warga') ? 'Rekening & QRIS RT' : (($role == 'RT') ? 'Daftar Rekening & QRIS' : 'Kelola Rekening & QRIS');
                     @endphp
-
                     @if($can('tagihan-warga'))
                     <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelTagihan }}</a>
                     @endif
@@ -144,190 +309,270 @@
                 </div>
             </div>
             @endif
+
+            {{-- ===== DROPDOWN: Transaksi ===== --}}
+            @if($can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori'))
+            <div class="space-y-1 dropdown-group">
+                <button onclick="toggleDropdown('transaksi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Transaksi">
+                    <i class="fa-solid fa-shuffle w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Transaksi</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="transaksi-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    @if($can('pemasukan'))
+                    <a href="javascript:void(0)" onclick="switchPage('pemasukan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pemasukan</a>
+                    @endif
+                    @if($can('pengeluaran'))
+                    <a href="javascript:void(0)" onclick="switchPage('pengeluaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengeluaran</a>
+                    @endif
+                    @if($can('transaksi'))
+                    <a href="javascript:void(0)" onclick="switchPage('transaksi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Semua Transaksi</a>
+                    @endif
+                    @if($can('kategori'))
+                    <a href="javascript:void(0)" onclick="switchPage('kategori', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kategori</a>
+                    @endif
+                </div>
+            </div>
+            @endif
+
+            {{-- ===== DROPDOWN: Laporan ===== --}}
+            @if($can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
+            <div class="space-y-1 dropdown-group">
+                <button onclick="toggleDropdown('laporan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Laporan">
+                    <i class="fa-solid fa-chart-line w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Laporan</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="laporan-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    @if($can('laporan-keuangan'))
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-keuangan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Keuangan</a>
+                    @endif
+                    @if($can('laporan-iuran'))
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Iuran</a>
+                    @endif
+                    @if($can('laporan-kas'))
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Kas</a>
+                    @endif
+                    @if($can('export-laporan'))
+                    <a href="javascript:void(0)" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Export Laporan</a>
+                    @endif
+                </div>
+            </div>
+            @endif
+            @endif
+
             <script>
-                    function toggleDropdown(id) {
-                        const menu = document.getElementById(id);
+                // Create flyout popup container on body (outside sidebar to avoid transform clipping)
+                (function() {
+                    if (!document.getElementById('flyout-popup')) {
+                        const fp = document.createElement('div');
+                        fp.id = 'flyout-popup';
+                        document.body.appendChild(fp);
+                    }
+                })();
+
+                let activeFlyoutId = null;
+
+                function closeFlyout() {
+                    const fp = document.getElementById('flyout-popup');
+                    if (fp) {
+                        fp.classList.remove('open');
+                        fp.innerHTML = '';
+                    }
+                    activeFlyoutId = null;
+                }
+
+                function toggleDropdown(id) {
+                    const sidebar = document.getElementById('sidebar');
+                    const menu = document.getElementById(id);
+                    if (!menu) return;
+                    const isCollapsed = sidebar && sidebar.classList.contains('sidebar-collapsed');
+
+                    if (isCollapsed) {
+                        const fp = document.getElementById('flyout-popup');
+                        if (!fp) return;
+
+                        // If this flyout is already open, close it
+                        if (activeFlyoutId === id) {
+                            closeFlyout();
+                            return;
+                        }
+
+                        // Clone submenu links into flyout popup
+                        fp.innerHTML = '';
+                        const links = menu.querySelectorAll('a');
+                        links.forEach(link => {
+                            const clone = link.cloneNode(true);
+                            // Re-attach onclick since cloneNode doesn't copy inline event handlers in all browsers
+                            const onclickAttr = link.getAttribute('onclick');
+                            if (onclickAttr) {
+                                clone.setAttribute('onclick', onclickAttr);
+                            }
+                            fp.appendChild(clone);
+                        });
+
+                        // Position flyout at the button's vertical position
+                        const btn = menu.closest('.dropdown-group').querySelector('button');
+                        if (btn) {
+                            const btnRect = btn.getBoundingClientRect();
+                            fp.style.top = btnRect.top + 'px';
+                            fp.classList.add('open');
+
+                            // Clamp so flyout doesn't go off-screen bottom
+                            const fpRect = fp.getBoundingClientRect();
+                            if (fpRect.bottom > window.innerHeight - 10) {
+                                fp.style.top = Math.max(10, window.innerHeight - fpRect.height - 10) + 'px';
+                            }
+                        }
+
+                        activeFlyoutId = id;
+                    } else {
+                        // Expanded sidebar: normal inline toggle
+                        closeFlyout();
                         menu.classList.toggle('hidden');
                     }
+                }
+
+                // Close flyout when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (e.target.closest('.dropdown-group') || e.target.closest('#flyout-popup')) return;
+                    closeFlyout();
+                });
+
+                // Close flyout on window resize
+                window.addEventListener('resize', closeFlyout);
             </script>
 
+            {{-- 2. KATEGORI: LAYANAN & INTERAKSI --}}
+            @if($can('surat-online') || $can('pengumuman') || $can('koperasi') || $can('bank-sampah') || $can('umkm') || $can('posyandu') || $can('keamanan') || $can('kegiatan') || $can('rukem') || $can('aspirasi'))
+            <div class="pt-8 pb-2 px-4">
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Layanan & Interaksi</p>
+            </div>
 
-            @if($can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori'))
-            <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Transaksi</p></div>
-
-            @if($can('pemasukan'))
-            <a href="javascript:void(0)" onclick="switchPage('pemasukan', this)" class="menu-link {{ isset($page) && $page == 'pemasukan' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-circle-arrow-down w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pemasukan</span>
-            </a>
-            @endif
-            @if($can('pengeluaran'))
-            <a href="javascript:void(0)" onclick="switchPage('pengeluaran', this)" class="menu-link {{ isset($page) && $page == 'pengeluaran' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-circle-arrow-up w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengeluaran</span>
-            </a>
-            @endif
-            @if($can('transaksi'))
-            <a href="javascript:void(0)" onclick="switchPage('transaksi', this)" class="menu-link {{ isset($page) && $page == 'transaksi' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-shuffle w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Transaksi</span>
-            </a>
-            @endif
-            @if($can('kategori'))
-            <a href="javascript:void(0)" onclick="switchPage('kategori', this)" class="menu-link {{ isset($page) && $page == 'kategori' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-folder-tree w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Kategori</span>
-            </a>
-            @endif
-            @endif
-
-            @if($can('surat-online') || $can('pengumuman'))
-            <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Interaksi Warga</p></div>
-
-            @if($can('surat-online'))
-            <a href="javascript:void(0)" onclick="switchPage('surat-online', this)" class="menu-link {{ isset($page) && $page == 'surat-online' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-envelope w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Surat Online</span>
-            </a>
-            @endif
-            @if($can('pengumuman'))
-            <a href="javascript:void(0)" onclick="switchPage('pengumuman', this)" class="menu-link {{ isset($page) && $page == 'pengumuman' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-bullhorn w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengumuman</span>
-            </a>
-            @endif
+            {{-- ===== DROPDOWN: Administrasi ===== --}}
+            @if($can('surat-online') || $can('pengumuman') || $can('aspirasi'))
+            <div class="space-y-1 dropdown-group">
+                <button onclick="toggleDropdown('administrasi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Administrasi">
+                    <i class="fa-solid fa-envelope-open-text w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Administrasi</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="administrasi-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    @if($can('surat-online'))
+                    <a href="javascript:void(0)" onclick="switchPage('surat-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Surat Online</a>
+                    @endif
+                    @if($can('pengumuman'))
+                    <a href="javascript:void(0)" onclick="switchPage('pengumuman', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengumuman</a>
+                    @endif
+                    @if($can('aspirasi'))
+                    <a href="javascript:void(0)" onclick="switchPage('aspirasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aspirasi & Keluhan</a>
+                    @endif
+                </div>
+            </div>
             @endif
 
-            @if($can('koperasi') || $can('bank-sampah') || $can('umkm') || $can('posyandu') || $can('keamanan') || $can('kegiatan') || $can('rukem') || $can('aspirasi'))
-            <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Layanan Warga</p></div>
-
-            @if($can('koperasi'))
-            <a href="javascript:void(0)" onclick="switchPage('koperasi', this)" class="menu-link {{ isset($page) && $page == 'koperasi' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-store w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Koperasi Warga</span>
-            </a>
-            @endif
-
-            @if($can('bank-sampah'))
-            <a href="javascript:void(0)" onclick="switchPage('bank-sampah', this)" class="menu-link {{ isset($page) && $page == 'bank-sampah' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-recycle w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Bank Sampah</span>
-            </a>
-            @endif
-
-            @if($can('umkm'))
-            <a href="javascript:void(0)" onclick="switchPage('umkm', this)" class="menu-link {{ isset($page) && $page == 'umkm' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-shop w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">UMKM Warga</span>
-            </a>
-            @endif
-
-            @if($can('posyandu'))
-            <a href="javascript:void(0)" onclick="switchPage('posyandu', this)" class="menu-link {{ isset($page) && $page == 'posyandu' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-heart-pulse w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Posyandu</span>
-            </a>
-            @endif
-
-            @if($can('keamanan'))
-            <a href="javascript:void(0)" onclick="switchPage('keamanan', this)" class="menu-link {{ isset($page) && $page == 'keamanan' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-shield-halved w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Keamanan & Ronda</span>
-            </a>
-            @endif
-
-            @if($can('kegiatan'))
-            <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link {{ isset($page) && $page == 'kegiatan' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-calendar-check w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Kegiatan RT</span>
-            </a>
-            @endif
-
-            @if($can('rukem'))
-            <a href="javascript:void(0)" onclick="switchPage('rukem', this)" class="menu-link {{ isset($page) && $page == 'rukem' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-hands-holding-child w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Rukem (Duka Cita)</span>
-            </a>
-            @endif
-
-            @if($can('aspirasi'))
-            <a href="javascript:void(0)" onclick="switchPage('aspirasi', this)" class="menu-link {{ isset($page) && $page == 'aspirasi' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-comment-dots w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aspirasi & Keluhan</span>
-            </a>
+            {{-- ===== DROPDOWN: Layanan Warga ===== --}}
+            @if($can('koperasi') || $can('bank-sampah') || $can('umkm') || $can('posyandu') || $can('keamanan') || $can('kegiatan') || $can('rukem'))
+            <div class="space-y-1 dropdown-group">
+                <button onclick="toggleDropdown('layanan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Layanan Warga">
+                    <i class="fa-solid fa-hand-holding-heart w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Layanan Warga</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="layanan-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    @if($can('koperasi'))
+                    <a href="javascript:void(0)" onclick="switchPage('koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Koperasi Warga</a>
+                    @endif
+                    @if($can('bank-sampah'))
+                    <a href="javascript:void(0)" onclick="switchPage('bank-sampah', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Bank Sampah</a>
+                    @endif
+                    @if($can('umkm'))
+                    <a href="javascript:void(0)" onclick="switchPage('umkm', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">UMKM Warga</a>
+                    @endif
+                    @if($can('posyandu'))
+                    <a href="javascript:void(0)" onclick="switchPage('posyandu', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Posyandu</a>
+                    @endif
+                    @if($can('keamanan'))
+                    <a href="javascript:void(0)" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Keamanan & Ronda</a>
+                    @endif
+                    @if($can('kegiatan'))
+                    <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kegiatan RT</a>
+                    @endif
+                    @if($can('rukem'))
+                    <a href="javascript:void(0)" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Rukem (Duka Cita)</a>
+                    @endif
+                </div>
+            </div>
             @endif
             @endif
 
+            {{-- 3. KATEGORI: DATA & ASET RT --}}
             @if($can('data-warga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem'))
-            <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Master Data</p></div>
+            <div class="pt-8 pb-2 px-4">
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Data & Aset RT</p>
+            </div>
 
-            @if($can('data-warga'))
-            <a href="javascript:void(0)" onclick="switchPage('data-warga', this)" class="menu-link {{ isset($page) && $page == 'data-warga' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-users w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data Warga</span>
-            </a>
-            @endif
-            @if($can('data-iuran'))
-            <a href="javascript:void(0)" onclick="switchPage('data-iuran', this)" class="menu-link {{ isset($page) && $page == 'data-iuran' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-wallet w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data Iuran</span>
-            </a>
-            @endif
-            @if($can('data-pengurus-rt'))
-            <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link {{ isset($page) && $page == 'data-pengurus-rt' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-user-tie w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data Pengurus RT</span>
-            </a>
-            @endif
-            @if($can('data-rt'))
-            <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link {{ isset($page) && $page == 'data-rt' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-database w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data RT</span>
-            </a>
-            @endif
-            @if($can('pengguna'))
-            <a href="javascript:void(0)" onclick="switchPage('pengguna', this)" class="menu-link {{ isset($page) && $page == 'pengguna' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-user-gear w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengguna</span>
-            </a>
-            @endif
-            @if($can('perangkat-sistem'))
-            <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link {{ isset($page) && $page == 'perangkat-sistem' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-boxes-stacked w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aset RT</span>
-            </a>
-            @endif
-            @endif
-
-            @if($can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
-            <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Laporan</p></div>
-
-            @if($can('laporan-keuangan'))
-            <a href="javascript:void(0)" onclick="switchPage('laporan-keuangan', this)" class="menu-link {{ isset($page) && $page == 'laporan-keuangan' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-chart-line w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Laporan Keuangan</span>
-            </a>
-            @endif
-            @if($can('laporan-iuran'))
-            <a href="javascript:void(0)" onclick="switchPage('laporan-iuran', this)" class="menu-link {{ isset($page) && $page == 'laporan-iuran' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-file-invoice w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Laporan Iuran</span>
-            </a>
-            @endif
-            @if($can('laporan-kas'))
-            <a href="javascript:void(0)" onclick="switchPage('laporan-kas', this)" class="menu-link {{ isset($page) && $page == 'laporan-kas' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-vault w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Laporan Kas</span>
-            </a>
-            @endif
-            @if($can('export-laporan'))
-            <a href="javascript:void(0)" onclick="switchPage('export-laporan', this)" class="menu-link {{ isset($page) && $page == 'export-laporan' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-file-export w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Export Laporan</span>
-            </a>
-            @endif
+            {{-- ===== DROPDOWN: Data Master ===== --}}
+            <div class="space-y-1 dropdown-group">
+                <button onclick="toggleDropdown('data-master-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Data Master">
+                    <i class="fa-solid fa-database w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Data Master</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="data-master-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    @if($can('data-warga'))
+                    <a href="javascript:void(0)" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Warga</a>
+                    @endif
+                    @if($can('data-iuran'))
+                    <a href="javascript:void(0)" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Iuran</a>
+                    @endif
+                    @if($can('data-pengurus-rt'))
+                    <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Pengurus RT</a>
+                    @endif
+                    @if($can('data-rt'))
+                    <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data RT</a>
+                    @endif
+                    @if($can('pengguna'))
+                    <a href="javascript:void(0)" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengguna</a>
+                    @endif
+                    @if($can('perangkat-sistem'))
+                    <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aset RT</a>
+                    @endif
+                </div>
+            </div>
             @endif
 
+            {{-- 4. KATEGORI: PENGATURAN SISTEM --}}
             @if($can('pengaturan') || $can('backup-restore') || $can('aktivitas-pengguna'))
-            <div class="pt-8 pb-2 px-4"><p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pengaturan</p></div>
+            <div class="pt-8 pb-2 px-4">
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pengaturan</p>
+            </div>
 
-            @if($can('pengaturan'))
-            <a href="javascript:void(0)" onclick="switchPage('pengaturan', this)" class="menu-link {{ isset($page) && $page == 'pengaturan' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-gears w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengaturan</span>
-            </a>
-            @endif
-            @if($can('backup-restore'))
-            <a href="javascript:void(0)" onclick="switchPage('backup-restore', this)" class="menu-link {{ isset($page) && $page == 'backup-restore' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-cloud-arrow-up w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Backup & Restore</span>
-            </a>
-            @endif
-            @if($can('aktivitas-pengguna'))
-            <a href="javascript:void(0)" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link {{ isset($page) && $page == 'aktivitas-pengguna' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3 text-sm rounded-2xl transition-all group">
-                <i class="fa-solid fa-clock-rotate-left w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aktivitas Pengguna</span>
-            </a>
-            @endif
+            {{-- ===== DROPDOWN: Sistem ===== --}}
+            <div class="space-y-1 dropdown-group">
+                <button onclick="toggleDropdown('sistem-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Sistem">
+                    <i class="fa-solid fa-gears w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Sistem</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="sistem-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    @if($can('pengaturan'))
+                    <a href="javascript:void(0)" onclick="switchPage('pengaturan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengaturan</a>
+                    @endif
+                    @if($can('backup-restore'))
+                    <a href="javascript:void(0)" onclick="switchPage('backup-restore', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Backup & Restore</a>
+                    @endif
+                    @if($can('aktivitas-pengguna'))
+                    <a href="javascript:void(0)" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aktivitas Pengguna</a>
+                    @endif
+                </div>
+            </div>
             @endif
         </nav>
 
         <div class="p-6 border-t border-white/5 bg-[#0F172A] sticky bottom-0 shrink-0 flex flex-col gap-3">
             {{-- Tombol kembali ke halaman publik --}}
-            <a href="{{ route('welcome') }}" class="flex items-center w-full px-5 py-3 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group">
+            <a href="{{ route('welcome') }}" class="flex items-center w-full px-5 py-3 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group" data-tooltip="Halaman Publik">
                 <i class="fa-solid fa-globe mr-3 group-hover:-translate-x-1 transition-transform duration-300"></i>
                 <span>Halaman Publik</span>
                 <i class="fa-solid fa-arrow-up-right-from-square ml-auto text-xs opacity-60 group-hover:opacity-100"></i>
@@ -335,7 +580,7 @@
             {{-- Tombol logout --}}
             <form id="logout-form" action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="flex items-center w-full px-5 py-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group">
+                <button type="submit" class="flex items-center w-full px-5 py-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group" data-tooltip="Keluar Akun">
                     <i class="fa-solid fa-power-off mr-3 group-hover:rotate-90 transition-transform duration-300"></i>
                     <span>Keluar Akun</span>
                 </button>
@@ -344,18 +589,18 @@
     </aside>
 
     <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-10 shrink-0">
+        <header class="h-14 md:h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-10 shrink-0">
             <div class="flex items-center gap-3">
-                <!-- Sidebar Toggle Button -->
-                <button onclick="toggleSidebar(true)" class="flex items-center justify-center px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl mr-2 focus:outline-none transition-all border border-slate-200 shadow-sm gap-2">
+                <!-- Sidebar Toggle Button (Desktop Only) -->
+                <button onclick="toggleSidebar()" class="hidden md:flex items-center justify-center px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl mr-2 focus:outline-none transition-all border border-slate-200 shadow-sm gap-2">
                     <i class="fa-solid fa-bars text-sm"></i>
                     <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Menu Halaman</span>
                 </button>
                 <div class="flex flex-col">
-                    <h2 class="text-base md:text-xl font-bold text-gray-800 tracking-tight italic line-clamp-1">Halo, {{ Auth::user()->name }} 👋</h2>
-                    <div class="flex items-center gap-2">
+                    <h2 class="text-sm md:text-xl font-bold text-gray-800 tracking-tight italic line-clamp-1">Halo, {{ Auth::user()->name }} 👋</h2>
+                    <div class="flex items-center gap-1.5 mt-0.5">
                         <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                        <p class="text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-[1.5px]">Status: Verified Online</p>
+                        <p class="text-[8px] md:text-[10px] text-gray-400 font-bold uppercase tracking-[1px] md:tracking-[1.5px]">Status: Verified Online</p>
                     </div>
                 </div>
             </div>
@@ -374,7 +619,7 @@
             </div>
         </header>
 
-        <main id="main-content" class="flex-1 overflow-y-auto p-4 md:p-10 pb-28 bg-[#F8FAFC]">
+        <main id="main-content" class="flex-1 overflow-y-auto p-3 md:p-10 pb-28 bg-[#F8FAFC]">
             @php
                 $currentView = $resolvedView ?? ('admin.partials.' . ($page ?? 'dashboard'));
             @endphp
@@ -391,8 +636,8 @@
     </div>
 
     <!-- Floating Bottom Navigation Bar (Mobile Only) -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 p-4 md:hidden">
-        <div class="max-w-md mx-auto bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.08)] flex items-center justify-around py-2 px-1">
+    <div class="fixed bottom-0 left-0 right-0 z-40 p-3 md:hidden">
+        <div class="max-w-md mx-auto bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.08)] flex items-center justify-around py-1.5 px-1">
             <!-- Tab 1: Dashboard -->
             <button onclick="switchPage('dashboard', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-blue-600">
                 <i class="fa-solid fa-th-large text-base"></i>
@@ -436,11 +681,11 @@
         <!-- Sheet Backdrop -->
         <div class="absolute inset-0" onclick="toggleMobileMenuSheet(false)"></div>
         <!-- Sheet Content -->
-        <div class="relative w-full max-w-md bg-white rounded-t-[2rem] p-5 shadow-2xl max-h-[85vh] overflow-y-auto transform translate-y-full transition-transform duration-300">
+        <div class="relative w-full max-w-md bg-white rounded-t-2xl p-4 shadow-2xl max-h-[80vh] overflow-y-auto transform translate-y-full transition-transform duration-300">
             <!-- Handle bar -->
-            <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-4"></div>
+            <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-3"></div>
             
-            <div class="flex items-center justify-between mb-5 border-b border-gray-50 pb-3">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-50 pb-2.5">
                 <div class="flex items-center gap-2">
                     <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
                         <i class="fa-solid fa-grip text-xs"></i>
@@ -455,7 +700,7 @@
                 </button>
             </div>
             
-            <div class="space-y-6">
+            <div class="space-y-4">
                 <!-- Section 1: Transaksi & Keuangan -->
                 @if($can('tagihan-warga') || $can('status-pembayaran') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori'))
                 <div>
@@ -675,24 +920,50 @@
 
     <script>
         // ==========================================
+        // AUTO-SET TOOLTIPS FOR COLLAPSED SIDEBAR
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set data-tooltip from span text for all sidebar menu links
+            document.querySelectorAll('#sidebar .menu-link').forEach(function(link) {
+                const span = link.querySelector('span');
+                if (span && span.textContent.trim()) {
+                    link.setAttribute('data-tooltip', span.textContent.trim());
+                }
+            });
+            // Set data-tooltip for footer links
+            const footerLink = document.querySelector('#sidebar .sticky.bottom-0 a');
+            if (footerLink) {
+                const span = footerLink.querySelector('span');
+                if (span) footerLink.setAttribute('data-tooltip', span.textContent.trim());
+            }
+        });
+
+        // ==========================================
         // 0. FUNGSI TOGGLE SIDEBAR MOBILE & DESKTOP
         // ==========================================
-        window.toggleSidebar = function(forceOpen) {
+        window.toggleSidebar = function() {
             const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
-            if (!sidebar || !backdrop) return;
+            if (!sidebar) return;
 
-            const isCurrentlyClosed = sidebar.classList.contains('-translate-x-full');
-            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : isCurrentlyClosed;
+            // Close all open flyout submenus
+            if (typeof closeFlyout === 'function') closeFlyout();
 
-            if (shouldOpen) {
-                sidebar.classList.remove('-translate-x-full');
-                sidebar.classList.add('translate-x-0');
-                backdrop.classList.remove('hidden');
+            if (window.innerWidth >= 768) {
+                // Desktop: Toggle collapsed state
+                sidebar.classList.toggle('sidebar-collapsed');
             } else {
-                sidebar.classList.remove('translate-x-0');
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
+                // Mobile: Toggle slide-in drawer state
+                const backdrop = document.getElementById('sidebar-backdrop');
+                const isClosed = sidebar.classList.contains('-translate-x-full');
+                if (isClosed) {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('translate-x-0');
+                    if (backdrop) backdrop.classList.remove('hidden');
+                } else {
+                    sidebar.classList.remove('translate-x-0');
+                    sidebar.classList.add('-translate-x-full');
+                    if (backdrop) backdrop.classList.add('hidden');
+                }
             }
         };
 
@@ -745,9 +1016,39 @@
             });
         }
 
+        // Global page cache for fast navigation (SWR - Stale While Revalidate)
+        window.pageCache = window.pageCache || {};
+
+        // Invalidate cache for a page (+ dashboard since stats may change)
+        window.invalidatePageCache = function(pageName) {
+            delete window.pageCache[pageName];
+            delete window.pageCache['dashboard'];
+        };
+
         function switchPage(pageName, element) {
-            // Auto hide sidebar on page switch (both mobile and desktop)
-            try { toggleSidebar(false); } catch(e) {}
+            // Auto collapse/hide sidebar on page switch (both mobile and desktop)
+            try {
+                // Close all open flyout submenus
+                if (typeof closeFlyout === 'function') closeFlyout();
+
+                // Clear any running realtime intervals
+                if (window.realtimeInterval) {
+                    clearInterval(window.realtimeInterval);
+                    window.realtimeInterval = null;
+                }
+
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) {
+                    if (window.innerWidth >= 768) {
+                        sidebar.classList.add('sidebar-collapsed');
+                    } else {
+                        sidebar.classList.remove('translate-x-0');
+                        sidebar.classList.add('-translate-x-full');
+                        const backdrop = document.getElementById('sidebar-backdrop');
+                        if (backdrop) backdrop.classList.add('hidden');
+                    }
+                }
+            } catch(e) {}
 
             const mainContent = document.getElementById('main-content');
             if (!mainContent) return;
@@ -782,36 +1083,14 @@
                 bottomTabElement.classList.remove('text-gray-400');
             }
 
-            mainContent.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full min-h-[400px] space-y-4">
-                    <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-gray-400 font-bold italic animate-pulse tracking-widest uppercase text-xs">MENGAKSES HALAMAN ${pageName.replace(/-/g, ' ').toUpperCase()}...</p>
-                </div>
-            `;
-
-            fetch(`/${pageName}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(async response => {
-                if (response.status === 401) {
-                    window.location.href = '/login';
-                    return;
-                }
-                const text = await response.text();
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: Halaman tidak ditemukan atau terjadi kesalahan server.`);
-                }
-                return text;
-            })
-            .then(html => {
-                if (!html) return;
+            // Helper to render and trigger page logic
+            function renderPage(html) {
                 mainContent.innerHTML = html;
-                window.history.pushState({}, '', `/${pageName}`);
-
                 try {
                     executeScripts(mainContent);
                 } catch (scriptErr) {
                     console.warn('Script execution notice:', scriptErr);
                 }
-
                 // Pemicu Grafik Dashboard
                 if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
                     try {
@@ -820,18 +1099,71 @@
                         console.warn('Dashboard render notice:', dashErr);
                     }
                 }
-            })
-            .catch(error => {
+            }
+
+            // SWR: Stale-While-Revalidate Caching Logic
+            // Skip cache if reloading the SAME page (mutation refresh from save/delete)
+            const currentPage = window.location.pathname.replace(/^\//, '');
+            const isSamePageReload = (currentPage === pageName);
+            const cachedHtml = isSamePageReload ? null : window.pageCache[pageName];
+            if (cachedHtml) {
+                // Instant load from cache
+                renderPage(cachedHtml);
+                window.history.pushState({}, '', `/${pageName}`);
+
+                // Revalidate in the background
+                fetch(`/${pageName}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(response => {
+                    if (response.status === 401) { window.location.href = '/login'; return; }
+                    if (!response.ok) throw new Error();
+                    return response.text();
+                })
+                .then(html => {
+                    if (html && window.pageCache[pageName] !== html) {
+                        window.pageCache[pageName] = html;
+                        renderPage(html);
+                    }
+                })
+                .catch(() => { /* Silent fail for background revalidation */ });
+            } else {
+                // Cache miss: normal load with full spinner
                 mainContent.innerHTML = `
-                    <div class="p-10 bg-white rounded-[2.5rem] border border-red-100 shadow-sm text-center min-h-[400px] flex flex-col justify-center items-center">
-                        <i class="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-800">Gagal Memuat Halaman</h3>
-                        <p class="text-gray-500 mt-2 max-w-lg">${error.message || 'Pastikan koneksi lancar dan route halaman sudah terdaftar.'}</p>
-                        <button onclick="switchPage('${pageName}', document.querySelector('.bottom-tab-link[onclick*=\\'${pageName}\\']') || document.querySelector('.menu-active'))" class="mt-4 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20">
-                            Coba Lagi
-                        </button>
-                    </div>`;
-            });
+                    <div class="flex flex-col items-center justify-center h-full min-h-[400px] space-y-4">
+                        <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-gray-400 font-bold italic animate-pulse tracking-widest uppercase text-xs">MENGAKSES HALAMAN ${pageName.replace(/-/g, ' ').toUpperCase()}...</p>
+                    </div>
+                `;
+
+                fetch(`/${pageName}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(async response => {
+                    if (response.status === 401) {
+                        window.location.href = '/login';
+                        return;
+                    }
+                    const text = await response.text();
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: Halaman tidak ditemukan atau terjadi kesalahan server.`);
+                    }
+                    return text;
+                })
+                .then(html => {
+                    if (!html) return;
+                    window.pageCache[pageName] = html;
+                    renderPage(html);
+                    window.history.pushState({}, '', `/${pageName}`);
+                })
+                .catch(error => {
+                    mainContent.innerHTML = `
+                        <div class="p-10 bg-white rounded-[2.5rem] border border-red-100 shadow-sm text-center min-h-[400px] flex flex-col justify-center items-center">
+                            <i class="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-800">Gagal Memuat Halaman</h3>
+                            <p class="text-gray-500 mt-2 max-w-lg">${error.message || 'Pastikan koneksi lancar dan route halaman sudah terdaftar.'}</p>
+                            <button onclick="switchPage('${pageName}', document.querySelector('.bottom-tab-link[onclick*=\\'${pageName}\\']') || document.querySelector('.menu-active'))" class="mt-4 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20">
+                                Coba Lagi
+                            </button>
+                        </div>`;
+                });
+            }
         }
 
         // ==========================================
@@ -898,6 +1230,8 @@
                 if (pageToReload === 'pengaturan') {
                     window.location.reload();
                 } else {
+                    // Invalidate cache so switchPage forces a fresh fetch
+                    window.invalidatePageCache(pageToReload);
                     switchPage(pageToReload, document.querySelector(`.menu-link[onclick*='${pageToReload}']`));
                 }
             })

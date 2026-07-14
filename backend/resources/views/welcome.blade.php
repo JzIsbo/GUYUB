@@ -101,26 +101,35 @@
         ========================= */
 
         .container-custom{
-            max-width: 1120px;
+            max-width: 1200px;
             margin: auto;
         }
 
         .hero-title{
-            font-size: 46px;
-            line-height: 1.2;
+            font-size: 44px;
+            line-height: 1.25;
         }
 
         .hero-desc{
             font-size: 15px;
-            line-height: 30px;
+            line-height: 28px;
         }
 
         .dashboard-card{
-            max-width: 350px;
+            max-width: 330px;
         }
 
         .section-title{
-            font-size: 34px;
+            font-size: 32px;
+        }
+
+        /* Tabs Scrollable styling on mobile */
+        .tabs-scrollable::-webkit-scrollbar {
+            display: none;
+        }
+        .tabs-scrollable {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         /* =========================
@@ -130,11 +139,11 @@
         @media (max-width:1366px){
 
             .hero-title{
-                font-size: 40px;
+                font-size: 38px;
             }
 
             .dashboard-card{
-                max-width: 320px;
+                max-width: 300px;
             }
 
         }
@@ -146,7 +155,7 @@
         @media (max-width:1024px){
 
             .hero-title{
-                font-size: 36px;
+                font-size: 34px;
             }
 
         }
@@ -155,29 +164,30 @@
            MOBILE
         ========================= */
 
-        @media (max-width:768px){
-
-            .hero-title{
-                font-size: 30px;
+        @media (max-width:768px) {
+            .hero-title {
+                font-size: 26px;
                 text-align: center;
             }
 
-            .hero-desc{
+            .hero-desc {
+                font-size: 13.5px;
+                line-height: 24px;
                 text-align: center;
             }
 
-            .mobile-center{
+            .mobile-center {
                 justify-content: center;
             }
 
-            .stats-grid{
-                grid-template-columns: 1fr;
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
             }
 
-            .section-title{
-                font-size: 28px;
+            .section-title {
+                font-size: 22px;
             }
-
         }
 
     </style>
@@ -185,7 +195,6 @@
 </head>
 
 <body>
-
 {{-- HERO --}}
 <section id="beranda" class="hero-bg min-h-screen relative overflow-hidden">
 
@@ -195,7 +204,7 @@
     <div class="absolute bottom-[-100px] left-[-100px] w-[220px] h-[220px] rounded-full bg-blue-300/20"></div>
 
     {{-- NAVBAR --}}
-    <nav class="relative z-20 container-custom flex items-center justify-between px-5 lg:px-8 py-4 transition-all duration-300">
+    <nav class="relative z-30 container-custom flex items-center justify-between px-5 lg:px-8 py-4 transition-all duration-300">
 
         {{-- LOGO --}}
         <div class="flex items-center gap-3">
@@ -242,35 +251,50 @@
         </div>
 
         {{-- LOGIN / DASHBOARD --}}
-        @auth
-        <a href="/dashboard"
-           class="px-5 py-2 rounded-xl bg-white text-blue-700 text-sm font-semibold hover:bg-blue-50 transition flex items-center gap-2">
-            <i class="fa-solid fa-gauge-high text-xs"></i>
-            Dashboard
-        </a>
-        @else
-        <a href="{{ route('login') }}"
-           class="px-5 py-2 rounded-xl bg-white text-blue-700 text-sm font-semibold hover:bg-blue-50 transition">
-            Login
-        </a>
-        @endauth
+        <div class="flex items-center gap-2">
+            @auth
+            <a href="/dashboard"
+               class="px-4 py-2 rounded-xl bg-white text-blue-700 text-xs sm:text-sm font-semibold hover:bg-blue-50 transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-gauge-high text-[10px] sm:text-xs"></i>
+                <span>Dashboard</span>
+            </a>
+            @else
+            <a href="{{ route('login') }}"
+               class="px-4 py-2 rounded-xl bg-white text-blue-700 text-xs sm:text-sm font-semibold hover:bg-blue-50 transition shadow-sm">
+                Login
+            </a>
+            @endauth
+
+            {{-- HAMBURGER BUTTON --}}
+            <button onclick="toggleMobileNavbar()" class="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white focus:outline-none transition hover:bg-white/20">
+                <i id="hamburger-icon" class="fa-solid fa-bars text-base"></i>
+            </button>
+        </div>
+
+        {{-- MOBILE NAV DROPDOWN --}}
+        <div id="mobile-nav" class="hidden absolute top-full left-5 right-5 mt-2 bg-[#0e2764]/95 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col gap-3 text-white text-xs sm:text-sm font-medium shadow-2xl z-40">
+            <a href="#beranda" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Beranda</a>
+            <a href="#fitur" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Fitur & Layanan</a>
+            <a href="#tentang" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Tentang</a>
+            <a href="#kontak" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1">Kontak</a>
+        </div>
 
     </nav>
 
     {{-- CONTENT --}}
-    <div class="relative z-10 container-custom px-5 lg:px-8 pt-4 lg:pt-10 pb-16">
+    <div class="relative z-10 container-custom px-5 lg:px-8 pt-2 lg:pt-8 pb-10 lg:pb-16">
 
-        <div class="grid lg:grid-cols-2 gap-10 items-center">
+        <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
             {{-- LEFT --}}
-            <div>
+            <div class="lg:col-span-7">
 
                 {{-- BADGE --}}
-                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full glass text-white mb-6">
+                <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full glass text-white mb-4 sm:mb-6">
 
-                    <i class="fa-solid fa-shield-halved text-blue-300"></i>
+                    <i class="fa-solid fa-shield-halved text-blue-300 text-xs"></i>
 
-                    <span class="text-xs">
+                    <span class="text-[10px] sm:text-xs font-medium">
                         Aman • Modern • Terintegrasi
                     </span>
 
@@ -287,7 +311,7 @@
                 </h1>
 
                 {{-- DESC --}}
-                <p class="hero-desc mt-6 text-blue-100 max-w-[520px]">
+                <p class="hero-desc mt-4 sm:mt-6 text-blue-100 max-w-[520px]">
 
                     Kelola data warga, iuran, surat pengantar,
                     pengumuman, dan aktivitas lingkungan
@@ -296,24 +320,24 @@
                 </p>
 
                 {{-- BUTTON --}}
-                <div class="flex flex-wrap mobile-center gap-4 mt-8">
+                <div class="flex flex-wrap mobile-center gap-3 mt-6 sm:mt-8">
 
                     @auth
                     <a href="/dashboard"
-                       class="btn-primary px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300">
-                        <i class="fa-solid fa-gauge-high mr-2"></i>
+                       class="btn-primary px-5 py-3 rounded-xl text-white text-xs sm:text-sm font-semibold transition-all duration-300">
+                        <i class="fa-solid fa-gauge-high mr-1.5"></i>
                         Buka Dashboard
                     </a>
                     @else
                     <a href="{{ route('login') }}"
-                       class="btn-primary px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300">
-                        <i class="fa-solid fa-right-to-bracket mr-2"></i>
+                       class="btn-primary px-5 py-3 rounded-xl text-white text-xs sm:text-sm font-semibold transition-all duration-300">
+                        <i class="fa-solid fa-right-to-bracket mr-1.5"></i>
                         Masuk Sekarang
                     </a>
                     @endauth
 
                     <a href="#fitur"
-                       class="px-6 py-3 rounded-xl glass text-white text-sm font-semibold hover:bg-white/20 transition">
+                       class="px-5 py-3 rounded-xl glass text-white text-xs sm:text-sm font-semibold hover:bg-white/20 transition">
 
                         Lihat Fitur
 
@@ -322,39 +346,39 @@
                 </div>
 
                 {{-- STATS --}}
-                <div class="stats-grid grid grid-cols-3 gap-4 mt-10">
+                <div class="stats-grid grid grid-cols-3 gap-2.5 sm:gap-4 mt-6 sm:mt-8">
 
-                    <div class="glass rounded-2xl p-4 text-center">
+                    <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
 
-                        <h2 class="text-white text-xl font-bold">
+                        <h2 class="text-white text-sm sm:text-xl font-bold">
                             24/7
                         </h2>
 
-                        <p class="text-blue-100 text-[11px] mt-2">
+                        <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
                             Akses Sistem
                         </p>
 
                     </div>
 
-                    <div class="glass rounded-2xl p-4 text-center">
+                    <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
 
-                        <h2 class="text-white text-xl font-bold">
+                        <h2 class="text-white text-sm sm:text-xl font-bold">
                             100%
                         </h2>
 
-                        <p class="text-blue-100 text-[11px] mt-2">
+                        <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
                             Digital
                         </p>
 
                     </div>
 
-                    <div class="glass rounded-2xl p-4 text-center">
+                    <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
 
-                        <h2 class="text-white text-xl font-bold">
+                        <h2 class="text-white text-sm sm:text-xl font-bold">
                             Aman
                         </h2>
 
-                        <p class="text-blue-100 text-[11px] mt-2">
+                        <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
                             Data Terenkripsi
                         </p>
 
@@ -365,76 +389,76 @@
             </div>
 
             {{-- RIGHT --}}
-            <div class="flex justify-center">
+            <div class="hidden lg:flex lg:col-span-5 justify-center">
 
-                <div class="dashboard-card glass rounded-[28px] p-6 w-full">
+                <div class="dashboard-card glass rounded-3xl p-5 w-full">
 
                     {{-- TOP --}}
                     <div class="flex items-center justify-between">
 
                         <div>
 
-                            <h2 class="text-white text-lg font-bold">
+                            <h2 class="text-white text-base font-bold">
                                 Dashboard RT
                             </h2>
 
-                            <p class="text-blue-100 text-[11px] mt-1">
+                            <p class="text-blue-100 text-[10px] mt-0.5">
                                 Monitoring lingkungan real-time
                             </p>
 
                         </div>
 
-                        <div class="w-11 h-11 rounded-2xl bg-blue-500/20 flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-2xl bg-blue-500/20 flex items-center justify-center">
 
-                            <i class="fa-solid fa-chart-line text-blue-300 text-lg"></i>
+                            <i class="fa-solid fa-chart-line text-blue-300 text-base"></i>
 
                         </div>
 
                     </div>
 
                     {{-- CHART --}}
-                    <div class="mt-6 bg-white/10 rounded-2xl p-4">
+                    <div class="mt-4 bg-white/10 rounded-2xl p-3">
 
-                        <div class="flex items-end gap-3 h-[120px]">
+                        <div class="flex items-end gap-2.5 h-[100px]">
 
-                            <div class="w-full bg-blue-300 rounded-t-2xl h-[45%]"></div>
+                            <div class="w-full bg-blue-300 rounded-t-xl h-[45%]"></div>
 
-                            <div class="w-full bg-blue-400 rounded-t-2xl h-[75%]"></div>
+                            <div class="w-full bg-blue-400 rounded-t-xl h-[75%]"></div>
 
-                            <div class="w-full bg-blue-500 rounded-t-2xl h-[55%]"></div>
+                            <div class="w-full bg-blue-500 rounded-t-xl h-[55%]"></div>
 
-                            <div class="w-full bg-blue-600 rounded-t-2xl h-[90%]"></div>
+                            <div class="w-full bg-blue-600 rounded-t-xl h-[90%]"></div>
 
-                            <div class="w-full bg-blue-700 rounded-t-2xl h-[65%]"></div>
+                            <div class="w-full bg-blue-700 rounded-t-xl h-[65%]"></div>
 
                         </div>
 
                     </div>
 
                     {{-- INFO --}}
-                    <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="grid grid-cols-2 gap-3 mt-3">
 
-                        <div class="bg-white/10 rounded-2xl p-4">
+                        <div class="bg-white/10 rounded-xl p-3.5">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-blue-100 text-[11px]">Total Warga</p>
-                                    <h3 class="text-white text-xl font-bold mt-2">
+                                    <p class="text-blue-100 text-[10px]">Total Warga</p>
+                                    <h3 class="text-white text-base font-bold mt-1.5">
                                         {{ $totalWarga ?? 0 }}
                                     </h3>
                                 </div>
-                                <i class="fa-solid fa-users text-xl text-blue-300"></i>
+                                <i class="fa-solid fa-users text-lg text-blue-300"></i>
                             </div>
                         </div>
 
-                        <div class="bg-white/10 rounded-2xl p-4">
+                        <div class="bg-white/10 rounded-xl p-3.5">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-blue-100 text-[11px]">UMKM Aktif</p>
-                                    <h3 class="text-white text-xl font-bold mt-2">
+                                    <p class="text-blue-100 text-[10px]">UMKM Aktif</p>
+                                    <h3 class="text-white text-base font-bold mt-1.5">
                                         {{ $totalUmkm ?? 0 }}
                                     </h3>
                                 </div>
-                                <i class="fa-solid fa-shop text-xl text-blue-300"></i>
+                                <i class="fa-solid fa-shop text-lg text-blue-300"></i>
                             </div>
                         </div>
 
@@ -452,144 +476,144 @@
 
 {{-- INTERACTIVE PUBLIC DIRECTORIES --}}
 <div id="informasi-publik"></div>
-<section id="fitur" class="py-20 px-5 lg:px-8 bg-white border-t border-gray-100">
+<section id="fitur" class="py-10 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white border-t border-gray-100">
     <div class="container-custom">
         
-        <div class="text-center mb-16">
-            <span class="text-blue-600 font-extrabold text-xs uppercase tracking-widest bg-blue-50 px-4 py-2 rounded-full">Layanan Informasi Terbuka</span>
-            <h2 class="section-title font-black text-gray-800 tracking-tight mt-4">Direktori Publik RT</h2>
-            <p class="text-gray-500 mt-3 text-sm max-w-xl mx-auto leading-relaxed">
+        <div class="text-center mb-8 sm:mb-12">
+            <span class="text-blue-600 font-extrabold text-[10px] sm:text-xs uppercase tracking-widest bg-blue-50 px-3.5 py-1.5 rounded-full">Layanan Informasi Terbuka</span>
+            <h2 class="section-title font-black text-gray-800 tracking-tight mt-3">Direktori Publik RT</h2>
+            <p class="text-gray-500 mt-2 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
                 Informasi dan pelayanan lingkungan warga dapat diakses secara langsung tanpa masuk ke sistem.
             </p>
         </div>
 
-        <!-- Tab Controls -->
-        <div class="flex flex-wrap justify-center gap-3 mb-12">
-            <button onclick="switchPublicTab('tab-pengumuman', this)" class="public-tab-btn active bg-blue-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg shadow-blue-200 transition-all text-xs flex items-center gap-2 cursor-pointer">
+        <!-- Tab Controls with horizontal scroll on mobile -->
+        <div class="flex flex-nowrap md:flex-wrap md:justify-center gap-2 mb-6 sm:mb-10 overflow-x-auto tabs-scrollable pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+            <button onclick="switchPublicTab('tab-pengumuman', this)" class="public-tab-btn active bg-blue-600 text-white font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl shadow-lg shadow-blue-200 transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i class="fa-solid fa-bullhorn"></i> Pengumuman
             </button>
-            <button onclick="switchPublicTab('tab-umkm', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-6 py-3.5 rounded-2xl transition-all text-xs flex items-center gap-2 cursor-pointer">
+            <button onclick="switchPublicTab('tab-umkm', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i class="fa-solid fa-shop"></i> UMKM Warga
             </button>
-            <button onclick="switchPublicTab('tab-kegiatan', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-6 py-3.5 rounded-2xl transition-all text-xs flex items-center gap-2 cursor-pointer">
+            <button onclick="switchPublicTab('tab-kegiatan', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i class="fa-solid fa-calendar-check"></i> Kegiatan RT
             </button>
-            <button onclick="switchPublicTab('tab-posyandu', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-6 py-3.5 rounded-2xl transition-all text-xs flex items-center gap-2 cursor-pointer">
+            <button onclick="switchPublicTab('tab-posyandu', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i class="fa-solid fa-heart-pulse"></i> Posyandu
             </button>
-            <button onclick="switchPublicTab('tab-ronda', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-6 py-3.5 rounded-2xl transition-all text-xs flex items-center gap-2 cursor-pointer">
+            <button onclick="switchPublicTab('tab-ronda', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
                 <i class="fa-solid fa-shield-halved"></i> Jadwal Ronda
             </button>
         </div>
 
         <!-- Tab Contents -->
-        <div class="bg-gray-50/50 rounded-[2.5rem] p-8 border border-gray-100/50 min-h-[300px]">
+        <div class="bg-gray-50/50 rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 border border-gray-100/50 min-h-[250px]">
 
             <!-- 1. PENGUMUMAN TAB -->
-            <div id="tab-pengumuman" class="public-tab-content space-y-6">
+            <div id="tab-pengumuman" class="public-tab-content space-y-4 sm:space-y-6">
                 @forelse($announcements ?? [] as $item)
-                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow transition duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="bg-blue-50 text-blue-600 font-bold px-3 py-1 rounded-full text-[10px] tracking-wide uppercase">{{ $item->status }}</span>
-                        <span class="text-xs text-gray-400 font-medium"><i class="fa-regular fa-clock mr-1"></i> {{ date('d-m-Y', strtotime($item->created_at)) }}</span>
+                <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm hover:shadow transition duration-200">
+                    <div class="flex items-center justify-between mb-2 sm:mb-3">
+                        <span class="bg-blue-50 text-blue-600 font-bold px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] tracking-wide uppercase">{{ $item->status }}</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 font-medium"><i class="fa-regular fa-clock mr-1"></i> {{ date('d-m-Y', strtotime($item->created_at)) }}</span>
                     </div>
-                    <h3 class="text-base font-extrabold text-gray-800 mb-2">{{ $item->judul }}</h3>
+                    <h3 class="text-sm sm:text-base font-extrabold text-gray-800 mb-1.5 sm:mb-2">{{ $item->judul }}</h3>
                     <p class="text-xs text-gray-600 leading-relaxed whitespace-pre-line">{{ $item->isi }}</p>
                 </div>
                 @empty
-                <div class="text-center py-12 text-gray-400 italic">Belum ada pengumuman publik yang aktif.</div>
+                <div class="text-center py-10 text-gray-400 italic text-xs sm:text-sm">Belum ada pengumuman publik yang aktif.</div>
                 @endforelse
             </div>
 
             <!-- 2. UMKM WARGA TAB -->
-            <div id="tab-umkm" class="public-tab-content hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div id="tab-umkm" class="public-tab-content hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 @forelse($umkms ?? [] as $item)
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300 overflow-hidden group">
+                <div class="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300 overflow-hidden group">
                     <div>
-                        <div class="h-48 w-full overflow-hidden relative bg-gray-100">
+                        <div class="h-36 sm:h-44 w-full overflow-hidden relative bg-gray-100">
                             <img src="{{ $item->gambar ?? 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop' }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="{{ $item->nama_usaha }}">
-                            <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-emerald-600 px-3 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-sm">
-                                <i class="fa-solid fa-circle text-[6px]"></i> {{ $item->status }}
+                            <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-emerald-600 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-circle text-[5px]"></i> {{ $item->status }}
                             </span>
                         </div>
-                        <div class="p-6">
-                            <span class="inline-block bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wide uppercase mb-3">{{ $item->kategori }}</span>
-                            <h3 class="text-base font-extrabold text-gray-800 mb-1 leading-snug">{{ $item->nama_usaha }}</h3>
-                            <p class="text-[11px] font-bold text-gray-400 mb-3"><i class="fa-solid fa-user text-indigo-400 mr-1"></i> Pemilik: {{ $item->pemilik }}</p>
+                        <div class="p-4 sm:p-6">
+                            <span class="inline-block bg-indigo-50 text-indigo-600 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold tracking-wide uppercase mb-2 sm:mb-3">{{ $item->kategori }}</span>
+                            <h3 class="text-sm sm:text-base font-extrabold text-gray-800 mb-1 leading-snug">{{ $item->nama_usaha }}</h3>
+                            <p class="text-[10px] sm:text-[11px] font-bold text-gray-400 mb-2 sm:mb-3"><i class="fa-solid fa-user text-indigo-400 mr-1"></i> Pemilik: {{ $item->pemilik }}</p>
                             <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed">{{ $item->deskripsi ?? 'Usaha lokal warga RT.' }}</p>
                         </div>
                     </div>
-                    <div class="px-6 pb-6 pt-2">
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->kontak) }}" target="_blank" class="w-full py-3 px-4 rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition duration-200">
-                            <i class="fa-brands fa-whatsapp text-base"></i> Hubungi WhatsApp Usaha
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 pt-2">
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $item->kontak) }}" target="_blank" class="w-full py-2 sm:py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition duration-200">
+                            <i class="fa-brands fa-whatsapp text-sm sm:text-base"></i> Hubungi WhatsApp Usaha
                         </a>
                     </div>
                 </div>
                 @empty
-                <div class="col-span-3 text-center py-12 text-gray-400 italic">Belum ada usaha UMKM warga terdaftar.</div>
+                <div class="col-span-full text-center py-10 text-gray-400 italic text-xs sm:text-sm">Belum ada usaha UMKM warga terdaftar.</div>
                 @endforelse
             </div>
 
             <!-- 3. AGENDA KEGIATAN TAB -->
-            <div id="tab-kegiatan" class="public-tab-content hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div id="tab-kegiatan" class="public-tab-content hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 @forelse($kegiatans ?? [] as $item)
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300 overflow-hidden group">
+                <div class="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-lg transition duration-300 overflow-hidden group">
                     <div>
-                        <div class="h-44 w-full overflow-hidden relative bg-gray-100">
+                        <div class="h-32 sm:h-40 w-full overflow-hidden relative bg-gray-100">
                             <img src="{{ $item->gambar ?? 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop' }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="{{ $item->nama_kegiatan }}">
-                            <span class="absolute top-4 left-4 bg-teal-600 text-white px-3 py-1 rounded-full text-[10px] font-extrabold shadow-md">
+                            <span class="absolute top-3 left-3 bg-teal-600 text-white px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold shadow-md">
                                 <i class="fa-solid fa-clock mr-1"></i> {{ $item->waktu }}
                             </span>
                         </div>
-                        <div class="p-6">
-                            <span class="text-xs text-gray-400 font-bold block mb-1"><i class="fa-solid fa-calendar text-teal-500 mr-1.5"></i> {{ date('d-m-Y', strtotime($item->tanggal)) }}</span>
-                            <h3 class="text-base font-extrabold text-gray-800 mb-2 leading-snug">{{ $item->nama_kegiatan }}</h3>
-                            <p class="text-xs font-bold text-gray-500 mb-3"><i class="fa-solid fa-location-dot text-rose-500 mr-1.5"></i> {{ $item->lokasi }}</p>
+                        <div class="p-4 sm:p-6">
+                            <span class="text-[10px] sm:text-xs text-gray-400 font-bold block mb-1.5"><i class="fa-solid fa-calendar text-teal-500 mr-1.5"></i> {{ date('d-m-Y', strtotime($item->tanggal)) }}</span>
+                            <h3 class="text-sm sm:text-base font-extrabold text-gray-800 mb-1.5 leading-snug">{{ $item->nama_kegiatan }}</h3>
+                            <p class="text-xs font-bold text-gray-500 mb-2"><i class="fa-solid fa-location-dot text-rose-500 mr-1.5"></i> {{ $item->lokasi }}</p>
                             <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed">{{ $item->deskripsi ?? 'Aktivitas kebersamaan warga.' }}</p>
                         </div>
                     </div>
                 </div>
                 @empty
-                <div class="col-span-3 text-center py-12 text-gray-400 italic">Belum ada kegiatan RT terdekat.</div>
+                <div class="col-span-full text-center py-10 text-gray-400 italic text-xs sm:text-sm">Belum ada agenda kegiatan RT terdekat.</div>
                 @endforelse
             </div>
 
             <!-- 4. JADWAL POSYANDU TAB -->
-            <div id="tab-posyandu" class="public-tab-content hidden space-y-4">
+            <div id="tab-posyandu" class="public-tab-content hidden space-y-3 sm:space-y-4">
                 @forelse($posyandus ?? [] as $item)
-                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 hover:shadow transition duration-200">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg shadow-sm">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4 hover:shadow transition duration-200">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-base sm:text-lg shadow-sm">
                             <i class="fa-solid fa-heart-pulse"></i>
                         </div>
                         <div>
-                            <h4 class="text-sm font-extrabold text-gray-800">{{ $item->nama_kegiatan }}</h4>
-                            <p class="text-xs text-gray-400 font-medium mt-0.5"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> {{ $item->lokasi }}</p>
+                            <h4 class="text-xs sm:text-sm font-extrabold text-gray-800">{{ $item->nama_kegiatan }}</h4>
+                            <p class="text-[10px] sm:text-xs text-gray-400 font-medium mt-0.5"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> {{ $item->lokasi }}</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="bg-rose-50 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-extrabold">{{ $item->target_peserta }}</span>
-                        <span class="text-xs text-gray-500 font-bold"><i class="fa-solid fa-calendar mr-1"></i> {{ date('d-m-Y', strtotime($item->tanggal)) }}</span>
+                    <div class="flex items-center justify-between md:justify-end gap-3 border-t border-gray-50 md:border-none pt-2.5 md:pt-0">
+                        <span class="bg-rose-50 text-rose-600 px-2.5 py-1 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-extrabold">{{ $item->target_peserta }}</span>
+                        <span class="text-[10px] sm:text-xs text-gray-500 font-bold"><i class="fa-solid fa-calendar mr-1"></i> {{ date('d-m-Y', strtotime($item->tanggal)) }}</span>
                     </div>
                 </div>
                 @empty
-                <div class="text-center py-12 text-gray-400 italic">Belum ada agenda Posyandu terjadwal.</div>
+                <div class="text-center py-10 text-gray-400 italic text-xs sm:text-sm">Belum ada agenda Posyandu terjadwal.</div>
                 @endforelse
             </div>
 
             <!-- 5. JADWAL RONDA TAB -->
-            <div id="tab-ronda" class="public-tab-content hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div id="tab-ronda" class="public-tab-content hidden grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 @forelse($rondas ?? [] as $item)
-                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow transition duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="bg-slate-800 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">{{ $item->hari }}</span>
-                        <span class="text-xs text-gray-400 font-medium">{{ $item->jam_shift }}</span>
+                <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm hover:shadow transition duration-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-slate-800 text-white px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">{{ $item->hari }}</span>
+                        <span class="text-[10px] sm:text-xs text-gray-400 font-medium">{{ $item->jam_shift }}</span>
                     </div>
-                    <h4 class="text-sm font-extrabold text-gray-800 mt-2"><i class="fa-solid fa-user-shield text-slate-500 mr-1"></i> Petugas: {{ $item->petugas_ronda }}</h4>
-                    <p class="text-xs text-gray-400 mt-1">Koordinator Shift: <span class="font-bold text-gray-600">{{ $item->koordinator }}</span></p>
+                    <h4 class="text-xs sm:text-sm font-extrabold text-gray-800 mt-2"><i class="fa-solid fa-user-shield text-slate-500 mr-1"></i> Petugas: {{ $item->petugas_ronda }}</h4>
+                    <p class="text-[11px] text-gray-400 mt-0.5">Koordinator Shift: <span class="font-bold text-gray-600">{{ $item->koordinator }}</span></p>
                 </div>
                 @empty
-                <div class="col-span-2 text-center py-12 text-gray-400 italic">Belum ada jadwal ronda siskamling malam.</div>
+                <div class="col-span-full text-center py-10 text-gray-400 italic text-xs sm:text-sm">Belum ada jadwal ronda siskamling malam.</div>
                 @endforelse
             </div>
 
@@ -598,70 +622,71 @@
     </div>
 </section>
 
+
 {{-- SECTION TENTANG --}}
-<section id="tentang" class="py-20 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+<section id="tentang" class="py-10 sm:py-16 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
 
         {{-- HEADER --}}
-        <div class="text-center mb-14">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+        <div class="text-center mb-8 sm:mb-12">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-100 text-blue-700 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-3">
                 <i class="fa-solid fa-circle-info"></i> Tentang Kami
             </div>
-            <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">Siapa Kami?</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto text-base">Aplikasi RT adalah platform digital modern untuk mendukung administrasi dan pelayanan warga secara transparan, cepat, dan mudah.</p>
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-3">Siapa Kami?</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed">Aplikasi RT adalah platform digital modern untuk mendukung administrasi dan pelayanan warga secara transparan, cepat, dan mudah.</p>
         </div>
 
         {{-- GRID KONTEN --}}
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
 
             {{-- KIRI: Narasi --}}
-            <div class="space-y-6">
-                <div class="flex gap-4 items-start">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
-                        <i class="fa-solid fa-bullseye text-white"></i>
+            <div class="space-y-4 sm:space-y-6">
+                <div class="flex gap-3 sm:gap-4 items-start">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-600 flex items-center justify-center shrink-0 shadow-lg shadow-blue-200">
+                        <i class="fa-solid fa-bullseye text-white text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-1">Visi Kami</h3>
-                        <p class="text-gray-500 text-sm leading-relaxed">Mewujudkan lingkungan RT yang modern, terdigitalisasi, dan berdaya saing melalui teknologi informasi yang mudah diakses semua warga.</p>
+                        <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-0.5 sm:mb-1">Visi Kami</h3>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Mewujudkan lingkungan RT yang modern, terdigitalisasi, dan berdaya saing melalui teknologi informasi yang mudah diakses semua warga.</p>
                     </div>
                 </div>
-                <div class="flex gap-4 items-start">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200">
-                        <i class="fa-solid fa-rocket text-white"></i>
+                <div class="flex gap-3 sm:gap-4 items-start">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200">
+                        <i class="fa-solid fa-rocket text-white text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-1">Misi Kami</h3>
-                        <p class="text-gray-500 text-sm leading-relaxed">Membangun sistem administrasi RT yang transparan, efisien, dan dapat diandalkan — dari pencatatan kas hingga layanan surat-menyurat.</p>
+                        <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-0.5 sm:mb-1">Misi Kami</h3>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Bangun sistem administrasi RT yang transparan, efisien, dan dapat diandalkan — dari pencatatan kas hingga layanan surat-menyurat.</p>
                     </div>
                 </div>
-                <div class="flex gap-4 items-start">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-200">
-                        <i class="fa-solid fa-shield-halved text-white"></i>
+                <div class="flex gap-3 sm:gap-4 items-start">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-600 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-200">
+                        <i class="fa-solid fa-shield-halved text-white text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-1">Keamanan Data</h3>
-                        <p class="text-gray-500 text-sm leading-relaxed">Data warga dikelola dengan standar keamanan tinggi. Setiap akses dicatat dan hak akses diatur berdasarkan peran pengguna.</p>
+                        <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-0.5 sm:mb-1">Keamanan Data</h3>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Data warga dikelola dengan standar keamanan tinggi. Setiap akses dicatat dan hak akses diatur berdasarkan peran pengguna.</p>
                     </div>
                 </div>
             </div>
 
             {{-- KANAN: Statistik / Fakta --}}
-            <div class="grid grid-cols-2 gap-5">
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
-                    <div class="text-4xl font-black text-blue-600 mb-1">100+</div>
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Warga Terdaftar</p>
+            <div class="grid grid-cols-2 gap-3 sm:gap-5">
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
+                    <div class="text-2xl sm:text-4xl font-black text-blue-600 mb-0.5 sm:mb-1">100+</div>
+                    <p class="text-[9px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Warga Terdaftar</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
-                    <div class="text-4xl font-black text-indigo-600 mb-1">12</div>
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Fitur Layanan</p>
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
+                    <div class="text-2xl sm:text-4xl font-black text-indigo-600 mb-0.5 sm:mb-1">12</div>
+                    <p class="text-[9px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Fitur Layanan</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
-                    <div class="text-4xl font-black text-emerald-600 mb-1">24/7</div>
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Akses Sistem</p>
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
+                    <div class="text-2xl sm:text-4xl font-black text-emerald-600 mb-0.5 sm:mb-1">24/7</div>
+                    <p class="text-[9px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Akses Sistem</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
-                    <div class="text-4xl font-black text-rose-500 mb-1">100%</div>
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Digital & Gratis</p>
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 text-center hover:shadow-md transition">
+                    <div class="text-2xl sm:text-4xl font-black text-rose-500 mb-0.5 sm:mb-1">100%</div>
+                    <p class="text-[9px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wider">Digital & Gratis</p>
                 </div>
             </div>
 
@@ -670,88 +695,88 @@
 </section>
 
 {{-- SECTION KONTAK --}}
-<section id="kontak" class="py-20 bg-white">
-    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+<section id="kontak" class="py-10 sm:py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
 
         {{-- HEADER --}}
-        <div class="text-center mb-14">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+        <div class="text-center mb-8 sm:mb-12">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-rose-100 text-rose-600 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-3">
                 <i class="fa-solid fa-headset"></i> Kontak & Bantuan
             </div>
-            <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">Hubungi Kami</h2>
-            <p class="text-gray-500 max-w-xl mx-auto text-base">Punya pertanyaan atau kendala? Hubungi pengurus RT atau kirim pesan langsung melalui formulir di bawah ini.</p>
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-3">Hubungi Kami</h2>
+            <p class="text-gray-500 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed">Punya pertanyaan atau kendala? Hubungi pengurus RT atau kirim pesan langsung melalui formulir di bawah ini.</p>
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-12">
+        <div class="grid lg:grid-cols-2 gap-8 sm:gap-12">
 
             {{-- KIRI: Info Kontak --}}
-            <div class="space-y-5">
+            <div class="space-y-3 sm:space-y-4">
                 @php $rt = $rt_info ?? null; @endphp
 
-                <div class="flex items-center gap-4 p-5 bg-blue-50 rounded-2xl border border-blue-100">
-                    <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow">
-                        <i class="fa-solid fa-people-roof"></i>
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow shrink-0">
+                        <i class="fa-solid fa-people-roof text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-blue-500 font-semibold uppercase tracking-wider">Nama RT / RW</p>
-                        <p class="font-bold text-gray-800 text-sm">RT {{ $rt->nomor_rt ?? '001' }} / RW {{ $rt->nomor_rw ?? '001' }} — {{ $rt->nama_wilayah ?? 'Wilayah RT' }}</p>
+                        <p class="text-[10px] sm:text-xs text-blue-500 font-semibold uppercase tracking-wider">Nama RT / RW</p>
+                        <p class="font-bold text-gray-800 text-xs sm:text-sm">RT {{ $rt->nomor_rt ?? '001' }} / RW {{ $rt->nomor_rw ?? '001' }} — {{ $rt->nama_wilayah ?? 'Wilayah RT' }}</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4 p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
-                    <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow">
-                        <i class="fa-solid fa-location-dot"></i>
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow shrink-0">
+                        <i class="fa-solid fa-location-dot text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-emerald-600 font-semibold uppercase tracking-wider">Alamat Sekretariat</p>
-                        <p class="font-bold text-gray-800 text-sm">{{ $rt->alamat_lengkap ?? 'Sekretariat RT setempat' }}</p>
+                        <p class="text-[10px] sm:text-xs text-emerald-600 font-semibold uppercase tracking-wider">Alamat Sekretariat</p>
+                        <p class="font-bold text-gray-800 text-xs sm:text-sm">{{ $rt->alamat_lengkap ?? 'Sekretariat RT setempat' }}</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4 p-5 bg-amber-50 rounded-2xl border border-amber-100">
-                    <div class="w-11 h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow">
-                        <i class="fa-brands fa-whatsapp"></i>
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-amber-50 rounded-2xl border border-amber-100">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow shrink-0">
+                        <i class="fa-brands fa-whatsapp text-base sm:text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-amber-600 font-semibold uppercase tracking-wider">WhatsApp Pengurus</p>
-                        <a href="https://wa.me/6281234567890" target="_blank" class="font-bold text-gray-800 text-sm hover:text-amber-600 transition">+62 812-3456-7890</a>
+                        <p class="text-[10px] sm:text-xs text-amber-600 font-semibold uppercase tracking-wider">WhatsApp Pengurus</p>
+                        <a href="https://wa.me/6281234567890" target="_blank" class="font-bold text-gray-800 text-xs sm:text-sm hover:text-amber-600 transition">+62 812-3456-7890</a>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4 p-5 bg-indigo-50 rounded-2xl border border-indigo-100">
-                    <div class="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow">
-                        <i class="fa-solid fa-clock"></i>
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-indigo-50 rounded-2xl border border-indigo-100">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow shrink-0">
+                        <i class="fa-solid fa-clock text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-indigo-600 font-semibold uppercase tracking-wider">Jam Layanan</p>
-                        <p class="font-bold text-gray-800 text-sm">Senin – Jumat: 08.00 – 16.00 WIB</p>
+                        <p class="text-[10px] sm:text-xs text-indigo-600 font-semibold uppercase tracking-wider">Jam Layanan</p>
+                        <p class="font-bold text-gray-800 text-xs sm:text-sm">Senin – Jumat: 08.00 – 16.00 WIB</p>
                     </div>
                 </div>
             </div>
 
             {{-- KANAN: Form Pesan --}}
-            <div class="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
-                <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <div class="bg-gray-50 rounded-3xl p-5 sm:p-8 border border-gray-100 shadow-sm">
+                <h3 class="text-sm sm:text-lg font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-2">
                     <i class="fa-solid fa-paper-plane text-blue-600"></i> Kirim Pesan
                 </h3>
-                <form id="kontak-form" class="space-y-4" onsubmit="kirimKontak(event)">
+                <form id="kontak-form" class="space-y-3 sm:space-y-4" onsubmit="kirimKontak(event)">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nama Lengkap</label>
-                        <input type="text" id="kontak-nama" required placeholder="Nama kamu..." class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition">
+                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 mb-1">Nama Lengkap</label>
+                        <input type="text" id="kontak-nama" required placeholder="Nama kamu..." class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nomor HP / WhatsApp</label>
-                        <input type="tel" id="kontak-hp" placeholder="08xx-xxxx-xxxx" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition">
+                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 mb-1">Nomor HP / WhatsApp</label>
+                        <input type="tel" id="kontak-hp" placeholder="08xx-xxxx-xxxx" class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1.5">Pesan / Pertanyaan</label>
-                        <textarea id="kontak-pesan" required rows="4" placeholder="Tuliskan pesan atau pertanyaan kamu di sini..." class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition resize-none"></textarea>
+                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 mb-1">Pesan / Pertanyaan</label>
+                        <textarea id="kontak-pesan" required rows="3" placeholder="Tuliskan pesan atau pertanyaan kamu di sini..." class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition resize-none"></textarea>
                     </div>
-                    <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-md shadow-blue-200">
-                        <i class="fa-brands fa-whatsapp text-lg"></i> Kirim via WhatsApp
+                    <button type="submit" class="w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md shadow-blue-200">
+                        <i class="fa-brands fa-whatsapp text-base"></i> Kirim via WhatsApp
                     </button>
                 </form>
-                <p id="kontak-sukses" class="hidden mt-4 text-center text-emerald-600 font-semibold text-sm">✅ Pesan berhasil dikirim via WhatsApp!</p>
+                <p id="kontak-sukses" class="hidden mt-3 text-center text-emerald-600 font-semibold text-xs sm:text-sm">✅ Pesan berhasil dikirim via WhatsApp!</p>
             </div>
 
         </div>
@@ -778,6 +803,26 @@
 </footer>
 
 <script>
+    /* =============================================
+       MOBILE NAVBAR TOGGLE
+    ============================================= */
+    function toggleMobileNavbar() {
+        const nav = document.getElementById('mobile-nav');
+        const icon = document.getElementById('hamburger-icon');
+        if (!nav || !icon) return;
+        
+        const isHidden = nav.classList.contains('hidden');
+        if (isHidden) {
+            nav.classList.remove('hidden');
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-xmark');
+        } else {
+            nav.classList.add('hidden');
+            icon.classList.remove('fa-xmark');
+            icon.classList.add('fa-bars');
+        }
+    }
+
     /* =============================================
        TAB INFORMASI PUBLIK
     ============================================= */

@@ -25,6 +25,8 @@ class ContributionController extends Controller
 
             Contribution::create($request->all());
 
+            self::logActivity('BUAT IURAN', "Membuat konfigurasi master iuran baru: {$request->nama_iuran} (Nominal: Rp " . number_format($request->nominal, 0, ',', '.') . ")");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Master iuran baru berhasil ditambahkan!'
@@ -62,6 +64,8 @@ class ContributionController extends Controller
             $contribution = Contribution::findOrFail($request->id);
             $contribution->update($request->all());
 
+            self::logActivity('UPDATE IURAN', "Memperbarui konfigurasi master iuran: {$request->nama_iuran} menjadi Rp " . number_format($request->nominal, 0, ',', '.'));
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Master iuran berhasil diperbarui!'
@@ -88,7 +92,10 @@ class ContributionController extends Controller
         abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
         try {
             $contribution = Contribution::findOrFail($id);
+            $iuranName = $contribution->nama_iuran;
             $contribution->delete();
+
+            self::logActivity('HAPUS IURAN', "Menghapus master iuran: {$iuranName}");
 
             return response()->json([
                 'status'  => 'success',
@@ -124,6 +131,11 @@ class ContributionController extends Controller
                 'created_at'    => now(),
                 'updated_at'    => now()
             ]);
+
+            $wargaName = DB::table('wargas')->where('id', $request->warga_id)->value('nama_lengkap') ?? 'Warga';
+            $iuranName = DB::table('contributions')->where('id', $request->iuran_id)->value('nama_iuran') ?? 'Iuran';
+            
+            self::logActivity('BAYAR IURAN', "Mencatat pembayaran iuran {$iuranName} untuk {$wargaName} sebesar Rp " . number_format($request->nominal_bayar, 0, ',', '.'));
 
             return response()->json([
                 'status'  => 'success',

@@ -40,6 +40,8 @@ class SystemController extends Controller
             // Refresh user session with fresh data
             Auth::setUser($user->fresh());
 
+            self::logActivity('UPDATE PROFIL', "Memperbarui profil akun: Nama menjadi '{$request->name}', Email menjadi '{$request->email}'");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Profil berhasil diperbarui!'
@@ -62,6 +64,8 @@ class SystemController extends Controller
                 $request->except('_token'),
                 ['updated_at' => now()]
             ));
+
+            self::logActivity('UPDATE PENGATURAN', "Memperbarui konfigurasi pengaturan sistem global.");
 
             return response()->json([
                 'status'  => 'success',
@@ -103,6 +107,8 @@ class SystemController extends Controller
                 DB::table('rt_details')->insert(array_merge($updateData, ['created_at' => now()]));
             }
 
+            self::logActivity('UPDATE RT', "Memperbarui identitas detail RT: RT {$request->nomor_rt} RW {$request->nomor_rw}, Wilayah {$request->nama_wilayah}");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Identitas profil RT berhasil diperbarui!'
@@ -128,6 +134,7 @@ class SystemController extends Controller
                 ->select(
                     'users.name',
                     'users.photo',
+                    'users.role',
                     'activity_logs.action',
                     'activity_logs.description',
                     'activity_logs.created_at'
@@ -142,7 +149,7 @@ class SystemController extends Controller
                     : 'Beberapa saat yang lalu';
 
                 $item->photo = $item->photo ?? 'https://ui-avatars.com/api/?name=' . urlencode($item->name ?? 'User') . '&background=random&color=fff';
-                $item->hak_akses = 'Pengguna Sistem';
+                $item->hak_akses = $item->role ?? 'Sistem';
                 return $item;
             });
 

@@ -30,6 +30,8 @@ class DataWargaController extends Controller
 
             Warga::create($request->all());
 
+            self::logActivity('BUAT WARGA', "Menambahkan data warga baru: {$request->nama_lengkap} (NIK: {$request->nik}, Blok: {$request->blok_rumah})");
+
             session()->flash('success', 'Berhasil! Data warga baru telah ditambahkan.');
 
             if ($request->ajax() || $request->wantsJson()) {
@@ -74,6 +76,8 @@ class DataWargaController extends Controller
             $warga = Warga::findOrFail($request->id);
             $warga->update($request->all());
 
+            self::logActivity('UPDATE WARGA', "Memperbarui data warga: {$warga->nama_lengkap} (NIK: {$request->nik}, Blok: {$request->blok_rumah})");
+
             session()->flash('success', 'Berhasil! Data warga telah diperbarui.');
 
             if ($request->ajax() || $request->wantsJson()) {
@@ -112,6 +116,11 @@ class DataWargaController extends Controller
         }
 
         try {
+            $warga = Warga::find($targetId);
+            if ($warga) {
+                self::logActivity('HAPUS WARGA', "Menghapus data warga: {$warga->nama_lengkap} (NIK: {$warga->nik}) beserta rekam jejak iurannya.");
+            }
+
             DB::transaction(function () use ($targetId) {
                 // 1. Hapus warga dari daftar Pengurus RT (jika dia menjabat)
                 DB::table('officers')->where('warga_id', $targetId)->delete();

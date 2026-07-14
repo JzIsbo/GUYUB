@@ -31,6 +31,8 @@ class UserController extends Controller
                 'status'   => $request->status
             ]);
 
+            self::logActivity('BUAT PENGGUNA', "Mendaftarkan pengguna baru: {$request->name} ({$request->role})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Akun pengguna baru berhasil didaftarkan!'
@@ -79,6 +81,8 @@ class UserController extends Controller
 
             $user->update($updateData);
 
+            self::logActivity('UPDATE PENGGUNA', "Memperbarui akun pengguna: {$user->name} menjadi role {$request->role} ({$request->status})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Akun pengguna berhasil diperbarui!'
@@ -107,7 +111,11 @@ class UserController extends Controller
 
         try {
             $user = User::findOrFail($request->id);
+            $userName = $user->name;
+            $userEmail = $user->email;
             $user->delete();
+
+            self::logActivity('HAPUS PENGGUNA', "Menghapus akun pengguna: {$userName} ({$userEmail})");
 
             return response()->json([
                 'status'  => 'success',

@@ -26,6 +26,8 @@ class CategoryController extends Controller
                 'tipe'      => $request->tipe
             ]);
 
+            self::logActivity('BUAT KATEGORI', "Menambahkan kategori transaksi baru: {$request->nama} (Tipe: {$request->tipe})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Kategori baru berhasil ditambahkan!'
@@ -65,6 +67,8 @@ class CategoryController extends Controller
                 'tipe'      => $request->tipe
             ]);
 
+            self::logActivity('UPDATE KATEGORI', "Memperbarui kategori transaksi: {$category->nama} (Tipe: {$request->tipe})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Kategori berhasil diperbarui!'
@@ -91,7 +95,11 @@ class CategoryController extends Controller
         abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
         try {
             $category = Category::findOrFail($id);
+            $catName = $category->nama;
+            $catType = $category->tipe;
             $category->delete();
+
+            self::logActivity('HAPUS KATEGORI', "Menghapus kategori transaksi: {$catName} (Tipe: {$catType})");
 
             return response()->json([
                 'status'  => 'success',

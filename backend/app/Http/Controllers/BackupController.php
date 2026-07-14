@@ -44,6 +44,9 @@ class BackupController extends Controller
                 $zip->close();
             }
             unlink($path);
+
+            self::logActivity('BACKUP DATABASE', "Mengunduh cadangan (backup) database RT.");
+
             return response()->download($zipPath)->deleteFileAfterSend(true);
         }
 
@@ -80,6 +83,7 @@ class BackupController extends Controller
         exec($command, $output, $returnCode);
 
         if ($returnCode === 0) {
+            self::logActivity('RESTORE DATABASE', "Memulihkan database dari file cadangan yang diunggah.");
             return back()->with('success', 'Database berhasil dipulihkan!');
         } else {
             return back()->with('error', 'Gagal memulihkan database. Cek konfigurasi MySQL Anda.');

@@ -32,6 +32,8 @@ class PaymentController extends Controller
                 'updated_at'  => now()
             ]);
 
+            self::logActivity('SETTING GATEWAY', "Memperbarui konfigurasi payment gateway Midtrans ({$request->environment})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Konfigurasi Payment Gateway berhasil disimpan ke sistem!'
@@ -52,6 +54,9 @@ class PaymentController extends Controller
         abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
         try {
             DB::table('gateway_logs')->truncate();
+
+            self::logActivity('BERSIH LOG GATEWAY', "Membersihkan seluruh catatan log gateway.");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Semua catatan log riwayat gateway berhasil dibersihkan!'
@@ -161,6 +166,8 @@ class PaymentController extends Controller
                 }
             }
 
+            self::logActivity('SINKRONISASI MIDTRANS', "Melakukan sinkronisasi status transaksi online. {$updatedCount} transaksi berhasil diperbarui.");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => "Sinkronisasi selesai! $updatedCount transaksi berhasil diupdate dari Midtrans."
@@ -190,6 +197,8 @@ class PaymentController extends Controller
                 'bank_2_owner'  => $request->bank_2_owner,
                 'updated_at'    => now()
             ]);
+
+            self::logActivity('SETTING REKENING/QRIS', "Memperbarui data QRIS dan nomor rekening tujuan iuran RT.");
 
             return response()->json([
                 'status'  => 'success',
@@ -224,6 +233,8 @@ class PaymentController extends Controller
                 'status'        => 'menunggu',
                 'batas_bayar'   => $request->batas_bayar
             ]);
+
+            self::logActivity('BUAT TAGIHAN', "Membuat tagihan {$request->jenis_tagihan} baru untuk {$request->nama_warga} sebesar Rp " . number_format($request->jumlah, 0, ',', '.'));
 
             return response()->json([
                 'status'  => 'success',
@@ -260,6 +271,8 @@ class PaymentController extends Controller
                 'status'        => $request->status
             ]);
 
+            self::logActivity('UPDATE TAGIHAN', "Memperbarui detail tagihan {$request->jenis_tagihan} untuk {$request->nama_warga} menjadi Rp " . number_format($request->jumlah, 0, ',', '.') . " (Status: {$request->status})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Detail tagihan berhasil diperbarui!'
@@ -282,7 +295,11 @@ class PaymentController extends Controller
 
         try {
             $tagihan = Tagihan::findOrFail($request->id);
+            $tagName = $tagihan->nama_warga;
+            $tagType = $tagihan->jenis_tagihan;
             $tagihan->delete();
+
+            self::logActivity('HAPUS TAGIHAN', "Menghapus data tagihan {$tagType} milik {$tagName}");
 
             return response()->json([
                 'status'  => 'success',

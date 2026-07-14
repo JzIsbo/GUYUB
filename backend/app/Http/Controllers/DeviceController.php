@@ -24,6 +24,8 @@ class DeviceController extends Controller
 
             Device::create($request->all());
 
+            self::logActivity('BUAT ASET', "Menambahkan aset baru: {$request->nama_perangkat} ({$request->jenis_perangkat}, Kondisi: {$request->kondisi})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Data perangkat berhasil disimpan!'
@@ -61,6 +63,8 @@ class DeviceController extends Controller
             $device = Device::findOrFail($request->id);
             $device->update($request->all());
 
+            self::logActivity('UPDATE ASET', "Memperbarui aset: {$device->nama_perangkat} menjadi Kondisi: {$request->kondisi}");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Data perangkat berhasil diubah!'
@@ -87,7 +91,10 @@ class DeviceController extends Controller
         abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT', 'Bendahara']), 403, 'Akses Ditolak');
         try {
             $device = Device::findOrFail($id);
+            $devName = $device->nama_perangkat;
             $device->delete();
+
+            self::logActivity('HAPUS ASET', "Menghapus data aset: {$devName}");
 
             return response()->json([
                 'status'  => 'success',

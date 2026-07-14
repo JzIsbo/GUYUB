@@ -28,6 +28,8 @@ class SuratController extends Controller
                 'updated_at'  => now()
             ]);
 
+            self::logActivity('AJU SURAT', "Membuat pengajuan surat baru: {$request->jenis_surat} untuk {$request->nama_warga} (Keperluan: {$request->keperluan})");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Pengajuan surat berhasil ditambahkan!'
@@ -52,10 +54,16 @@ class SuratController extends Controller
         ]);
 
         try {
+            $surat = DB::table('surat_online')->where('id', $request->id)->first();
+            
             DB::table('surat_online')->where('id', $request->id)->update([
                 'status'     => $request->status,
                 'updated_at' => now()
             ]);
+
+            if ($surat) {
+                self::logActivity('STATUS SURAT', "Mengubah status pengajuan surat {$surat->jenis_surat} ({$surat->nama_warga}) menjadi {$request->status}");
+            }
 
             return response()->json([
                 'status'  => 'success',

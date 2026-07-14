@@ -28,6 +28,8 @@ class AnnouncementController extends Controller
                 'updated_at' => now()
             ]);
 
+            self::logActivity('BUAT PENGUMUMAN', "Menyiarkan pengumuman baru: {$request->judul}");
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Pengumuman baru berhasil disiarkan!'
@@ -49,6 +51,11 @@ class AnnouncementController extends Controller
         $request->validate(['id' => 'required']);
 
         try {
+            $ann = DB::table('pengumumans')->where('id', $request->id)->first();
+            if ($ann) {
+                self::logActivity('HAPUS PENGUMUMAN', "Menghapus pengumuman: {$ann->judul}");
+            }
+
             DB::table('pengumumans')->where('id', $request->id)->delete();
 
             return response()->json([

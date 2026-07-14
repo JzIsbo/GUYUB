@@ -1,87 +1,104 @@
-# Aplikasi Kas RT Digital System
+# 🏠 GUYUB — Gerbang Urusan dan Layanan Warga Bersama
 
-Aplikasi berbasis web modern untuk digitalisasi administrasi lingkungan RT/RW. Proyek ini memisahkan arsitektur backend dan frontend secara profesional untuk modularitas, kemudahan pemeliharaan, dan performa tinggi.
+**GUYUB** adalah platform sistem informasi dan pelayanan digital modern berbasis web yang dirancang khusus untuk mengelola administrasi lingkungan RT/RW secara terpadu, transparan, cepat, dan efisien.
+
+---
+
+## ✨ Fitur Utama
+
+- **🏛️ Dashboard Executive & Statistik Realtime**: Ringkasan kas RT, statistik warga, grafik transparansi keuangan, dan jadwal kegiatan.
+- **💵 Keuangan & Iuran Digital**: Pengelolaan arus kas (pemasukan & pengeluaran), laporan keuangan, pembayaran QRIS/Virtual Account, serta iuran otomatis.
+- **📝 Surat Online & Layanan Mandiri**: Pengajuan surat pengantar warga secara digital dengan persetujuan pengurus RT.
+- **🛡️ Keamanan & Jadwal Ronda**: Pengelolaan regu ronda malam, jadwal piket, dan sistem pelaporan situasi lingkungan.
+- **🩺 Posyandu & Kesehatan Keluarga**: Pencatatan tumbuh kembang balita, riwayat kesehatan lansia, dan informasi Posyandu.
+- **🛍️ Koperasi & Pembinaan UMKM**: Marketplace usaha warga lingkungan untuk saling mendukung ekonomi lokal.
+- **♻️ Bank Sampah Lingkungan**: Manajemen setoran dan penimbangan sampah terdaur ulang.
+- **📢 Pengumuman & Aspirasi Warga**: Wadah komunikasi langsung warga dengan pengurus RT secara terbuka.
+- **🔒 Audit Trail & CCTV Notifikasi**: Log aktivitas pengguna otomatis dan lonceng notifikasi realtime.
 
 ---
 
 ## 📁 Struktur Repositori
 
 ```
-Aplikasi_RT/
-├── backend/               # Laravel 11 Core API & Database Layer
+GUYUB/
+├── backend/               # Core Application (Laravel 11, Engine & Views SPA)
 │   ├── app/
-│   ├── config/
-│   ├── database/
-│   └── routes/
-├── frontend/              # Static SPA Client (HTML5, TailwindCSS, Vanilla JS)
-│   ├── assets/
-│   │   ├── css/          # Modular CSS Files
-│   │   └── js/           # Modular JS Actions & Router
-│   ├── index.html         # Landing Page Publik
-│   ├── login.html         # Form Login
-│   └── dashboard.html     # Portal Panel Warga & Admin
-└── README.md              # Panduan Utama Proyek
+│   │   ├── Http/Controllers/   # Logic & Controller
+│   │   └── Models/             # Eloquent Database Models
+│   ├── config/                 # Application Configurations
+│   ├── database/               # Migrations & Seeders
+│   ├── public/                 # Assets & User File Uploads
+│   ├── resources/views/        # Blade Templates & Component Views
+│   └── routes/                 # Web & API Route Definitions
+├── frontend/              # Web Client Static Interface
+└── README.md              # Dokumentasi Utama GUYUB
 ```
 
 ---
 
-## 🛠️ Langkah Menjalankan Aplikasi
+## 🚀 Panduan Instalasi & Penggunaan
 
-### 1. Jalankan Backend (API Laravel 11)
+### 1. Prasyarat Sistem
+- **PHP** >= 8.2
+- **Composer** >= 2.x
+- **MySQL / MariaDB** (XAMPP Server)
+- **Node.js & NPM** (Opsional)
 
-Pastikan XAMPP (Apache & MySQL) Anda sudah aktif.
+### 2. Langkah Instalasi Backend (Laravel Core)
 
-1. Buka Terminal, masuk ke direktori `backend`:
+1. Masuk ke direktori `backend`:
    ```bash
    cd backend
    ```
-2. Salin file `.env.example` ke `.env` (sesuaikan konfigurasi database jika diperlukan):
+
+2. Salin file environment dan atur koneksi database:
    ```bash
    cp .env.example .env
    ```
-3. Instal dependencies Composer:
+
+3. Install dependencies composer:
    ```bash
    composer install
    ```
-4. Generate key aplikasi:
+
+4. Generate Application Key:
    ```bash
    php artisan key:generate
    ```
-5. Jalankan migrasi dan seeder database untuk data awal (UMKM, Posyandu, Jadwal Ronda, Akun Demo):
+
+5. Jalankan migrasi database beserta data awal (seeders):
    ```bash
    php artisan migrate:fresh --seed
    ```
-6. Jalankan local development server:
+
+6. Jalankan server lokal:
    ```bash
    php artisan serve
    ```
-   Backend API sekarang berjalan di: `http://127.0.0.1:8000`
-
-### 2. Jalankan Frontend (SPA Client)
-
-1. Buka folder `frontend` di file explorer Anda.
-2. Klik dua kali pada file `index.html` untuk membuka halaman utama publik langsung di peramban (browser).
-3. Anda juga dapat menjalankannya di server lokal XAMPP dengan meletakkan folder repositori ini di dalam direktori `C:/xampp/htdocs/`.
-   * Akses URL publik: `http://localhost/kas-rt/frontend/index.html`
-   * Akses Portal login: `http://localhost/kas-rt/frontend/login.html`
+   Aplikasi dapat diakses melalui browser di: `http://127.0.0.1:8000` atau melalui server lokal XAMPP `http://localhost/kas-rt/backend/public`.
 
 ---
 
-## 👥 Akun Demo Login
+## 🔐 Kredensial Akun Demo
 
-Untuk mencoba sistem administrasi internal RT, masuk menggunakan kredensial berikut:
+Untuk mencoba berbagai tingkat hak akses pengguna di dalam sistem GUYUB:
 
-| Peran (Role) | Email / Username | Kata Sandi |
-|---|---|---|
-| **Super Admin** | `superadmin@gmail.com` | `password` |
-| **Ketua RT** | `rt@gmail.com` | `password` |
-| **Bendahara** | `bendahara@gmail.com` | `password` |
-| **Warga** | `warga@gmail.com` | `password` |
+| Peran (Role) | Email / Username | Kata Sandi | Akses Utama |
+|---|---|---|---|
+| **Super Admin** | `superadmin@gmail.com` | `password` | Akses Penuh Sistem & Pengaturan |
+| **Ketua RT** | `rt@gmail.com` | `password` | Manajerial Warga, Surat, & Kebijakan |
+| **Bendahara** | `bendahara@gmail.com` | `password` | Pengelolaan Kas, Iuran, & Laporan Keuangan |
+| **Warga** | `warga@gmail.com` | `password` | Layanan Surat, Iuran Saya, & UMKM |
 
 ---
 
-## 💡 Keunggulan Arsitektur BE/FE Terpisah
+## ⚡ Keunggulan Performa & Arsitektur
 
-1. **Modular & Clean:** Kode CSS, JavaScript, dan HTML dipisahkan dalam folder modular (`assets/css` dan `assets/js`) sehingga lebih mudah dikembangkan dan dipelihara.
-2. **Koneksi Resilien:** Frontend terintegrasi menggunakan Fetch API dengan sistem fallback otomatis (mencoba port XAMPP default terlebih dahulu kemudian port Artisan Serve `8000`).
-3. **SPA Modern:** Halaman admin menggunakan sistem *Single Page Application* (SPA) dengan pergantian modul instan tanpa memuat ulang browser (no full reload).
+1. **SPA Interaktif (0ms Navigation)**: Menggunakan pola *Stale-While-Revalidate (SWR)* client-side caching untuk perpindahan halaman yang instan tanpa menderita loading berulang.
+2. **Database Aggregation Efficient**: Query agregasi SQL dioptimalkan langsung di level database (`SUM()`, `LEFT JOIN` group by) tanpa membebankan alokasi memori PHP.
+3. **Lazy Self-Healing Throttle**: Proteksi struktur tabel otomatis yang ter-cache secara efisien sehingga tidak membebani query SQL di setiap request.
+
+---
+
+© 2026 **GUYUB** — *Gerbang Urusan dan Layanan Warga Bersama*.

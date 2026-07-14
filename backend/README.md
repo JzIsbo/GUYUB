@@ -1,6 +1,6 @@
-# Backend API - Kas RT Digital
+# Backend Engine — GUYUB (Gerbang Urusan dan Layanan Warga Bersama)
 
-Bagian ini merupakan server backend berbasis **Laravel 11** yang berfungsi menyediakan REST API, manajemen database MySQL (ORM Eloquent), otentikasi sesi, serta sistem administrasi partial view untuk SPA (Single Page Application) klien.
+Bagian ini merupakan server backend berbasis **Laravel 11** yang berfungsi menyediakan REST API, manajemen database MySQL (ORM Eloquent), otentikasi sesi, serta sistem administrasi partial view untuk SPA (Single Page Application) GUYUB.
 
 ## 🚀 Fitur Utama Backend
 

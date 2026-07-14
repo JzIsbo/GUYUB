@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SIPERWARA - Sistem Informasi Pengelolaan Warga</title>
+    <title>GUYUB - Gerbang Urusan dan Layanan Warga Bersama</title>
 
     {{-- Tailwind --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -218,7 +218,7 @@
             <div>
 
                 <h1 class="text-white text-lg font-bold">
-                    SIPERWARA
+                    GUYUB
                 </h1>
 
                 <p class="text-blue-100 text-[11px]">
@@ -633,7 +633,7 @@
                 <i class="fa-solid fa-circle-info"></i> Tentang Kami
             </div>
             <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-3">Siapa Kami?</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed">SIPERWARA adalah platform digital modern untuk mendukung administrasi dan pelayanan warga secara transparan, cepat, dan mudah.</p>
+            <p class="text-gray-500 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed">GUYUB (Gerbang Urusan dan Layanan Warga Bersama) adalah platform digital modern untuk mendukung administrasi dan pelayanan warga secara transparan, cepat, dan mudah.</p>
         </div>
 
         {{-- GRID KONTEN --}}
@@ -790,7 +790,7 @@
             <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
                 <i class="fa-solid fa-people-roof text-white text-sm"></i>
             </div>
-            <span class="text-white font-bold text-base">SIPERWARA</span>
+            <span class="text-white font-bold text-base">GUYUB</span>
         </div>
         <div class="flex items-center justify-center gap-6 mb-5">
             <a href="#beranda" class="text-gray-400 hover:text-white text-xs transition">Beranda</a>
@@ -798,7 +798,7 @@
             <a href="#tentang" class="text-gray-400 hover:text-white text-xs transition">Tentang</a>
             <a href="#kontak" class="text-gray-400 hover:text-white text-xs transition">Kontak</a>
         </div>
-        <p class="text-gray-500 text-xs">© 2026 SIPERWARA — Sistem Informasi Pengelolaan Warga</p>
+        <p class="text-gray-500 text-xs">© 2026 GUYUB — Gerbang Urusan dan Layanan Warga Bersama</p>
     </div>
 </footer>
 

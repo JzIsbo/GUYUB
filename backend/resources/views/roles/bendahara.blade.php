@@ -8,7 +8,7 @@
     <div class="w-64 bg-[#0e1b35] min-h-screen text-white p-6 shrink-0 flex flex-col">
         <div class="flex items-center mb-10">
             <span class="bg-blue-500 p-2 rounded mr-2">🏠</span>
-            <h1 class="text-xl font-bold italic">SIPERWARA</h1>
+            <h1 class="text-xl font-bold italic">GUYUB</h1>
         </div>
         <nav class="space-y-4 flex-1">
             <p class="text-xs text-gray-500 uppercase font-bold">Menu Utama</p>

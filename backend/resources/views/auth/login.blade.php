@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SIPERWARA</title>
+    <title>Login - GUYUB</title>
 
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -323,7 +323,7 @@
                 </div>
 
                 <h1 class="left-title mt-6">
-                    SIPER<span class="text-blue-400">WARA</span>
+                    GU<span class="text-blue-400">YUB</span>
                 </h1>
 
                 <p class="left-desc mt-5 max-w-[300px] text-blue-100">
@@ -395,7 +395,7 @@
                     </h1>
 
                     <p class="login-subtitle text-[#66708c]">
-                        Silakan masuk untuk melanjutkan ke SIPERWARA.
+                        Silakan masuk untuk melanjutkan ke GUYUB.
                     </p>
                 </div>
 

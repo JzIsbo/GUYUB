@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SIPERWARA - Sistem Informasi Pengelolaan Warga</title>
+    <title>GUYUB - Gerbang Urusan dan Layanan Warga Bersama</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 </head>
 <head>

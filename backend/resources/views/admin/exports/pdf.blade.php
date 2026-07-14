@@ -198,7 +198,7 @@
     <!-- Corporate RT Header -->
     <div class="header">
         <div class="header-logo">
-            KAS RT DIGITAL
+            SIPERWARA
         </div>
         <div class="header-info">
             <h2>{{ $namaRT }}</h2>
@@ -270,7 +270,7 @@
         <div class="signature-box">
             <p>Dibuat oleh,</p>
             <div class="signature-line">Bendahara RT</div>
-            <div class="signature-title">KAS RT Digital System</div>
+            <div class="signature-title">SIPERWARA</div>
         </div>
     </div>
 

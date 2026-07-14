@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Super Admin - KAS RT Digital System</title>
+    <title>Super Admin - SIPERWARA</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         window.csrfToken = "{{ csrf_token() }}";
@@ -258,7 +258,7 @@
                 <i class="fa-solid fa-house-chimney-window text-[#0F172A] text-xl"></i>
             </div>
             <div>
-                <h1 class="text-white font-extrabold text-xl leading-none italic uppercase tracking-tighter">KAS RT</h1>
+                <h1 class="text-white font-extrabold text-xl leading-none italic uppercase tracking-tighter">SIPERWARA</h1>
                 <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[2px] mt-1.5 text-nowrap">Super Admin Panel</p>
             </div>
         </div>

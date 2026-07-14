@@ -5,7 +5,7 @@
 </head>
 <body class="bg-gray-100 flex h-screen overflow-hidden">
     <div class="w-64 bg-[#0e1b35] text-white flex flex-col shrink-0 p-6">
-        <h1 class="text-xl font-bold mb-10 italic">🏠 KAS RT</h1>
+        <h1 class="text-xl font-bold mb-10 italic">🏠 SIPERWARA</h1>
         <nav class="space-y-4 flex-1">
             <a href="#" class="block p-3 bg-blue-600 rounded-xl font-bold">📊 Dashboard</a>
             <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-xl">🏘️ Data Warga</a>

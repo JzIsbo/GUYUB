@@ -17,25 +17,29 @@
     </div>
 
     <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
-        <form id="form-profil-baru" action="{{ route('settings.update') }}" method="POST">
+        <form id="form-profil-baru" action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <div class="mb-8">
-                <label class="block text-sm font-bold text-gray-700 mb-4">Pilih Avatar Profil</label>
-                <div class="flex flex-wrap gap-4">
-                    @foreach($avatars as $avatar)
-                    <label class="cursor-pointer relative">
-                        <input type="radio" name="avatar" value="{{ $avatar }}" class="peer hidden" {{ $user->photo == $avatar ? 'checked' : '' }}>
+            <div class="mb-8 flex flex-col sm:flex-row items-center gap-6">
+                <!-- Current Profile Image Preview -->
+                <div class="relative group">
+                    <div class="w-24 h-24 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-50 flex items-center justify-center">
+                        <img id="avatar-preview" src="{{ $user->photo ?? 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=random&color=fff' }}" alt="Foto Profil" class="w-full h-full object-cover">
+                    </div>
+                </div>
 
-                        <div class="w-16 h-16 rounded-full border-4 border-transparent peer-checked:border-blue-600 peer-checked:scale-110 transition-all hover:scale-105 bg-gray-50 overflow-hidden shadow-sm">
-                            <img src="{{ $avatar }}" alt="Avatar" class="w-full h-full object-cover">
-                        </div>
-
-                        <div class="absolute -bottom-1 -right-1 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity shadow-md">
-                            <i class="fa-solid fa-check text-xs"></i>
-                        </div>
-                    </label>
-                    @endforeach
+                <!-- Upload details -->
+                <div class="flex-1 text-center sm:text-left">
+                    <label class="block text-sm font-extrabold text-gray-700 mb-1">Foto Profil</label>
+                    <p class="text-xs text-gray-400 mb-3">Mendukung file JPG, JPEG, PNG, GIF, atau SVG. Ukuran maksimal 2MB.</p>
+                    
+                    <div class="inline-block relative">
+                        <input type="file" name="avatar_file" id="avatar_file" class="hidden" accept="image/*" onchange="previewAvatar(event)">
+                        <button type="button" onclick="document.getElementById('avatar_file').click()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-gray-200/50 shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            Pilih File Foto
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -84,14 +88,23 @@
         }
     };
 
+    window.previewAvatar = function(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const preview = document.getElementById('avatar-preview');
+            if (preview) {
+                preview.src = reader.result;
+            }
+        }
+        if (event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    };
+
     // Gunakan fungsi klik langsung agar lebih stabil
-   window.simpanProfil = function(btn) {
+    window.simpanProfil = function(btn) {
         let form = document.getElementById('form-profil-baru');
         let formData = new FormData(form);
-
-        // Pastikan radio yang dipilih terdeteksi
-        let selected = document.querySelector('input[name="avatar"]:checked');
-        if (selected) formData.set('avatar', selected.value);
 
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...';
@@ -104,7 +117,12 @@
         .then(res => res.json())
         .then(data => {
             alert(data.message || 'Profil berhasil diperbarui!');
-            // Reload paksa dengan timestamp agar gambar avatar baru langsung terlihat
+            // Invalidasi page cache sebelum berpindah/refresh agar perubahan instan terlihat
+            if (typeof window.invalidatePageCache === 'function') {
+                window.invalidatePageCache('pengaturan');
+                // Invalidasi dashboard juga agar avatarnya terupdate
+                window.invalidatePageCache('dashboard');
+            }
             window.location.href = window.location.pathname + '?t=' + new Date().getTime();
         })
         .catch(err => {

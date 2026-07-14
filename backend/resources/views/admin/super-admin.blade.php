@@ -609,13 +609,13 @@
                 <div class="bg-gray-50 p-2.5 rounded-xl text-gray-400 relative cursor-pointer hover:bg-gray-100 transition hidden sm:block">
                 </div>
 
-                <div class="flex items-center gap-3 md:gap-4 pl-3 md:pl-6 border-l border-gray-100">
+                <a href="javascript:void(0)" onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']'))" class="flex items-center gap-3 md:gap-4 pl-3 md:pl-6 border-l border-gray-100 hover:opacity-80 transition cursor-pointer">
                     <div class="text-right hidden sm:block">
                         <p class="text-sm font-black text-gray-800 leading-none lowercase tracking-tighter">{{ Auth::user()->name }}</p>
                         <p class="text-[9px] text-blue-600 font-black uppercase mt-1 italic tracking-widest leading-none">{{ Auth::user()->role }}</p>
                     </div>
                     <img src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" class="h-10 w-10 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover" alt="Avatar">
-                </div>
+                </a>
             </div>
         </header>
 

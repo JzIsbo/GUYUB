@@ -16,10 +16,10 @@ class SystemController extends Controller
     public function updateSettings(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
-            'avatar'   => 'nullable|string|max:500',
-            'password' => 'nullable|string|min:6'
+            'name'        => 'required|string|max:255',
+            'email'       => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
+            'avatar_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'password'    => 'nullable|string|min:6'
         ]);
 
         try {
@@ -27,8 +27,11 @@ class SystemController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
 
-            if ($request->has('avatar')) {
-                $user->photo = $request->avatar;
+            if ($request->hasFile('avatar_file')) {
+                $file = $request->file('avatar_file');
+                $filename = 'avatar_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/profile'), $filename);
+                $user->photo = '/uploads/profile/' . $filename;
             }
 
             if ($request->filled('password')) {

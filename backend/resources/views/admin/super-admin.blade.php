@@ -606,7 +606,29 @@
             </div>
 
             <div class="flex items-center gap-3 md:gap-6">
-                <div class="bg-gray-50 p-2.5 rounded-xl text-gray-400 relative cursor-pointer hover:bg-gray-100 transition hidden sm:block">
+                <!-- Notification Bell -->
+                <div class="relative hidden sm:block" id="notification-container">
+                    <button onclick="toggleNotificationDropdown(event)" class="bg-gray-50 p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-gray-100 transition relative focus:outline-none border border-gray-100 shadow-sm flex items-center justify-center">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-[8px] font-black flex items-center justify-center hidden">0</span>
+                    </button>
+
+                    <!-- Dropdown Panel -->
+                    <div id="notification-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 hidden transition-all duration-200 transform scale-95 opacity-0 origin-top-right">
+                        <div class="px-4 py-2 border-b border-gray-50 flex justify-between items-center">
+                            <span class="text-[10px] font-black text-gray-800 uppercase tracking-widest">Notifikasi Aktivitas</span>
+                            <span onclick="markNotificationsAsRead(event)" class="text-[9px] text-blue-600 font-extrabold hover:underline cursor-pointer">Tandai Dibaca</span>
+                        </div>
+                        <div id="notification-list" class="divide-y divide-gray-50 max-h-60 overflow-y-auto">
+                            <!-- Dynamic Content -->
+                            <div class="p-4 text-center text-gray-400 text-xs italic">
+                                Belum ada notifikasi.
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 border-t border-gray-50 text-center">
+                            <a href="javascript:void(0)" onclick="goToActivityLog(event)" class="text-[9px] text-blue-600 font-black uppercase tracking-wider hover:underline">Lihat Semua Aktivitas</a>
+                        </div>
+                    </div>
                 </div>
 
                 <a href="javascript:void(0)" onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']'))" class="flex items-center gap-3 md:gap-4 pl-3 md:pl-6 border-l border-gray-100 hover:opacity-80 transition cursor-pointer">
@@ -936,6 +958,11 @@
                 const span = footerLink.querySelector('span');
                 if (span) footerLink.setAttribute('data-tooltip', span.textContent.trim());
             }
+
+            // Load bell notifications on page ready
+            if (typeof window.fetchNotifications === 'function') {
+                window.fetchNotifications();
+            }
         });
 
         // ==========================================
@@ -1164,6 +1191,11 @@
                         </div>`;
                 });
             }
+
+            // Refresh bell notifications on page navigation
+            if (typeof window.fetchNotifications === 'function') {
+                window.fetchNotifications();
+            }
         }
 
         // ==========================================
@@ -1251,6 +1283,133 @@
                 }
             });
         }
+
+        // ==========================================
+        // NOTIFIKASI AKTIVITAS PENGGUNA (BELL NOTIFICATION)
+        // ==========================================
+        window.latestActivityTimestamp = null;
+
+        window.fetchNotifications = function() {
+            let url = "{{ route('aktivitas.data') }}?_t=" + new Date().getTime();
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json())
+            .then(data => {
+                if (!data || data.length === 0) return;
+                
+                const lastViewed = localStorage.getItem('last_viewed_activity') || '';
+                let unreadCount = 0;
+                let listHtml = '';
+                
+                data.slice(0, 5).forEach((item) => {
+                    const isUnread = lastViewed ? (new Date(item.created_at) > new Date(lastViewed)) : true;
+                    if (isUnread) unreadCount++;
+                    
+                    // Determin warna badge tindakan
+                    let badgeStyle = 'bg-blue-50 text-blue-600 border-blue-100';
+                    let act = (item.action || '').toUpperCase();
+                    if (act.includes('BUAT') || act.includes('TAMBAH')) {
+                        badgeStyle = 'bg-emerald-50 text-emerald-600 border-emerald-100';
+                    } else if (act.includes('UPDATE') || act.includes('RESPON') || act.includes('SETTING') || act.includes('SINKRONISASI')) {
+                        badgeStyle = 'bg-amber-50 text-amber-600 border-amber-100';
+                    } else if (act.includes('HAPUS') || act.includes('BERSIH') || act.includes('DELETE')) {
+                        badgeStyle = 'bg-rose-50 text-rose-600 border-rose-100';
+                    } else if (act.includes('LOGIN')) {
+                        badgeStyle = 'bg-indigo-50 text-indigo-600 border-indigo-100';
+                    }
+
+                    listHtml += `
+                    <div class="p-3 hover:bg-gray-50/50 transition-all duration-150 flex items-start gap-2.5 ${isUnread ? 'bg-blue-50/10' : ''}">
+                        <img src="${item.photo || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(item.name || 'User')}" class="w-7 h-7 rounded-full border border-gray-200 object-cover flex-shrink-0">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="font-bold text-gray-800 text-[10px] truncate">${item.name || 'User'}</span>
+                                <span class="text-[8px] text-gray-400 whitespace-nowrap">${item.waktu_berlalu || ''}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span class="px-1 py-0.2 rounded text-[7px] font-bold border ${badgeStyle} shrink-0">${item.action || '-'}</span>
+                                <span class="text-[9px] text-gray-500 truncate">${item.description || ''}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                
+                const badge = document.getElementById('notification-badge');
+                if (badge) {
+                    if (unreadCount > 0) {
+                        badge.innerText = unreadCount;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+                
+                const listContainer = document.getElementById('notification-list');
+                if (listContainer) {
+                    listContainer.innerHTML = listHtml;
+                }
+                
+                // Simpan timestamp terbaru
+                if (data[0] && data[0].created_at) {
+                    window.latestActivityTimestamp = data[0].created_at;
+                }
+            }).catch(err => console.warn('Gagal memuat notifikasi:', err));
+        };
+
+        window.toggleNotificationDropdown = function(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('notification-dropdown');
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                if (isHidden) {
+                    dropdown.classList.remove('hidden');
+                    setTimeout(() => {
+                        dropdown.classList.remove('scale-95', 'opacity-0');
+                        dropdown.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                    
+                    // Tandai dibaca saat membuka panel dropdown
+                    if (window.latestActivityTimestamp) {
+                        localStorage.setItem('last_viewed_activity', window.latestActivityTimestamp);
+                        const badge = document.getElementById('notification-badge');
+                        if (badge) badge.classList.add('hidden');
+                    }
+                } else {
+                    dropdown.classList.remove('scale-100', 'opacity-100');
+                    dropdown.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        dropdown.classList.add('hidden');
+                    }, 200);
+                }
+            }
+        };
+
+        window.markNotificationsAsRead = function(event) {
+            if (event) event.stopPropagation();
+            if (window.latestActivityTimestamp) {
+                localStorage.setItem('last_viewed_activity', window.latestActivityTimestamp);
+                window.fetchNotifications();
+            }
+        };
+
+        window.goToActivityLog = function(event) {
+            if (event) event.stopPropagation();
+            window.toggleNotificationDropdown();
+            
+            const targetLink = document.querySelector('.menu-link[onclick*="aktivitas-pengguna"]');
+            switchPage('aktivitas-pengguna', targetLink);
+        };
+
+        // Tutup notifikasi jika klik di luar
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notification-dropdown');
+            if (dropdown && !dropdown.classList.contains('hidden') && !event.target.closest('#notification-container')) {
+                dropdown.classList.remove('scale-100', 'opacity-100');
+                dropdown.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    dropdown.classList.add('hidden');
+                }, 200);
+            }
+        });
     </script>
 </body>
 </html>

@@ -631,13 +631,13 @@
                     </div>
                 </div>
 
-                <a href="javascript:void(0)" onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']'))" class="flex items-center gap-3 md:gap-4 pl-3 md:pl-6 border-l border-gray-100 hover:opacity-80 transition cursor-pointer">
-                    <div class="text-right hidden sm:block">
+                <div class="flex items-center gap-3 md:gap-4 pl-3 md:pl-6 border-l border-gray-100">
+                    <div onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']'))" class="text-right hidden sm:block cursor-pointer hover:opacity-80 transition" title="Ke Pengaturan Akun">
                         <p class="text-sm font-black text-gray-800 leading-none lowercase tracking-tighter">{{ Auth::user()->name }}</p>
                         <p class="text-[9px] text-blue-600 font-black uppercase mt-1 italic tracking-widest leading-none">{{ Auth::user()->role }}</p>
                     </div>
-                    <img src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" class="h-10 w-10 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover" alt="Avatar">
-                </a>
+                    <img src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" onclick="openAvatarModal(this.src, '{{ addslashes(Auth::user()->name) }}')" class="h-10 w-10 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover cursor-pointer hover:scale-105 active:scale-95 transition-transform" alt="Avatar" title="Lihat Foto Full">
+                </div>
             </div>
         </header>
 
@@ -1410,6 +1410,35 @@
                 }, 200);
             }
         });
+
+        window.openAvatarModal = function(src, name) {
+            const modal = document.getElementById('modal-full-avatar');
+            const img = document.getElementById('full-avatar-img');
+            const nameText = document.getElementById('full-avatar-name');
+            if (modal && img) {
+                img.src = src;
+                if (nameText) nameText.innerText = name || 'Foto Profil';
+                modal.classList.remove('hidden');
+            }
+        };
+
+        window.closeAvatarModal = function() {
+            const modal = document.getElementById('modal-full-avatar');
+            if (modal) modal.classList.add('hidden');
+        };
     </script>
+
+    <!-- Modal Full View Avatar -->
+    <div id="modal-full-avatar" class="fixed inset-0 bg-black/75 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-4 hidden transition-all duration-300" onclick="closeAvatarModal()">
+        <div class="relative max-w-md w-full flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
+            <button onclick="closeAvatarModal()" class="absolute -top-12 right-0 text-white hover:text-red-400 text-xl font-bold bg-white/10 hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition shadow-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="p-2 bg-white/10 rounded-3xl backdrop-blur-md shadow-2xl border border-white/20">
+                <img id="full-avatar-img" src="" class="max-w-full max-h-[75vh] rounded-2xl object-cover bg-white shadow-inner">
+            </div>
+            <p id="full-avatar-name" class="mt-3 text-white font-extrabold text-sm tracking-wide bg-black/40 px-5 py-1.5 rounded-full backdrop-blur-md border border-white/10 shadow-md text-center"></p>
+        </div>
+    </div>
 </body>
 </html>

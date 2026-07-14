@@ -60,21 +60,21 @@
         html.dark header h2, html.dark header p, html.dark header span, html.dark header button { color: #F8FAFC !important; }
         
         /* Containers & Cards */
-        html.dark .bg-white, 
-        html.dark .bg-gray-50, 
-        html.dark .bg-gray-100, 
-        html.dark .bg-gray-50\/50, 
-        html.dark .bg-[#F8FAFC], 
-        html.dark .bg-slate-50, 
-        html.dark .bg-slate-100, 
-        html.dark .bg-slate-200 { 
+        html.dark [class*="bg-white"], 
+        html.dark [class*="bg-gray-50"], 
+        html.dark [class*="bg-gray-100"], 
+        html.dark [class*="bg-slate-50"], 
+        html.dark [class*="bg-slate-100"], 
+        html.dark div.bg-white,
+        html.dark form.bg-white,
+        html.dark div[class*="bg-white"] { 
             background-color: #1E293B !important; 
             color: #F8FAFC !important; 
             border-color: rgba(255, 255, 255, 0.08) !important; 
         }
 
         /* Tables & Table Headers */
-        html.dark thead, html.dark th, html.dark tr th { 
+        html.dark thead, html.dark th, html.dark tr th, html.dark tr.bg-gray-50\/80, html.dark tr.bg-gray-50, html.dark tr.bg-slate-50 { 
             background-color: #111827 !important; 
             color: #E2E8F0 !important; 
             border-color: rgba(255, 255, 255, 0.08) !important; 
@@ -88,18 +88,50 @@
 
         /* Typography / Font Colors */
         html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700,
-        html.dark .text-slate-900, html.dark .text-slate-800, html.dark .text-slate-700 { 
+        html.dark .text-slate-900, html.dark .text-slate-800, html.dark .text-slate-700,
+        html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark h5, html.dark h6 { 
             color: #F8FAFC !important; 
         }
         
         html.dark .text-gray-600, html.dark .text-gray-500, html.dark .text-gray-400,
-        html.dark .text-slate-600, html.dark .text-slate-500, html.dark .text-slate-400 { 
+        html.dark .text-slate-600, html.dark .text-slate-500, html.dark .text-slate-400,
+        html.dark p, html.dark span:not([class*="text-"]) { 
             color: #CBD5E1 !important; 
         }
 
+        /* Colored Status Badges & Buttons in Dark Mode */
+        html.dark [class*="bg-amber"], html.dark [class*="bg-yellow"] {
+            background-color: rgba(217, 119, 6, 0.2) !important;
+            color: #FCD34D !important;
+            border-color: rgba(245, 158, 11, 0.3) !important;
+        }
+
+        html.dark [class*="bg-emerald"], html.dark [class*="bg-green"] {
+            background-color: rgba(5, 150, 105, 0.2) !important;
+            color: #6EE7B7 !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+
+        html.dark [class*="bg-rose"], html.dark [class*="bg-red"] {
+            background-color: rgba(225, 29, 72, 0.2) !important;
+            color: #FCA5A5 !important;
+            border-color: rgba(244, 63, 94, 0.3) !important;
+        }
+
+        html.dark [class*="bg-blue"], html.dark [class*="bg-indigo"] {
+            background-color: rgba(37, 99, 235, 0.2) !important;
+            color: #93C5FD !important;
+            border-color: rgba(59, 130, 246, 0.3) !important;
+        }
+
+        /* Action Buttons Override in Dark Mode */
+        html.dark button.bg-indigo-500, html.dark button.bg-blue-600 {
+            background-color: #3B82F6 !important;
+            color: #FFFFFF !important;
+        }
+
         /* Borders */
-        html.dark .border-gray-50, html.dark .border-gray-100, html.dark .border-gray-200,
-        html.dark .border-slate-50, html.dark .border-slate-100, html.dark .border-slate-200 { 
+        html.dark [class*="border-gray"], html.dark [class*="border-slate"] { 
             border-color: rgba(255, 255, 255, 0.08) !important; 
         }
 

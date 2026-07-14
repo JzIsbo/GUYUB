@@ -38,14 +38,28 @@
             scroll-behavior: smooth;
         }
 
-        /* Dark Mode Overrides for Landing Page */
+        /* ================= LIGHT & DARK MODE SYSTEM STYLING ================= */
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Light Mode Defaults */
+        html:not(.dark) body { background-color: #F8FAFC; color: #1E293B; }
+        html:not(.dark) #fitur, html:not(.dark) #tentang, html:not(.dark) #kontak { background-color: #FFFFFF; }
+        html:not(.dark) .public-tab-btn:not(.active) { background-color: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+
+        /* Dark Mode Overrides */
         html.dark, html.dark body { background-color: #0F172A !important; color: #F8FAFC !important; }
-        html.dark #fitur, html.dark #tentang, html.dark #kontak, html.dark section { background-color: #0F172A !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.08) !important; }
-        html.dark .bg-white { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.08) !important; }
-        html.dark .bg-gray-50, html.dark .bg-gray-50\/50 { background-color: #0F172A !important; border-color: rgba(255,255,255,0.08) !important; }
-        html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700 { color: #F1F5F9 !important; }
-        html.dark .text-gray-600, html.dark .text-gray-500 { color: #94A3B8 !important; }
-        html.dark .border-gray-100, html.dark .border-gray-200 { border-color: rgba(255,255,255,0.08) !important; }
+        html.dark #fitur, html.dark #tentang, html.dark #kontak, html.dark section { background-color: #0F172A !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.06) !important; }
+        html.dark .hero-bg { background: linear-gradient(135deg, #090E17 0%, #0F172A 50%, #1E293B 100%) !important; }
+        html.dark .bg-white { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+        html.dark .bg-gray-50, html.dark .bg-gray-50\/50 { background-color: #111827 !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+        html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700 { color: #F8FAFC !important; }
+        html.dark .text-gray-600, html.dark .text-gray-500 { color: #CBD5E1 !important; }
+        html.dark .border-gray-100, html.dark .border-gray-200 { border-color: rgba(255, 255, 255, 0.08) !important; }
+        html.dark .public-tab-btn:not(.active) { background-color: #1E293B !important; color: #94A3B8 !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+        html.dark .public-tab-btn:not(.active):hover { background-color: #334155 !important; color: #FFFFFF !important; }
+        html.dark footer { background-color: #0B0F19 !important; border-color: rgba(255,255,255,0.05) !important; }
 
         *{
             font-family: 'Poppins', sans-serif;

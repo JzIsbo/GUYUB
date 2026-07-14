@@ -60,8 +60,8 @@
         html.dark header { background-color: #1E293B !important; border-color: rgba(255, 255, 255, 0.05) !important; }
         html.dark header h2, html.dark header p, html.dark header span { color: #F8FAFC !important; }
         html.dark .bg-white { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.08) !important; }
-        html.dark .bg-gray-50, html.dark .bg-gray-50\/50, html.dark .bg-[#F8FAFC] { background-color: #0F172A !important; border-color: rgba(255, 255, 255, 0.08) !important; }
-        html.dark .text-gray-800, html.dark .text-gray-900, html.dark .text-slate-800, html.dark .text-slate-900, html.dark .text-gray-700 { color: #F1F5F9 !important; }
+        html.dark .bg-gray-50, html.dark .bg-gray-50\/50, html.dark .bg-[#F8FAFC], html.dark .bg-slate-50, html.dark .bg-slate-100, html.dark .bg-slate-200 { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark .text-gray-800, html.dark .text-gray-900, html.dark .text-slate-800, html.dark .text-slate-900, html.dark .text-gray-700, html.dark .text-slate-700 { color: #F1F5F9 !important; }
         html.dark .text-gray-600, html.dark .text-gray-500, html.dark .text-slate-600, html.dark .text-slate-500 { color: #94A3B8 !important; }
         html.dark .border-gray-100, html.dark .border-gray-200, html.dark .border-slate-200, html.dark .border-slate-100 { border-color: rgba(255, 255, 255, 0.08) !important; }
         html.dark input, html.dark select, html.dark textarea { background-color: #0F172A !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.15) !important; }

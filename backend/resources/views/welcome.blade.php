@@ -50,10 +50,12 @@
 
         /* Dark Mode Overrides */
         html.dark, html.dark body { background-color: #0F172A !important; color: #F8FAFC !important; }
-        html.dark #fitur, html.dark #tentang, html.dark #kontak, html.dark section { background-color: #0F172A !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.06) !important; }
+        html.dark #fitur, html.dark #tentang, html.dark #kontak, html.dark section { background-color: #0F172A !important; background-image: none !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.06) !important; }
+        html.dark .bg-gradient-to-br, html.dark .bg-gradient-to-r, html.dark .bg-gradient-to-l, html.dark .bg-gradient-to-t, html.dark .bg-gradient-to-b { background-image: none !important; background-color: #0F172A !important; }
         html.dark .hero-bg { background: linear-gradient(135deg, #090E17 0%, #0F172A 50%, #1E293B 100%) !important; }
         html.dark .bg-white { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.08) !important; }
         html.dark .bg-gray-50, html.dark .bg-gray-50\/50 { background-color: #111827 !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+        html.dark .bg-blue-50, html.dark .bg-indigo-50, html.dark .bg-emerald-50, html.dark .bg-rose-50 { background-color: rgba(30, 41, 59, 0.8) !important; border-color: rgba(255,255,255,0.08) !important; }
         html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700 { color: #F8FAFC !important; }
         html.dark .text-gray-600, html.dark .text-gray-500 { color: #CBD5E1 !important; }
         html.dark .border-gray-100, html.dark .border-gray-200 { border-color: rgba(255, 255, 255, 0.08) !important; }

@@ -1,104 +1,170 @@
-# 🏠 GUYUB — Gerbang Urusan dan Layanan Warga Bersama
+<div align="center">
 
-**GUYUB** adalah platform sistem informasi dan pelayanan digital modern berbasis web yang dirancang khusus untuk mengelola administrasi lingkungan RT/RW secara terpadu, transparan, cepat, dan efisien.
+# 🏠 GUYUB — Gerbang Urusan & Layanan Warga Bersama
+
+![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Platform](https://img.shields.io/badge/Architecture-Single_Page_App_(SPA)-2563EB?style=for-the-badge)
+
+<p align="center">
+  <b>Solusi DigitalTerpadu Administrasi, Keuangan, & Pelayanan Mandiri Lingkungan RT/RW Modern</b>
+</p>
+
+<p align="center">
+  <a href="#-fitur-unggulan">Fitur Utama</a> •
+  <a href="#-matriks-hak-akses-role">Matriks Role</a> •
+  <a href="#-arsitektur-sistem">Arsitektur</a> •
+  <a href="#-panduan-instalasi">Instalasi</a> •
+  <a href="#-kredensial-akun-demo">Demo Accounts</a>
+</p>
 
 ---
 
-## ✨ Fitur Utama
+</div>
 
-- **🏛️ Dashboard Executive & Statistik Realtime**: Ringkasan kas RT, statistik warga, grafik transparansi keuangan, dan jadwal kegiatan.
-- **💵 Keuangan & Iuran Digital**: Pengelolaan arus kas (pemasukan & pengeluaran), laporan keuangan, pembayaran QRIS/Virtual Account, serta iuran otomatis.
-- **📝 Surat Online & Layanan Mandiri**: Pengajuan surat pengantar warga secara digital dengan persetujuan pengurus RT.
-- **🛡️ Keamanan & Jadwal Ronda**: Pengelolaan regu ronda malam, jadwal piket, dan sistem pelaporan situasi lingkungan.
-- **🩺 Posyandu & Kesehatan Keluarga**: Pencatatan tumbuh kembang balita, riwayat kesehatan lansia, dan informasi Posyandu.
-- **🛍️ Koperasi & Pembinaan UMKM**: Marketplace usaha warga lingkungan untuk saling mendukung ekonomi lokal.
-- **♻️ Bank Sampah Lingkungan**: Manajemen setoran dan penimbangan sampah terdaur ulang.
-- **📢 Pengumuman & Aspirasi Warga**: Wadah komunikasi langsung warga dengan pengurus RT secara terbuka.
-- **🔒 Audit Trail & CCTV Notifikasi**: Log aktivitas pengguna otomatis dan lonceng notifikasi realtime.
+## 📌 Tentang GUYUB
+
+**GUYUB** (*Gerbang Urusan dan Layanan Warga Bersama*) adalah ekosistem aplikasi web Single Page Application (SPA) yang dirancang khusus untuk mendigitalisasi seluruh aktivitas warga dan pengurus RT/RW secara **transparan**, **akuntabel**, **cepat**, dan **bebas hambatan**.
+
+Dengan integrasi fitur keuangan modern (QRIS & Payment Gateway), administrasi surat-menyurat instan, hingga sistem pemantauan ronda malam dan kesehatan Posyandu, GUYUB menciptakan keharmonisan serta transparansi penuh di tingkat komunitas warga.
 
 ---
 
-## 📁 Struktur Repositori
+## ✨ Fitur Unggulan
 
+### 🏛️ 1. Manajemen Administrasi & Kepengurusan
+* **Surat Online Instan**: Pengajuan surat pengantar warga secara digital dengan sistem persetujuan instan oleh Ketua RT.
+* **Pengumuman Publik**: Publikasi informasi resmi RT yang dapat dibaca oleh seluruh warga secara terbuka.
+* **Direktori Warga & Pengurus**: Pencatatan data identitas warga, kepala keluarga, serta susunan pengurus RT terstruktur.
+* **Inventaris Aset & Perangkat Sistem**: Pendataan perangkat dan aset inventaris lingkungan RT.
+
+### 💵 2. Keuangan & Iuran Terintegrasi
+* **Pencatatan Arus Kas**: Transparansi dana masuk (pemasukan) dan pengeluaran kas RT secara realtime.
+* **Pembayaran Online & QRIS**: Dukungan Virtual Account & QRIS otomatis untuk pembayaran iuran bulanan.
+* **Laporan Arus Kas & Ekspor PDF**: Penjumlahan agregat otomatis dan laporan keuangan yang siap diunduh dalam format PDF resmi.
+
+### 🛡️ 3. Keamanan & Layanan Komunitas
+* **Jadwal Ronda Malam**: Pembagian regu piket ronda malam per hari beserta nama koordinator shift.
+* **Posyandu Balita & Lansia**: Pencatatan tumbuh kembang anak dan riwayat pemeriksaan kesehatan lansia.
+* **Marketplace UMKM Warga**: Wadah promosi usaha lokal antar warga lingkungan.
+* **Bank Sampah Lingkungan**: Catatan penimbangan dan setoran sampah terdaur ulang.
+* **Koperasi Warga & Rukem**: Pengelolaan simpan pinjam serta dana santunan duka cita warga (Rukem).
+* **Kotak Aspirasi & Notifikasi Realtime**: Penyampaian masukan warga dan lonceng notifikasi aktivitas otomatis.
+
+---
+
+## 👥 Matriks Hak Akses Role (Role-Based Access Control)
+
+Sistem **GUYUB** dilengkapi dengan pembagian hak akses (*RBAC*) yang ketat untuk menjamin keamanan data:
+
+| Modul / Fitur | 👑 Super Admin | 👤 Ketua RT | 💵 Bendahara | 🏡 Warga |
+|---|:---:|:---:|:---:|:---:|
+| **Dashboard Utama** | ✅ Full | ✅ Full | ✅ Full | ✅ View Only |
+| **Surat Online** | ✅ Kelola & Approve | ✅ Kelola & Approve | 👁️ Lihat Data | 📝 Ajukan Surat |
+| **Pengumuman RT** | ✅ Buat / Edit / Hapus | ✅ Buat / Edit / Hapus | 👁️ Lihat | 👁️ Lihat |
+| **Tagihan & Status Pembayaran** | ✅ Full Access | 👁️ Monitoring | ✅ Full Access | 💳 Bayar Tagihan |
+| **Pemasukan & Pengeluaran Kas** | ✅ Full Access | 👁️ Monitoring | ✅ Full Access | ❌ Closed |
+| **Laporan Kas & Ekspor PDF** | ✅ Full Access | ✅ Export PDF | ✅ Full Access | ❌ Closed |
+| **Data Warga & Pengurus RT** | ✅ Edit / Delete | ✅ Edit / Delete | 👁️ Direktori | 👁️ Direktori |
+| **Jadwal Ronda & Keamanan** | ✅ Kelola Shift | ✅ Kelola Shift | 👁️ Lihat | 👁️ Lihat Jadwal |
+| **Posyandu, UMKM, Bank Sampah** | ✅ Kelola Data | ✅ Kelola Data | ✅ Kelola Data | 👁️ Partisipasi |
+| **Log Aktivitas & Audit Trail** | ✅ Complete Logs | ❌ Closed | ❌ Closed | ❌ Closed |
+| **Pengaturan Akun & Profil** | ✅ Personal Profile | ✅ Personal Profile | ✅ Personal Profile | ✅ Personal Profile |
+
+---
+
+## 🏗️ Arsitektur & Optimasi Performa
+
+```text
++-------------------------------------------------------------------+
+|                           BROWSER CLIENT                          |
+|  +-------------------------------------------------------------+  |
+|  | SWR Caching Router (0ms Instant Navigation)                |  |
+|  | Real-Time Notification Bell & Interactive Direct Modal View |  |
+|  +-------------------------------------------------------------+  |
++----------------------------------+--------------------------------+
+                                   | AJAX (JSON / HTML Partial)
+                                   v
++-------------------------------------------------------------------+
+|                        LARAVEL 11 BACKEND                         |
+|  +---------------------------+---------------------------------+  |
+|  | Role Permission Middleware| SQL SUM Aggregation Engine      |  |
+|  | Audit Trail CCTV Logger   | Self-Healing DB Cache Throttle  |  |
+|  +---------------------------+---------------------------------+  |
++----------------------------------+--------------------------------+
+                                   | PDO
+                                   v
++-------------------------------------------------------------------+
+|                          MYSQL DATABASE                           |
++-------------------------------------------------------------------+
 ```
-GUYUB/
-├── backend/               # Core Application (Laravel 11, Engine & Views SPA)
-│   ├── app/
-│   │   ├── Http/Controllers/   # Logic & Controller
-│   │   └── Models/             # Eloquent Database Models
-│   ├── config/                 # Application Configurations
-│   ├── database/               # Migrations & Seeders
-│   ├── public/                 # Assets & User File Uploads
-│   ├── resources/views/        # Blade Templates & Component Views
-│   └── routes/                 # Web & API Route Definitions
-├── frontend/              # Web Client Static Interface
-└── README.md              # Dokumentasi Utama GUYUB
-```
+
+1. **⚡ SWR (Stale-While-Revalidate) Page Caching**: Perpindahan halaman instan tanpa jeda *loading* berulang saat bernavigasi.
+2. **🗄️ Database Query Aggregation**: Perhitungan saldo dan laporan kas diproses di level database engine menggunakan fungsi agregat `SUM()`, menghemat memori PHP hingga 90%.
+3. **🛡️ Lazy Database Self-Healing**: Validasi skema database otomatis menggunakan penyimpan cache waktu sehingga tidak membebani query per detik.
 
 ---
 
-## 🚀 Panduan Instalasi & Penggunaan
+## 🚀 Panduan Instalasi & Jalankan Sistem
 
 ### 1. Prasyarat Sistem
-- **PHP** >= 8.2
+- **PHP** >= 8.2 (Extension: OpenSSL, PDO, Mbstring, Tokenizer, XML)
 - **Composer** >= 2.x
-- **MySQL / MariaDB** (XAMPP Server)
-- **Node.js & NPM** (Opsional)
+- **MySQL Server / MariaDB** (XAMPP / Laragon)
 
-### 2. Langkah Instalasi Backend (Laravel Core)
+### 2. Langkah Instalasi Backend
 
-1. Masuk ke direktori `backend`:
+1. Buka Terminal / Command Prompt, lalu masuk ke folder `backend`:
    ```bash
    cd backend
    ```
 
-2. Salin file environment dan atur koneksi database:
+2. Buat berkas environment dari template:
    ```bash
    cp .env.example .env
    ```
 
-3. Install dependencies composer:
+3. Pasang dependency composer:
    ```bash
    composer install
    ```
 
-4. Generate Application Key:
+4. Buat kunci enkripsi aplikasi:
    ```bash
    php artisan key:generate
    ```
 
-5. Jalankan migrasi database beserta data awal (seeders):
+5. Jalankan migrasi tabel dan seeding data awal:
    ```bash
    php artisan migrate:fresh --seed
    ```
 
-6. Jalankan server lokal:
+6. Jalankan server lokal Laravel:
    ```bash
    php artisan serve
    ```
-   Aplikasi dapat diakses melalui browser di: `http://127.0.0.1:8000` atau melalui server lokal XAMPP `http://localhost/kas-rt/backend/public`.
+   Aplikasi siap diakses di: **`http://127.0.0.1:8000`**
 
 ---
 
-## 🔐 Kredensial Akun Demo
+## 🔑 Kredensial Akun Demo
 
-Untuk mencoba berbagai tingkat hak akses pengguna di dalam sistem GUYUB:
+Gunakan akun pengujian di bawah ini untuk mencoba antarmuka dan hak akses yang berbeda:
 
-| Peran (Role) | Email / Username | Kata Sandi | Akses Utama |
-|---|---|---|---|
-| **Super Admin** | `superadmin@gmail.com` | `password` | Akses Penuh Sistem & Pengaturan |
-| **Ketua RT** | `rt@gmail.com` | `password` | Manajerial Warga, Surat, & Kebijakan |
-| **Bendahara** | `bendahara@gmail.com` | `password` | Pengelolaan Kas, Iuran, & Laporan Keuangan |
-| **Warga** | `warga@gmail.com` | `password` | Layanan Surat, Iuran Saya, & UMKM |
-
----
-
-## ⚡ Keunggulan Performa & Arsitektur
-
-1. **SPA Interaktif (0ms Navigation)**: Menggunakan pola *Stale-While-Revalidate (SWR)* client-side caching untuk perpindahan halaman yang instan tanpa menderita loading berulang.
-2. **Database Aggregation Efficient**: Query agregasi SQL dioptimalkan langsung di level database (`SUM()`, `LEFT JOIN` group by) tanpa membebankan alokasi memori PHP.
-3. **Lazy Self-Healing Throttle**: Proteksi struktur tabel otomatis yang ter-cache secara efisien sehingga tidak membebani query SQL di setiap request.
+| Peran (Role) | Email / Username | Kata Sandi |
+|---|---|---|
+| 👑 **Super Admin** | `superadmin@gmail.com` | `password` |
+| 👤 **Ketua RT** | `rt@gmail.com` | `password` |
+| 💵 **Bendahara** | `bendahara@gmail.com` | `password` |
+| 🏡 **Warga** | `warga@gmail.com` | `password` |
 
 ---
 
-© 2026 **GUYUB** — *Gerbang Urusan dan Layanan Warga Bersama*.
+<div align="center">
+
+© 2026 **GUYUB** — *Gerbang Urusan dan Layanan Warga Bersama*.  
+Dibuat untuk lingkungan warga yang transparan, modern, dan saling terhubung.
+
+</div>

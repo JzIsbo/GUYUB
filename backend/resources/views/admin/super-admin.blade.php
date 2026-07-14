@@ -221,8 +221,8 @@
             ],
             'RT'          => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'status-pembayaran', 'qris-va',
-                'surat-online', 'pengumuman', 'data-warga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
-                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'pengaturan',
+                'surat-online', 'pengumuman', 'data-warga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
+                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
             ],
             'Bendahara'   => [

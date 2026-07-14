@@ -222,7 +222,7 @@
                 </h1>
 
                 <p class="text-blue-100 text-[11px]">
-                    Sistem Informasi Warga
+                    Gerbang Urusan dan Layanan Warga Bersama
                 </p>
 
             </div>

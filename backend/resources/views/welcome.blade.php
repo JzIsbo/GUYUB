@@ -487,21 +487,21 @@
             </p>
         </div>
 
-        <!-- Tab Controls with horizontal scroll on mobile -->
-        <div class="flex flex-nowrap md:flex-wrap md:justify-center gap-2 mb-6 sm:mb-10 overflow-x-auto tabs-scrollable pb-2 -mx-4 px-4 md:mx-0 md:px-0">
-            <button onclick="switchPublicTab('tab-pengumuman', this)" class="public-tab-btn active bg-blue-600 text-white font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl shadow-lg shadow-blue-200 transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
+        <!-- Tab Controls stacked top-to-bottom / grid on mobile (no horizontal scroll) -->
+        <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 mb-6 sm:mb-10 w-full">
+            <button onclick="switchPublicTab('tab-pengumuman', this)" class="public-tab-btn active bg-blue-600 text-white font-bold px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl shadow-lg shadow-blue-200 transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-bullhorn"></i> Pengumuman
             </button>
-            <button onclick="switchPublicTab('tab-umkm', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
+            <button onclick="switchPublicTab('tab-umkm', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-shop"></i> UMKM Warga
             </button>
-            <button onclick="switchPublicTab('tab-kegiatan', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
+            <button onclick="switchPublicTab('tab-kegiatan', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-calendar-check"></i> Kegiatan RT
             </button>
-            <button onclick="switchPublicTab('tab-posyandu', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
+            <button onclick="switchPublicTab('tab-posyandu', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-heart-pulse"></i> Posyandu
             </button>
-            <button onclick="switchPublicTab('tab-ronda', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-[10px] sm:text-xs flex items-center gap-1.5 shrink-0 cursor-pointer">
+            <button onclick="switchPublicTab('tab-ronda', this)" class="public-tab-btn col-span-2 sm:col-span-1 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-shield-halved"></i> Jadwal Ronda
             </button>
         </div>

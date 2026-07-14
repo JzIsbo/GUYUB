@@ -518,6 +518,27 @@
 
                 </form>
 
+                {{-- QUICK LOGIN SHORTCUTS --}}
+                <div class="mt-6 border-t border-gray-100 pt-5">
+                    <p class="text-center text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3">
+                        Akses Cepat Login (Demo)
+                    </p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="quickLogin('superadmin@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-3 bg-red-50 hover:bg-red-100 border border-red-100/50 text-red-600 rounded-xl text-xs font-bold transition-all active:scale-95">
+                            👑 <span class="hidden sm:inline">Super</span> Admin
+                        </button>
+                        <button type="button" onclick="quickLogin('rt@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-3 bg-blue-50 hover:bg-blue-100 border border-blue-100/50 text-blue-600 rounded-xl text-xs font-bold transition-all active:scale-95">
+                            👥 Ketua RT
+                        </button>
+                        <button type="button" onclick="quickLogin('bendahara@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100/50 text-emerald-600 rounded-xl text-xs font-bold transition-all active:scale-95">
+                            💵 Bendahara
+                        </button>
+                        <button type="button" onclick="quickLogin('warga@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-3 bg-gray-50 hover:bg-gray-100 border border-gray-200/50 text-gray-600 rounded-xl text-xs font-bold transition-all active:scale-95">
+                            🏡 Warga
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -545,6 +566,20 @@
 
             eyeIcon.classList.remove('fa-eye-slash');
             eyeIcon.classList.add('fa-eye');
+        }
+    }
+
+    function quickLogin(email, password) {
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        if (emailInput && passwordInput) {
+            emailInput.value = email;
+            passwordInput.value = password;
+            
+            // Trigger submit after briefly showing the fill effect
+            setTimeout(() => {
+                emailInput.closest('form').submit();
+            }, 100);
         }
     }
 </script>

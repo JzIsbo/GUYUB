@@ -7,8 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - GUYUB</title>
 
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
 
     {{-- Google Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,7 +40,17 @@
             min-height: 100vh;
             overflow-x: hidden;
             background: #eef3ff;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        /* Dark Mode for Login */
+        html.dark, html.dark body { background: #0F172A !important; color: #F8FAFC !important; }
+        html.dark .bg-\[\#f5f8ff\] { background-color: #0F172A !important; }
+        html.dark .login-card { background: rgba(30, 41, 59, 0.95) !important; border-color: rgba(255, 255, 255, 0.1) !important; color: #F8FAFC !important; }
+        html.dark .login-title { color: #F8FAFC !important; }
+        html.dark .login-subtitle { color: #94A3B8 !important; }
+        html.dark .login-label { color: #E2E8F0 !important; }
+        html.dark .input-custom { background: #0F172A !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.15) !important; }
 
         .left-section {
             background:
@@ -357,10 +381,15 @@
     <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#f5f8ff] px-5 py-8 xl:w-[64%]">
 
         <!-- Back to Public Page Button -->
-        <a href="{{ route('welcome') }}" class="absolute left-6 top-6 z-20 flex items-center gap-2 px-4 py-2.5 bg-white/80 hover:bg-white text-gray-600 hover:text-blue-600 rounded-2xl border border-gray-100 shadow-sm backdrop-blur-md transition-all text-xs font-bold">
+        <a href="{{ route('welcome') }}" class="absolute left-6 top-6 z-20 flex items-center gap-2 px-4 py-2.5 bg-white/80 dark:bg-slate-800/80 hover:bg-white text-gray-600 dark:text-gray-200 hover:text-blue-600 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm backdrop-blur-md transition-all text-xs font-bold">
             <i class="fa-solid fa-arrow-left"></i>
             <span>Kembali ke Beranda</span>
         </a>
+
+        <!-- Theme Toggle Button -->
+        <button onclick="toggleTheme()" id="theme-toggle-btn" class="absolute right-6 top-6 z-20 flex items-center justify-center w-10 h-10 bg-white/80 dark:bg-slate-800/80 hover:bg-white text-gray-600 dark:text-amber-400 hover:text-amber-500 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm backdrop-blur-md transition-all cursor-pointer" title="Mode Gelap / Terang">
+            <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
+        </button>
 
         <div class="absolute -left-20 -top-32 h-[360px] w-[360px] rounded-full bg-blue-100/75"></div>
 
@@ -580,6 +609,32 @@
             setTimeout(() => {
                 emailInput.closest('form').submit();
             }, 100);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        applyTheme(isDark);
+    });
+
+    function toggleTheme() {
+        const isCurrentDark = document.documentElement.classList.contains('dark');
+        const newDarkState = !isCurrentDark;
+        applyTheme(newDarkState);
+        localStorage.setItem('theme', newDarkState ? 'dark' : 'light');
+    }
+
+    function applyTheme(isDark) {
+        const icon = document.getElementById('theme-toggle-icon');
+        const btn = document.getElementById('theme-toggle-btn');
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-400';
+            if (btn) btn.title = 'Ubah ke Mode Terang';
+        } else {
+            document.documentElement.classList.remove('dark');
+            if (icon) icon.className = 'fa-solid fa-moon text-sm text-slate-500';
+            if (btn) btn.title = 'Ubah ke Mode Gelap';
         }
     }
 </script>

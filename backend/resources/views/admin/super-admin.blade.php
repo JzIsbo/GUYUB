@@ -31,16 +31,45 @@
                         : 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-blue-200 transition-all text-sm cursor-pointer'
                 }
             });
-        };
+        // Anti-flicker theme init
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; transition: background-color 0.3s ease, color 0.3s ease; }
         .sidebar-scroll::-webkit-scrollbar { width: 3px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
         .menu-active { background-color: #2563EB !important; color: white !important; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4); font-weight: 700; }
+        
+        /* ================= DARK MODE STYLING ================= */
+        html.dark, html.dark body { background-color: #0F172A !important; color: #F8FAFC !important; }
+        html.dark #main-content { background-color: #0F172A !important; color: #F8FAFC !important; }
+        html.dark header { background-color: #1E293B !important; border-color: rgba(255, 255, 255, 0.05) !important; }
+        html.dark header h2, html.dark header p, html.dark header span { color: #F8FAFC !important; }
+        html.dark .bg-white { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+        html.dark .bg-gray-50, html.dark .bg-gray-50\/50, html.dark .bg-[#F8FAFC] { background-color: #0F172A !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+        html.dark .text-gray-800, html.dark .text-gray-900, html.dark .text-slate-800, html.dark .text-slate-900, html.dark .text-gray-700 { color: #F1F5F9 !important; }
+        html.dark .text-gray-600, html.dark .text-gray-500, html.dark .text-slate-600, html.dark .text-slate-500 { color: #94A3B8 !important; }
+        html.dark .border-gray-100, html.dark .border-gray-200, html.dark .border-slate-200, html.dark .border-slate-100 { border-color: rgba(255, 255, 255, 0.08) !important; }
+        html.dark input, html.dark select, html.dark textarea { background-color: #0F172A !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.15) !important; }
+        html.dark input::placeholder, html.dark textarea::placeholder { color: #64748B !important; }
+        html.dark .swal2-popup { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark .swal2-title, html.dark .swal2-html-container { color: #F8FAFC !important; }
+        html.dark #notification-dropdown { background-color: #1E293B !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+        html.dark #theme-toggle-btn { background-color: #1E293B !important; border-color: rgba(255, 255, 255, 0.1) !important; color: #F59E0B !important; }
         
         #sidebar {
             transition: transform 0.3s ease-in-out, width 0.3s ease-in-out !important;
@@ -605,7 +634,12 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 md:gap-6">
+            <div class="flex items-center gap-2 md:gap-4">
+                <!-- Theme Toggle Button (Dark / Light Mode) -->
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="bg-gray-50 p-2.5 rounded-xl text-gray-400 hover:text-amber-500 hover:bg-gray-100 transition focus:outline-none border border-gray-100 shadow-sm flex items-center justify-center cursor-pointer" title="Mode Gelap / Terang">
+                    <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
+                </button>
+
                 <!-- Notification Bell -->
                 <div class="relative hidden sm:block" id="notification-container">
                     <button onclick="toggleNotificationDropdown(event)" class="bg-gray-50 p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-gray-100 transition relative focus:outline-none border border-gray-100 shadow-sm flex items-center justify-center">
@@ -962,6 +996,11 @@
             // Load bell notifications on page ready
             if (typeof window.fetchNotifications === 'function') {
                 window.fetchNotifications();
+            }
+
+            // Init Dark / Light Theme state
+            if (typeof window.initTheme === 'function') {
+                window.initTheme();
             }
         });
 
@@ -1426,6 +1465,38 @@
             const modal = document.getElementById('modal-full-avatar');
             if (modal) modal.classList.add('hidden');
         };
+
+        // ==========================================
+        // FITUR MODE GELAP & TERANG (DARK / LIGHT MODE)
+        // ==========================================
+        window.initTheme = function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme ? (savedTheme === 'dark') : prefersDark;
+            applyTheme(isDark);
+        };
+
+        window.toggleTheme = function() {
+            const isCurrentDark = document.documentElement.classList.contains('dark');
+            const newDarkState = !isCurrentDark;
+            applyTheme(newDarkState);
+            localStorage.setItem('theme', newDarkState ? 'dark' : 'light');
+        };
+
+        function applyTheme(isDark) {
+            const icon = document.getElementById('theme-toggle-icon');
+            const btn = document.getElementById('theme-toggle-btn');
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-400';
+                if (btn) btn.title = 'Ubah ke Mode Terang';
+            } else {
+                document.documentElement.classList.remove('dark');
+                if (icon) icon.className = 'fa-solid fa-moon text-sm text-slate-500';
+                if (btn) btn.title = 'Ubah ke Mode Gelap';
+            }
+        }
     </script>
 
     <!-- Modal Full View Avatar -->

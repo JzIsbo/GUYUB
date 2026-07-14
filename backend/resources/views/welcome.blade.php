@@ -8,8 +8,22 @@
 
     <title>GUYUB - Gerbang Urusan dan Layanan Warga Bersama</title>
 
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
     {{-- Tailwind --}}
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
 
     {{-- Font --}}
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,6 +37,15 @@
         html {
             scroll-behavior: smooth;
         }
+
+        /* Dark Mode Overrides for Landing Page */
+        html.dark, html.dark body { background-color: #0F172A !important; color: #F8FAFC !important; }
+        html.dark #fitur, html.dark #tentang, html.dark #kontak, html.dark section { background-color: #0F172A !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.08) !important; }
+        html.dark .bg-white { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.08) !important; }
+        html.dark .bg-gray-50, html.dark .bg-gray-50\/50 { background-color: #0F172A !important; border-color: rgba(255,255,255,0.08) !important; }
+        html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700 { color: #F1F5F9 !important; }
+        html.dark .text-gray-600, html.dark .text-gray-500 { color: #94A3B8 !important; }
+        html.dark .border-gray-100, html.dark .border-gray-200 { border-color: rgba(255,255,255,0.08) !important; }
 
         *{
             font-family: 'Poppins', sans-serif;
@@ -250,8 +273,11 @@
 
         </div>
 
-        {{-- LOGIN / DASHBOARD --}}
+        {{-- LOGIN / DASHBOARD & THEME TOGGLE --}}
         <div class="flex items-center gap-2">
+            <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition backdrop-blur-md cursor-pointer" title="Mode Gelap / Terang">
+                <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
+            </button>
             @auth
             <a href="/dashboard"
                class="px-4 py-2 rounded-xl bg-white text-blue-700 text-xs sm:text-sm font-semibold hover:bg-blue-50 transition flex items-center gap-1.5 shadow-sm">
@@ -894,6 +920,35 @@
             navbar.classList.remove('bg-[#0f2460]', 'shadow-lg');
         }
     }, { passive: true });
+
+    /* =============================================
+       MODE GELAP & TERANG (DARK / LIGHT MODE)
+    ============================================= */
+    document.addEventListener('DOMContentLoaded', function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        applyTheme(isDark);
+    });
+
+    window.toggleTheme = function() {
+        const isCurrentDark = document.documentElement.classList.contains('dark');
+        const newDarkState = !isCurrentDark;
+        applyTheme(newDarkState);
+        localStorage.setItem('theme', newDarkState ? 'dark' : 'light');
+    };
+
+    function applyTheme(isDark) {
+        const icon = document.getElementById('theme-toggle-icon');
+        const btn = document.getElementById('theme-toggle-btn');
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-400';
+            if (btn) btn.title = 'Ubah ke Mode Terang';
+        } else {
+            document.documentElement.classList.remove('dark');
+            if (icon) icon.className = 'fa-solid fa-moon text-sm text-white/80';
+            if (btn) btn.title = 'Ubah ke Mode Gelap';
+        }
+    }
 </script>
 
 </body>

@@ -228,48 +228,34 @@
                 font-size: 1.15rem !important;
                 width: auto !important;
             }
-            /* Tooltip on hover for collapsed menu items (including footer links/buttons and dropdown triggers) */
-            .sidebar-collapsed .menu-link:hover::after,
-            .sidebar-collapsed .sticky.bottom-0 a:hover::after,
-            .sidebar-collapsed .sticky.bottom-0 button:hover::after {
-                content: attr(data-tooltip);
-                position: absolute;
-                left: calc(100% + 12px);
-                top: 50%;
-                transform: translateY(-50%);
-                background: #1E293B;
-                color: #F1F5F9;
-                padding: 6px 12px;
-                border-radius: 8px;
-                font-size: 12px;
-                font-weight: 600;
-                white-space: nowrap;
-                z-index: 999;
-                pointer-events: none;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            }
-            .sidebar-collapsed .menu-link:hover::before,
-            .sidebar-collapsed .sticky.bottom-0 a:hover::before,
-            .sidebar-collapsed .sticky.bottom-0 button:hover::before {
-                content: '';
-                position: absolute;
-                left: calc(100% + 4px);
-                top: 50%;
-                transform: translateY(-50%);
-                border: 5px solid transparent;
-                border-right-color: #1E293B;
-                z-index: 999;
-                pointer-events: none;
-            }
-            /* Hide tooltips when flyout menu is active to prevent overlapping visual clutter */
-            body.flyout-active .sidebar-collapsed .menu-link::after,
-            body.flyout-active .sidebar-collapsed .menu-link::before,
-            body.flyout-active .sidebar-collapsed .sticky.bottom-0 a::after,
-            body.flyout-active .sidebar-collapsed .sticky.bottom-0 a::before,
-            body.flyout-active .sidebar-collapsed .sticky.bottom-0 button::after,
-            body.flyout-active .sidebar-collapsed .sticky.bottom-0 button::before {
-                display: none !important;
-            }
+        /* Global Tooltip container (rendered at body level to bypass overflow clipping) */
+        #global-tooltip {
+            position: fixed;
+            background: #0F172A;
+            color: #F1F5F9;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            z-index: 999999;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: opacity 0.15s ease;
+            opacity: 0;
+            display: none;
+            transform: translateY(-50%);
+        }
+        #global-tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-right-color: #0F172A;
+        }
             .sidebar-collapsed .sticky.bottom-0 {
                 padding: 1rem 0.5rem !important;
             }
@@ -460,7 +446,65 @@
                         fp.id = 'flyout-popup';
                         document.body.appendChild(fp);
                     }
+                    if (!document.getElementById('global-tooltip')) {
+                        const gt = document.createElement('div');
+                        gt.id = 'global-tooltip';
+                        document.body.appendChild(gt);
+                    }
                 })();
+
+                // Dynamic Tooltip Event Listeners
+                document.addEventListener('mouseover', function(e) {
+                    const sidebar = document.getElementById('sidebar');
+                    if (!sidebar || !sidebar.classList.contains('sidebar-collapsed')) return;
+
+                    const target = e.target.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button');
+                    if (!target) return;
+
+                    // Prevent flickering when hovering child elements inside the link/button
+                    if (e.relatedTarget && e.relatedTarget.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button') === target) {
+                        return;
+                    }
+
+                    if (document.body.classList.contains('flyout-active')) return;
+
+                    const text = target.getAttribute('data-tooltip');
+                    if (!text) return;
+
+                    const tooltip = document.getElementById('global-tooltip');
+                    if (tooltip) {
+                        tooltip.textContent = text;
+                        tooltip.style.display = 'block';
+                        const rect = target.getBoundingClientRect();
+                        tooltip.style.left = (rect.right + 10) + 'px';
+                        tooltip.style.top = (rect.top + rect.height / 2) + 'px';
+                        tooltip.style.opacity = '1';
+                    }
+                });
+
+                document.addEventListener('mouseout', function(e) {
+                    const target = e.target.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button');
+                    if (!target) return;
+
+                    // Prevent hiding when moving mouse inside child elements of the link/button
+                    if (e.relatedTarget && e.relatedTarget.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button') === target) {
+                        return;
+                    }
+
+                    const tooltip = document.getElementById('global-tooltip');
+                    if (tooltip) {
+                        tooltip.style.opacity = '0';
+                        tooltip.style.display = 'none';
+                    }
+                });
+
+                document.addEventListener('click', function() {
+                    const tooltip = document.getElementById('global-tooltip');
+                    if (tooltip) {
+                        tooltip.style.opacity = '0';
+                        tooltip.style.display = 'none';
+                    }
+                });
 
                 let activeFlyoutId = null;
 

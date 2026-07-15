@@ -39,7 +39,7 @@
 
         body {
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
             background-color: #F8FAFC;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -55,7 +55,7 @@
         }
 
         html.dark .login-card { 
-            background: rgba(30, 41, 59, 0.7) !important; 
+            background: rgba(30, 41, 59, 0.75) !important; 
             border-color: rgba(255, 255, 255, 0.08) !important; 
             color: #F8FAFC !important; 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
@@ -95,11 +95,11 @@
 
         html.dark .btn-login {
             background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4) !important;
+            box-shadow: 0 8px 20px -5px rgba(37, 99, 235, 0.4) !important;
         }
 
         html.dark .btn-login:hover {
-            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.6) !important;
+            box-shadow: 0 12px 24px -5px rgba(37, 99, 235, 0.6) !important;
         }
 
         /* Layout styles */
@@ -122,13 +122,13 @@
 
         .login-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 440px;
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 32px;
-            padding: 40px;
+            border-radius: 28px;
+            padding: 24px 32px;
             box-shadow: 
                 0 20px 40px -15px rgba(15, 23, 42, 0.05),
                 0 15px 25px -5px rgba(37, 99, 235, 0.03);
@@ -148,30 +148,30 @@
         }
 
         .login-title {
-            font-size: 30px;
+            font-size: 26px;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
 
         .login-subtitle {
-            font-size: 14px;
-            line-height: 22px;
-            margin-top: 8px;
+            font-size: 13px;
+            line-height: 20px;
+            margin-top: 6px;
         }
 
         .login-label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
+            margin-bottom: 6px;
+            font-size: 12px;
             font-weight: 700;
         }
 
         .input-custom {
-            height: 52px;
-            border-radius: 16px;
+            height: 46px;
+            border-radius: 14px;
             border: 1px solid #E2E8F0;
             background-color: #ffffff;
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 500;
             color: #1e293b;
             transition: all 0.2s ease;
@@ -189,22 +189,22 @@
         }
 
         .input-icon {
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .btn-login {
-            height: 52px;
-            border-radius: 16px;
+            height: 46px;
+            border-radius: 14px;
             background: linear-gradient(135deg, #2563eb, #3b82f6);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             transition: all 0.2s ease;
-            box-shadow: 0 8px 20px -6px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.3);
         }
 
         .btn-login:hover {
             transform: translateY(-1px);
-            box-shadow: 0 12px 24px -5px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 10px 20px -4px rgba(37, 99, 235, 0.4);
         }
 
         .btn-login:active {
@@ -243,40 +243,34 @@
         }
 
         .form-spacing {
-            margin-top: 26px;
+            margin-top: 20px;
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         /* Screen-height adaptive sizing */
-        @media (max-height: 800px) {
+        @media (max-height: 700px) {
             .login-card {
-                padding: 30px;
+                padding: 16px 24px;
             }
             .form-spacing {
-                margin-top: 20px;
+                margin-top: 14px;
             }
             .form-group {
-                margin-bottom: 14px;
+                margin-bottom: 10px;
             }
-            .login-icon-wrapper {
-                width: 70px;
-                height: 70px;
-                border-radius: 20px;
-            }
-            .login-icon {
-                font-size: 32px;
-            }
-                display: none;
+            .login-title {
+                font-size: 22px;
             }
         }
 
-        @media (max-width: 640px) {
-            .login-card {
-                max-width: 100%;
-                padding: 30px 22px;
+        @media (max-width: 1280px) {
+            .left-section {
+                display: none;
+            }
+        }
                 border-radius: 28px;
             }
 
@@ -390,18 +384,7 @@
     </div>
 
     {{-- RIGHT --}}
-    <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#f5f8ff] px-5 py-8 xl:w-[64%]">
-
-        <!-- Back to Public Page Button -->
-        <a href="{{ route('welcome') }}" class="absolute left-6 top-6 z-20 flex items-center gap-2 px-4 py-2.5 bg-white/80 dark:bg-slate-800/80 hover:bg-white text-gray-600 dark:text-gray-200 hover:text-blue-600 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm backdrop-blur-md transition-all text-xs font-bold">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>Kembali ke Beranda</span>
-        </a>
-
-        <!-- Theme Toggle Button -->
-        <button onclick="toggleTheme()" id="theme-toggle-btn" class="absolute right-6 top-6 z-20 flex items-center justify-center w-10 h-10 bg-white/80 dark:bg-slate-800/80 hover:bg-white text-gray-600 dark:text-amber-400 hover:text-amber-500 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm backdrop-blur-md transition-all cursor-pointer" title="Mode Gelap / Terang">
-            <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
-        </button>
+    <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#f5f8ff] px-5 py-6 xl:w-[64%]">
 
         <!-- Decorative blurred gradient blobs for rich modern glassmorphism -->
         <div class="absolute -left-20 -top-20 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-blue-300/40 to-indigo-300/40 blur-3xl dark:from-blue-900/30 dark:to-indigo-900/30 opacity-70"></div>
@@ -413,26 +396,31 @@
 
             <div class="login-card login-shadow relative overflow-hidden">
 
+                {{-- TOP UTILITY BAR (Integrated cleanly inside the card to prevent overlap) --}}
+                <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-800/60 pb-3 mb-4">
+                    <a href="{{ route('welcome') }}" class="text-[11.5px] font-bold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+                    </a>
+                    <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-amber-400 hover:text-amber-500 transition cursor-pointer" title="Ubah Tema">
+                        <i class="fa-solid fa-moon text-xs" id="theme-toggle-icon"></i>
+                    </button>
+                </div>
+
                 {{-- DOTS --}}
-                <div class="absolute right-8 top-8 grid grid-cols-5 gap-1.5 opacity-20 dark:opacity-10">
+                <div class="absolute right-6 top-[72px] grid grid-cols-5 gap-1 opacity-20 dark:opacity-10">
                     @for($i = 0; $i < 25; $i++)
-                        <div class="h-1 w-1 rounded-full bg-blue-500"></div>
+                        <div class="h-[3px] w-[3px] rounded-full bg-blue-500"></div>
                     @endfor
                 </div>
 
-                {{-- ICON --}}
-                <div class="flex justify-center">
-                    <div class="floating login-icon-wrapper flex items-center justify-center">
-                        <i class="fa-solid fa-people-roof login-icon text-blue-600"></i>
+                {{-- HEADING & COMPACT ICON --}}
+                <div class="text-center">
+                    <div class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 text-xl mb-2.5 shadow-inner">
+                        <i class="fa-solid fa-people-roof"></i>
                     </div>
-                </div>
-
-                {{-- HEADING --}}
-                <div class="mt-5 text-center">
                     <h1 class="login-title text-[#132b63]">
                         Selamat Datang!
                     </h1>
-
                     <p class="login-subtitle text-[#66708c]">
                         Silakan masuk untuk melanjutkan ke GUYUB.
                     </p>
@@ -440,8 +428,8 @@
 
                 {{-- ERROR MESSAGE --}}
                 @if ($errors->any())
-                    <div class="mt-5 rounded-2xl border border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900/30 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400">
-                        <div class="flex gap-3">
+                    <div class="mt-4 rounded-xl border border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900/30 px-3.5 py-2.5 text-xs font-medium text-red-600 dark:text-red-400">
+                        <div class="flex gap-2.5">
                             <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
                             <div>
                                 Email, nomor WhatsApp, atau kata sandi yang Anda masukkan belum sesuai.
@@ -460,21 +448,21 @@
                             Email atau Nomor WhatsApp
                         </label>
                         <div class="relative">
-                            <i class="fa-regular fa-user input-icon absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                            <i class="fa-regular fa-user input-icon absolute left-4.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
                             <input
                                 type="text"
                                 id="email"
                                 name="email"
                                 value="{{ old('email') }}"
                                 placeholder="Masukkan email atau nomor WhatsApp"
-                                class="input-custom w-full pl-14 pr-5 focus:outline-none"
+                                class="input-custom w-full pl-12 pr-4 focus:outline-none"
                                 autocomplete="username"
                                 autofocus
                                 required
                             >
                         </div>
                         @error('email')
-                            <p class="mt-2 text-xs font-medium text-red-500">
+                            <p class="mt-1.5 text-xs font-medium text-red-500">
                                 {{ $message }}
                             </p>
                         @enderror
@@ -486,48 +474,48 @@
                             Kata Sandi
                         </label>
                         <div class="relative">
-                            <i class="fa-solid fa-lock input-icon absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                            <i class="fa-solid fa-lock input-icon absolute left-4.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
                                 placeholder="Masukkan kata sandi"
-                                class="input-custom w-full pl-14 pr-14 focus:outline-none"
+                                class="input-custom w-full pl-12 pr-12 focus:outline-none"
                                 autocomplete="current-password"
                                 required
                             >
                             <button
                                 type="button"
                                 onclick="togglePassword()"
-                                class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 transition hover:text-blue-600"
+                                class="absolute right-4.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 transition hover:text-blue-600"
                                 aria-label="Tampilkan atau sembunyikan kata sandi"
                             >
-                                <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                                <i class="fa-regular fa-eye text-xs" id="eyeIcon"></i>
                             </button>
                         </div>
                         @error('password')
-                            <p class="mt-2 text-xs font-medium text-red-500">
+                            <p class="mt-1.5 text-xs font-medium text-red-500">
                                 {{ $message }}
                             </p>
                         @enderror
                     </div>
 
                     {{-- FORGOT --}}
-                    <div class="flex justify-end">
-                        <a href="/welcome#kontak" class="text-[13px] font-semibold text-blue-600 dark:text-blue-400 transition hover:text-blue-750 dark:hover:text-blue-300 hover:underline">
+                    <div class="flex justify-end mt-1">
+                        <a href="/welcome#kontak" class="text-[12px] font-semibold text-blue-600 dark:text-blue-400 transition hover:text-blue-750 dark:hover:text-blue-300 hover:underline">
                             Lupa kata sandi?
                         </a>
                     </div>
 
                     {{-- LOGIN BUTTON --}}
-                    <button type="submit" class="btn-login mt-6 w-full font-bold text-white flex items-center justify-center gap-2 cursor-pointer">
+                    <button type="submit" class="btn-login mt-4.5 w-full font-bold text-white flex items-center justify-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-right-to-bracket text-sm"></i>
                         Masuk
                     </button>
 
                     {{-- INFO REGISTER --}}
-                    <div class="mt-5 text-center">
-                        <p class="text-[12.5px] leading-6 text-gray-500 dark:text-slate-400">
+                    <div class="mt-3.5 text-center">
+                        <p class="text-[12px] text-gray-500 dark:text-slate-400">
                             Belum punya akun?
                             <a href="/welcome#kontak" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline transition">
                                 Hubungi Pengurus RT
@@ -537,21 +525,21 @@
                 </form>
 
                 {{-- QUICK LOGIN SHORTCUTS --}}
-                <div class="mt-5 border-t border-gray-100 dark:border-slate-800/80 pt-5">
-                    <p class="text-center text-[10px] font-extrabold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-3">
+                <div class="mt-4 border-t border-gray-100 dark:border-slate-800/80 pt-4">
+                    <p class="text-center text-[9.5px] font-extrabold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">
                         Akses Cepat Login (Demo)
                     </p>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="quickLogin('superadmin@gmail.com', 'password')" class="flex items-center justify-center gap-2 py-2.5 px-3 bg-red-50 hover:bg-red-100/80 dark:bg-red-950/20 dark:hover:bg-red-950/40 border border-red-100/50 dark:border-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer">
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="quickLogin('superadmin@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-2 bg-red-50 hover:bg-red-100/80 dark:bg-red-950/20 dark:hover:bg-red-950/40 border border-red-100/50 dark:border-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-[11px] font-bold transition-all active:scale-95 cursor-pointer">
                             👑 <span class="hidden sm:inline">Super</span> Admin
                         </button>
-                        <button type="button" onclick="quickLogin('rt@gmail.com', 'password')" class="flex items-center justify-center gap-2 py-2.5 px-3 bg-blue-50 hover:bg-blue-100/80 dark:bg-blue-950/20 dark:hover:bg-blue-950/40 border border-blue-100/50 dark:border-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer">
+                        <button type="button" onclick="quickLogin('rt@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-2 bg-blue-50 hover:bg-blue-100/80 dark:bg-blue-950/20 dark:hover:bg-blue-950/40 border border-blue-100/50 dark:border-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl text-[11px] font-bold transition-all active:scale-95 cursor-pointer">
                             👥 Ketua RT
                         </button>
-                        <button type="button" onclick="quickLogin('bendahara@gmail.com', 'password')" class="flex items-center justify-center gap-2 py-2.5 px-3 bg-emerald-50 hover:bg-emerald-100/80 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 border border-emerald-100/50 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer">
+                        <button type="button" onclick="quickLogin('bendahara@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-2 bg-emerald-50 hover:bg-emerald-100/80 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 border border-emerald-100/50 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl text-[11px] font-bold transition-all active:scale-95 cursor-pointer">
                             💵 Bendahara
                         </button>
-                        <button type="button" onclick="quickLogin('warga@gmail.com', 'password')" class="flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/40 dark:hover:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer">
+                        <button type="button" onclick="quickLogin('warga@gmail.com', 'password')" class="flex items-center justify-center gap-1.5 py-2 px-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/40 dark:hover:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 rounded-xl text-[11px] font-bold transition-all active:scale-95 cursor-pointer">
                             🏡 Warga
                         </button>
                     </div>

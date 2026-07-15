@@ -40,25 +40,25 @@
         body {
             min-height: 100vh;
             overflow: hidden;
-            background-color: #F8FAFC;
+            background-color: #F1F5F9;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Dark Mode Override classes */
+        /* Dark Mode */
         html.dark, html.dark body { 
             background-color: #0B0F19 !important; 
             color: #F8FAFC !important; 
         }
-        
+
         html.dark .bg-\[\#f5f8ff\] { 
             background-color: #0B0F19 !important; 
         }
 
         html.dark .login-card { 
-            background: rgba(30, 41, 59, 0.75) !important; 
-            border-color: rgba(255, 255, 255, 0.08) !important; 
+            background: rgba(30, 41, 59, 0.45) !important; 
+            border-color: rgba(255, 255, 255, 0.06) !important; 
             color: #F8FAFC !important; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5) !important;
         }
 
         html.dark .login-title { 
@@ -74,23 +74,15 @@
         }
 
         html.dark .input-custom { 
-            background-color: rgba(15, 23, 42, 0.6) !important; 
+            background-color: rgba(15, 23, 42, 0.5) !important; 
             color: #F8FAFC !important; 
-            border-color: rgba(255, 255, 255, 0.12) !important; 
+            border-color: rgba(255, 255, 255, 0.08) !important; 
         }
 
         html.dark .input-custom:focus {
+            background-color: rgba(15, 23, 42, 0.7) !important;
             border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.2) !important;
-        }
-
-        html.dark .login-icon-wrapper {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)) !important;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 20px rgba(0,0,0,0.2) !important;
-        }
-
-        html.dark .login-icon {
-            color: #60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important;
         }
 
         html.dark .btn-login {
@@ -98,16 +90,12 @@
             box-shadow: 0 8px 20px -5px rgba(37, 99, 235, 0.4) !important;
         }
 
-        html.dark .btn-login:hover {
-            box-shadow: 0 12px 24px -5px rgba(37, 99, 235, 0.6) !important;
-        }
-
         /* Layout styles */
         .left-section {
             background:
                 linear-gradient(
                     to bottom,
-                    rgba(15, 23, 42, 0.92),
+                    rgba(15, 23, 42, 0.94),
                     rgba(30, 41, 59, 0.8)
                 ),
                 url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1920&auto=format&fit=crop');
@@ -115,65 +103,48 @@
             background-position: center;
         }
 
-        .curve-left {
-            border-top-right-radius: 64px;
-            border-bottom-right-radius: 64px;
-        }
-
         .login-card {
             width: 100%;
-            max-width: 440px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 28px;
-            padding: 24px 32px;
-            box-shadow: 
-                0 20px 40px -15px rgba(15, 23, 42, 0.05),
-                0 15px 25px -5px rgba(37, 99, 235, 0.03);
-            transition: all 0.3s ease;
-        }
-
-        .login-icon-wrapper {
-            width: 80px;
-            height: 80px;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 24px;
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 8px 16px rgba(37, 99, 235, 0.05);
-        }
-
-        .login-icon {
-            font-size: 36px;
+            padding: 24px 32px;
+            box-shadow: 0 40px 80px -20px rgba(15, 23, 42, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .login-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
+            color: #0F172A;
         }
 
         .login-subtitle {
             font-size: 13px;
-            line-height: 20px;
-            margin-top: 6px;
+            color: #475569;
+            margin-top: 4px;
         }
 
         .login-label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             font-size: 12px;
             font-weight: 700;
+            color: #334155;
         }
 
         .input-custom {
-            height: 46px;
-            border-radius: 14px;
-            border: 1px solid #E2E8F0;
-            background-color: #ffffff;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            background-color: rgba(241, 245, 249, 0.5);
             font-size: 13px;
             font-weight: 500;
-            color: #1e293b;
+            color: #0F172A;
             transition: all 0.2s ease;
         }
 
@@ -183,6 +154,7 @@
         }
 
         .input-custom:focus {
+            background-color: #FFFFFF;
             border-color: #3b82f6;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
             outline: none;
@@ -193,18 +165,18 @@
         }
 
         .btn-login {
-            height: 46px;
-            border-radius: 14px;
+            height: 44px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #2563eb, #3b82f6);
             font-size: 14px;
             font-weight: 700;
             transition: all 0.2s ease;
-            box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
         .btn-login:hover {
             transform: translateY(-1px);
-            box-shadow: 0 10px 20px -4px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
         }
 
         .btn-login:active {
@@ -233,39 +205,15 @@
             line-height: 20px;
         }
 
-        .floating {
-            animation: floating 6s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-
         .form-spacing {
-            margin-top: 20px;
+            margin-top: 16px;
         }
 
         .form-group {
             margin-bottom: 12px;
         }
 
-        /* Screen-height adaptive sizing */
-        @media (max-height: 700px) {
-            .login-card {
-                padding: 16px 24px;
-            }
-            .form-spacing {
-                margin-top: 14px;
-            }
-            .form-group {
-                margin-bottom: 10px;
-            }
-            .login-title {
-                font-size: 22px;
-            }
-        }
-
+        /* Responsive */
         @media (max-width: 1280px) {
             .left-section {
                 display: none;
@@ -339,7 +287,7 @@
 <div class="flex min-h-screen w-full">
 
     {{-- LEFT --}}
-    <div class="hidden xl:flex w-[36%] left-section curve-left relative overflow-hidden">
+    <div class="hidden xl:flex w-[36%] left-section relative overflow-hidden border-r border-white/5">
 
         <div class="absolute inset-0 bg-gradient-to-b from-blue-950/40 to-blue-800/20"></div>
 
@@ -384,7 +332,16 @@
     </div>
 
     {{-- RIGHT --}}
-    <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#f5f8ff] px-5 py-6 xl:w-[64%]">
+    <div class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#F1F5F9] dark:bg-[#0B0F19] px-5 py-6 xl:w-[64%]">
+
+        <!-- Top navigation links (elegant, floating, borderless) -->
+        <a href="{{ route('welcome') }}" class="absolute left-8 top-8 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+        </a>
+
+        <button onclick="toggleTheme()" id="theme-toggle-btn" class="absolute right-8 top-8 text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400 transition flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer" title="Ubah Tema">
+            <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
+        </button>
 
         <!-- Decorative blurred gradient blobs for rich modern glassmorphism -->
         <div class="absolute -left-20 -top-20 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-blue-300/40 to-indigo-300/40 blur-3xl dark:from-blue-900/30 dark:to-indigo-900/30 opacity-70"></div>
@@ -396,26 +353,9 @@
 
             <div class="login-card login-shadow relative overflow-hidden">
 
-                {{-- TOP UTILITY BAR (Integrated cleanly inside the card to prevent overlap) --}}
-                <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-800/60 pb-3 mb-4">
-                    <a href="{{ route('welcome') }}" class="text-[11.5px] font-bold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
-                    </a>
-                    <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-amber-400 hover:text-amber-500 transition cursor-pointer" title="Ubah Tema">
-                        <i class="fa-solid fa-moon text-xs" id="theme-toggle-icon"></i>
-                    </button>
-                </div>
-
-                {{-- DOTS --}}
-                <div class="absolute right-6 top-[72px] grid grid-cols-5 gap-1 opacity-20 dark:opacity-10">
-                    @for($i = 0; $i < 25; $i++)
-                        <div class="h-[3px] w-[3px] rounded-full bg-blue-500"></div>
-                    @endfor
-                </div>
-
                 {{-- HEADING & COMPACT ICON --}}
-                <div class="text-center">
-                    <div class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 text-xl mb-2.5 shadow-inner">
+                <div class="text-center mt-2">
+                    <div class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 text-xl mb-3 shadow-inner">
                         <i class="fa-solid fa-people-roof"></i>
                     </div>
                     <h1 class="login-title text-[#132b63]">
@@ -444,25 +384,25 @@
 
                     {{-- EMAIL --}}
                     <div class="form-group">
-                        <label for="email" class="login-label text-[#1d2942]">
+                        <label for="email" class="login-label">
                             Email atau Nomor WhatsApp
                         </label>
                         <div class="relative">
-                            <i class="fa-regular fa-user input-icon absolute left-4.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                            <i class="fa-regular fa-user input-icon absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
                             <input
                                 type="text"
                                 id="email"
                                 name="email"
                                 value="{{ old('email') }}"
                                 placeholder="Masukkan email atau nomor WhatsApp"
-                                class="input-custom w-full pl-12 pr-4 focus:outline-none"
+                                class="input-custom w-full pl-11 pr-4 focus:outline-none"
                                 autocomplete="username"
                                 autofocus
                                 required
                             >
                         </div>
                         @error('email')
-                            <p class="mt-1.5 text-xs font-medium text-red-500">
+                            <p class="mt-1 text-xs font-medium text-red-500">
                                 {{ $message }}
                             </p>
                         @enderror
@@ -470,31 +410,31 @@
 
                     {{-- PASSWORD --}}
                     <div class="form-group">
-                        <label for="password" class="login-label text-[#1d2942]">
+                        <label for="password" class="login-label">
                             Kata Sandi
                         </label>
                         <div class="relative">
-                            <i class="fa-solid fa-lock input-icon absolute left-4.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                            <i class="fa-solid fa-lock input-icon absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
                                 placeholder="Masukkan kata sandi"
-                                class="input-custom w-full pl-12 pr-12 focus:outline-none"
+                                class="input-custom w-full pl-11 pr-11 focus:outline-none"
                                 autocomplete="current-password"
                                 required
                             >
                             <button
                                 type="button"
                                 onclick="togglePassword()"
-                                class="absolute right-4.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 transition hover:text-blue-600"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 transition hover:text-blue-600"
                                 aria-label="Tampilkan atau sembunyikan kata sandi"
                             >
                                 <i class="fa-regular fa-eye text-xs" id="eyeIcon"></i>
                             </button>
                         </div>
                         @error('password')
-                            <p class="mt-1.5 text-xs font-medium text-red-500">
+                            <p class="mt-1 text-xs font-medium text-red-500">
                                 {{ $message }}
                             </p>
                         @enderror
@@ -502,19 +442,19 @@
 
                     {{-- FORGOT --}}
                     <div class="flex justify-end mt-1">
-                        <a href="/welcome#kontak" class="text-[12px] font-semibold text-blue-600 dark:text-blue-400 transition hover:text-blue-750 dark:hover:text-blue-300 hover:underline">
+                        <a href="/welcome#kontak" class="text-[12px] font-semibold text-blue-600 dark:text-blue-400 transition hover:text-blue-700 dark:hover:text-blue-300 hover:underline">
                             Lupa kata sandi?
                         </a>
                     </div>
 
                     {{-- LOGIN BUTTON --}}
-                    <button type="submit" class="btn-login mt-4.5 w-full font-bold text-white flex items-center justify-center gap-2 cursor-pointer">
+                    <button type="submit" class="btn-login mt-4 w-full font-bold text-white flex items-center justify-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-right-to-bracket text-sm"></i>
                         Masuk
                     </button>
 
                     {{-- INFO REGISTER --}}
-                    <div class="mt-3.5 text-center">
+                    <div class="mt-3 text-center">
                         <p class="text-[12px] text-gray-500 dark:text-slate-400">
                             Belum punya akun?
                             <a href="/welcome#kontak" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline transition">
@@ -525,8 +465,8 @@
                 </form>
 
                 {{-- QUICK LOGIN SHORTCUTS --}}
-                <div class="mt-4 border-t border-gray-100 dark:border-slate-800/80 pt-4">
-                    <p class="text-center text-[9.5px] font-extrabold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">
+                <div class="mt-4 border-t border-gray-150 dark:border-slate-800/80 pt-4">
+                    <p class="text-center text-[9.5px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">
                         Akses Cepat Login (Demo)
                     </p>
                     <div class="grid grid-cols-2 gap-1.5">

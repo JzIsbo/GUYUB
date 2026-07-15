@@ -388,14 +388,16 @@
                             Email atau Nomor WhatsApp
                         </label>
                         <div class="relative">
-                            <i class="fa-regular fa-user input-icon absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 text-gray-400 dark:text-gray-500 pointer-events-none text-sm">
+                                <i class="fa-regular fa-user"></i>
+                            </span>
                             <input
                                 type="text"
                                 id="email"
                                 name="email"
                                 value="{{ old('email') }}"
                                 placeholder="Masukkan email atau nomor WhatsApp"
-                                class="input-custom w-full pl-11 pr-4 focus:outline-none"
+                                class="input-custom w-full pl-12 pr-4 focus:outline-none"
                                 autocomplete="username"
                                 autofocus
                                 required
@@ -414,23 +416,25 @@
                             Kata Sandi
                         </label>
                         <div class="relative">
-                            <i class="fa-solid fa-lock input-icon absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 text-gray-400 dark:text-gray-500 pointer-events-none text-sm">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
                                 placeholder="Masukkan kata sandi"
-                                class="input-custom w-full pl-11 pr-11 focus:outline-none"
+                                class="input-custom w-full pl-12 pr-12 focus:outline-none"
                                 autocomplete="current-password"
                                 required
                             >
                             <button
                                 type="button"
                                 onclick="togglePassword()"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 transition hover:text-blue-600"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 dark:text-gray-500 transition hover:text-blue-600 cursor-pointer"
                                 aria-label="Tampilkan atau sembunyikan kata sandi"
                             >
-                                <i class="fa-regular fa-eye text-xs" id="eyeIcon"></i>
+                                <i class="fa-regular fa-eye text-sm" id="eyeIcon"></i>
                             </button>
                         </div>
                         @error('password')

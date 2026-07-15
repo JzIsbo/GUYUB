@@ -586,12 +586,12 @@
                 <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Layanan & Interaksi</p>
             </div>
 
-            {{-- ===== DROPDOWN: Administrasi ===== --}}
+            {{-- ===== DROPDOWN: Interaksi Warga ===== --}}
             @if($can('surat-online') || $can('pengumuman') || $can('aspirasi'))
             <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('administrasi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Administrasi">
+                <button onclick="toggleDropdown('administrasi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Interaksi Warga">
                     <i class="fa-solid fa-envelope-open-text w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Administrasi</span>
+                    <span class="ml-3 font-semibold flex-1 text-left">Interaksi Warga</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
                 <div id="administrasi-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">

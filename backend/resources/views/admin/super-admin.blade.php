@@ -228,8 +228,10 @@
                 font-size: 1.15rem !important;
                 width: auto !important;
             }
-            /* Tooltip on hover for collapsed menu items */
-            .sidebar-collapsed .menu-link:hover::after {
+            /* Tooltip on hover for collapsed menu items (including footer links/buttons and dropdown triggers) */
+            .sidebar-collapsed .menu-link:hover::after,
+            .sidebar-collapsed .sticky.bottom-0 a:hover::after,
+            .sidebar-collapsed .sticky.bottom-0 button:hover::after {
                 content: attr(data-tooltip);
                 position: absolute;
                 left: calc(100% + 12px);
@@ -246,7 +248,9 @@
                 pointer-events: none;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             }
-            .sidebar-collapsed .menu-link:hover::before {
+            .sidebar-collapsed .menu-link:hover::before,
+            .sidebar-collapsed .sticky.bottom-0 a:hover::before,
+            .sidebar-collapsed .sticky.bottom-0 button:hover::before {
                 content: '';
                 position: absolute;
                 left: calc(100% + 4px);
@@ -257,9 +261,13 @@
                 z-index: 999;
                 pointer-events: none;
             }
-            /* Hide tooltip when flyout is open to prevent overlap */
-            .sidebar-collapsed .dropdown-group .menu-link:hover::after,
-            .sidebar-collapsed .dropdown-group .menu-link:hover::before {
+            /* Hide tooltips when flyout menu is active to prevent overlapping visual clutter */
+            body.flyout-active .sidebar-collapsed .menu-link::after,
+            body.flyout-active .sidebar-collapsed .menu-link::before,
+            body.flyout-active .sidebar-collapsed .sticky.bottom-0 a::after,
+            body.flyout-active .sidebar-collapsed .sticky.bottom-0 a::before,
+            body.flyout-active .sidebar-collapsed .sticky.bottom-0 button::after,
+            body.flyout-active .sidebar-collapsed .sticky.bottom-0 button::before {
                 display: none !important;
             }
             .sidebar-collapsed .sticky.bottom-0 {
@@ -275,24 +283,6 @@
             .sidebar-collapsed .sticky.bottom-0 i {
                 margin-right: 0 !important;
                 font-size: 1.1rem !important;
-            }
-            /* Tooltip for footer items */
-            .sidebar-collapsed .sticky.bottom-0 a:hover::after {
-                content: attr(data-tooltip);
-                position: absolute;
-                left: calc(100% + 12px);
-                top: 50%;
-                transform: translateY(-50%);
-                background: #1E293B;
-                color: #F1F5F9;
-                padding: 6px 12px;
-                border-radius: 8px;
-                font-size: 12px;
-                font-weight: 600;
-                white-space: nowrap;
-                z-index: 999;
-                pointer-events: none;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             }
         }
 
@@ -480,6 +470,7 @@
                         fp.classList.remove('open');
                         fp.innerHTML = '';
                     }
+                    document.body.classList.remove('flyout-active');
                     activeFlyoutId = null;
                 }
 
@@ -518,6 +509,7 @@
                             const btnRect = btn.getBoundingClientRect();
                             fp.style.top = btnRect.top + 'px';
                             fp.classList.add('open');
+                            document.body.classList.add('flyout-active');
 
                             // Clamp so flyout doesn't go off-screen bottom
                             const fpRect = fp.getBoundingClientRect();
@@ -1052,12 +1044,13 @@
                     link.setAttribute('data-tooltip', span.textContent.trim());
                 }
             });
-            // Set data-tooltip for footer links
-            const footerLink = document.querySelector('#sidebar .sticky.bottom-0 a');
-            if (footerLink) {
-                const span = footerLink.querySelector('span');
-                if (span) footerLink.setAttribute('data-tooltip', span.textContent.trim());
-            }
+            // Set data-tooltip for footer links and buttons (like Logout)
+            document.querySelectorAll('#sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button').forEach(function(el) {
+                const span = el.querySelector('span');
+                if (span && span.textContent.trim()) {
+                    el.setAttribute('data-tooltip', span.textContent.trim());
+                }
+            });
 
             // Load bell notifications on page ready
             if (typeof window.fetchNotifications === 'function') {

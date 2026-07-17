@@ -163,12 +163,12 @@
 {{-- ════════════════════════════════════════════════════════════════════ --}}
 <div id="modal-kartu-keluarga" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100 relative">
-        <button onclick="document.getElementById('modal-kartu-keluarga').classList.add('hidden')" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-50 text-gray-400 hover:text-gray-600 flex items-center justify-center transition-all cursor-pointer border-none">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
 
         {{-- Official KK Card Banner Header --}}
         <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white p-6 rounded-3xl mb-6 shadow-md relative overflow-hidden">
+            <button onclick="document.getElementById('modal-kartu-keluarga').classList.add('hidden')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-all cursor-pointer border border-white/10 z-20">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
             <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-indigo-500/10 rounded-full blur-3xl"></div>
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
                 <div>

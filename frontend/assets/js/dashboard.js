@@ -549,8 +549,8 @@ function initPrefetch() {
     uniqueUrls.forEach(pageName => {
         if (pageName !== 'dashboard') {
             setTimeout(() => {
-                const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}`;
-                const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}`;
+                const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
+                const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
                 
                 const fetchPrefetch = (url) => {
                     return fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
@@ -689,8 +689,8 @@ function switchPage(pageName, element) {
         });
     };
 
-    const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}`;
-    const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}`;
+    const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
+    const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
 
     fetchPage(mainUrl)
         .catch(() => fetchPage(fallbackUrl))

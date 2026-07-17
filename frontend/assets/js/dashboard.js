@@ -210,6 +210,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Load default page (dashboard)
             switchPage('dashboard', document.querySelector('[data-page="dashboard"]'));
+            
+            // Prefetch other menu pages in the background for zero-delay instant switching
+            setTimeout(initPrefetch, 1000);
         })
         .catch(err => {
             console.error("Session verification failed:", err);
@@ -453,6 +456,77 @@ window.runGlobalCounterAnimation = function() {
 // ==========================================
 // 5. PAGE ROUTING & PREFETCHING
 // ==========================================
+// Prefetch all menu pages for instant navigation (zero delay)
+function initPrefetch() {
+    const links = document.querySelectorAll('[onclick*="switchPage"]');
+    const uniqueUrls = new Set();
+    links.forEach(link => {
+        const onclickAttr = link.getAttribute('onclick') || '';
+        const match = onclickAttr.match(/switchPage\(['"]([^'"]+)['"]/);
+        if (match && match[1]) {
+            uniqueUrls.add(match[1]);
+        }
+    });
+    
+    const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+    
+    uniqueUrls.forEach(pageName => {
+        if (pageName !== 'dashboard') {
+            const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}`;
+            const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}`;
+            
+            const fetchPrefetch = (url) => {
+                return fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => {
+                    if (res.ok) return res.text();
+                });
+            };
+            
+            fetchPrefetch(mainUrl)
+            .catch(() => fetchPrefetch(fallbackUrl))
+            .then(html => {
+                if (html) {
+                    window.pageCache[pageName] = { html: html, mode: currentMode };
+                }
+            })
+            .catch(() => {});
+        }
+    });
+
+    // Add mouseenter and touchstart listener to prefetch hovered/touched links even faster
+    links.forEach(link => {
+        const startPrefetch = () => {
+            const onclickAttr = link.getAttribute('onclick') || '';
+            const match = onclickAttr.match(/switchPage\(['"]([^'"]+)['"]/);
+            if (match && match[1]) {
+                const pageName = match[1];
+                if (!window.pageCache[pageName] || window.pageCache[pageName].mode !== currentMode) {
+                    const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}`;
+                    const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}`;
+                    
+                    const fetchHover = (url) => {
+                        return fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(res => {
+                            if (res.ok) return res.text();
+                        });
+                    };
+                    
+                    fetchHover(mainUrl)
+                    .catch(() => fetchHover(fallbackUrl))
+                    .then(html => {
+                        if (html) {
+                            window.pageCache[pageName] = { html: html, mode: currentMode };
+                        }
+                    })
+                    .catch(() => {});
+                }
+            }
+        };
+        link.addEventListener('mouseenter', startPrefetch);
+        link.addEventListener('touchstart', startPrefetch, { passive: true });
+    });
+}
+
 function switchPage(pageName, element) {
     const mainContent = document.getElementById('main-content');
 
@@ -477,6 +551,22 @@ function switchPage(pageName, element) {
         }
     }
 
+    const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+
+    // 1. Read cache first to load without loading spinner (instantly)
+    if (window.pageCache[pageName] && window.pageCache[pageName].mode === currentMode) {
+        mainContent.innerHTML = window.pageCache[pageName].html;
+        executeScripts(mainContent);
+        if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
+            window.renderDashboard();
+        }
+        if (typeof window.runGlobalCounterAnimation === 'function') {
+            window.runGlobalCounterAnimation();
+        }
+        return;
+    }
+
+    // Show loading spinner only if page is not cached
     mainContent.innerHTML = `
         <div class="flex flex-col items-center justify-center h-full min-h-[400px] space-y-4">
             <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -507,24 +597,11 @@ function switchPage(pageName, element) {
     const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}`;
     const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}`;
 
-    // Read cache first
-    if (window.pageCache[pageName]) {
-        mainContent.innerHTML = window.pageCache[pageName];
-        executeScripts(mainContent);
-        if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
-            window.renderDashboard();
-        }
-        if (typeof window.runGlobalCounterAnimation === 'function') {
-            window.runGlobalCounterAnimation();
-        }
-        return;
-    }
-
     fetchPage(mainUrl)
         .catch(() => fetchPage(fallbackUrl))
         .then(html => {
             if (!html) return;
-            window.pageCache[pageName] = html; // Save cache
+            window.pageCache[pageName] = { html: html, mode: currentMode }; // Save cache with mode
             mainContent.innerHTML = html;
             executeScripts(mainContent);
 

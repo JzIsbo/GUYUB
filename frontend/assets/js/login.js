@@ -96,10 +96,10 @@ window.quickLogin = function(email, password) {
     }
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
     const isDark = document.documentElement.classList.contains('dark');
     applyTheme(isDark);
-});
+})();
 
 window.toggleTheme = function() {
     const isCurrentDark = document.documentElement.classList.contains('dark');

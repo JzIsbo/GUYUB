@@ -81,3 +81,18 @@ function handleLogin(event) {
         submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk';
     });
 }
+
+window.quickLogin = function(email, password) {
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    if (emailInput && passwordInput) {
+        emailInput.value = email;
+        passwordInput.value = password;
+        
+        setTimeout(() => {
+            const submitBtn = document.getElementById('btn-submit');
+            if (submitBtn) submitBtn.click();
+        }, 100);
+    }
+};
+

@@ -365,6 +365,7 @@ class AdminController extends Controller
                 } else {
                     $data['list_surat'] = DB::table('surat_online')->where('nama_warga', $user->name)->orderBy('created_at', 'desc')->get();
                 }
+                $data['all_warga'] = DB::table('wargas')->orderBy('nama_lengkap', 'asc')->get();
             } elseif ($page == 'pengumuman') {
                 $data['list_pengumuman'] = DB::table('pengumumans')->orderBy('created_at', 'desc')->get();
             }

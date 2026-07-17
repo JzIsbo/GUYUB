@@ -94,7 +94,12 @@
             @csrf
             <div class="space-y-3">
                 @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                <input type="text" name="nama_warga" placeholder="Nama Warga" class="w-full py-2 px-3 text-sm border rounded-xl" required>
+                <select name="nama_warga" class="w-full py-2 px-3 text-sm border rounded-xl" required>
+                    <option value="" disabled selected>Pilih Warga...</option>
+                    @foreach($all_warga ?? [] as $w)
+                        <option value="{{ $w->nama_lengkap }}">{{ $w->nama_lengkap }} (Blok {{ $w->blok_rumah ?? '-' }})</option>
+                    @endforeach
+                </select>
                 @else
                 <input type="text" name="nama_warga" value="{{ Auth::user()->name }}" readonly class="w-full py-2 px-3 text-sm border rounded-xl bg-gray-50 text-gray-500 font-semibold" required>
                 @endif

@@ -533,6 +533,33 @@ function initPrefetch() {
 
 function switchPage(pageName, element) {
     const mainContent = document.getElementById('main-content');
+    if (!mainContent) return;
+
+    // Auto collapse/hide sidebar on page switch (both mobile and desktop)
+    try {
+        // Close all open flyout submenus
+        if (typeof closeFlyout === 'function') closeFlyout();
+
+        // Clear any running realtime intervals
+        if (window.realtimeInterval) {
+            clearInterval(window.realtimeInterval);
+            window.realtimeInterval = null;
+        }
+
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.add('sidebar-collapsed');
+            } else {
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('-translate-x-full');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
+        }
+    } catch (e) {
+        console.error("Error toggling sidebar or closing flyout:", e);
+    }
 
     // Reset active styles on sidebar & bottom tabs
     document.querySelectorAll('.menu-link, .bottom-tab-link').forEach(item => {

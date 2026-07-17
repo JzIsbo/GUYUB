@@ -326,22 +326,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Render cached dashboard instantly (SWR) ONLY if last active page is dashboard, otherwise show a clean spinner
+    // Render cached last active page instantly (SWR) from localStorage to eliminate all loading screens on boot
     const mainContent = document.getElementById('main-content');
     const lastActivePage = sessionStorage.getItem('guyub_active_page') || 'dashboard';
     
     if (mainContent) {
-        if (lastActivePage === 'dashboard') {
-            const cachedDashboard = localStorage.getItem('guyub_cache_dashboard');
-            if (cachedDashboard) {
-                mainContent.innerHTML = cachedDashboard;
-                executeScripts(mainContent);
-                if (typeof window.renderDashboard === 'function') {
-                    window.renderDashboard();
-                }
-                if (typeof window.runGlobalCounterAnimation === 'function') {
-                    window.runGlobalCounterAnimation();
-                }
+        const cachedHTML = localStorage.getItem('guyub_cache_' + lastActivePage);
+        if (cachedHTML) {
+            mainContent.innerHTML = cachedHTML;
+            executeScripts(mainContent);
+            if (lastActivePage === 'dashboard' && typeof window.renderDashboard === 'function') {
+                window.renderDashboard();
+            }
+            if (typeof window.runGlobalCounterAnimation === 'function') {
+                window.runGlobalCounterAnimation();
             }
         } else {
             mainContent.innerHTML = `
@@ -399,7 +397,12 @@ document.addEventListener("DOMContentLoaded", () => {
             hideLoadingBar();
             console.error("Session verification failed:", err);
             localStorage.removeItem('guyub_user');
-            localStorage.removeItem('guyub_cache_dashboard');
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('guyub_cache_')) {
+                    localStorage.removeItem(key);
+                }
+            }
             sessionStorage.removeItem('guyub_active_page');
             window.location.href = 'login.html';
         });
@@ -674,6 +677,7 @@ function initPrefetch() {
                 .then(html => {
                     if (html) {
                         window.pageCache[pageName] = { html: html, mode: currentMode };
+                        localStorage.setItem('guyub_cache_' + pageName, html);
                     }
                 })
                 .catch(() => {});
@@ -705,6 +709,7 @@ function initPrefetch() {
                     .then(html => {
                         if (html) {
                             window.pageCache[pageName] = { html: html, mode: currentMode };
+                            localStorage.setItem('guyub_cache_' + pageName, html);
                         }
                     })
                     .catch(() => {});
@@ -786,23 +791,7 @@ function switchPage(pageName, element) {
 
     const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
 
-    // 1. Read cache first to load without loading spinner (instantly)
-    if (window.pageCache[pageName] && window.pageCache[pageName].mode === currentMode) {
-        mainContent.innerHTML = window.pageCache[pageName].html;
-        executeScripts(mainContent);
-        if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
-            window.renderDashboard();
-        }
-        if (typeof window.runGlobalCounterAnimation === 'function') {
-            window.runGlobalCounterAnimation();
-        }
-        return;
-    }
-
-    // 2. If not cached, do NOT show the spinner! Just run the top loading progress bar
-    showLoadingBar();
-
-    // Fetch dynamic partial view
+    // Fetch dynamic partial view helper
     const fetchPage = (url) => {
         return fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(async res => {
@@ -819,12 +808,50 @@ function switchPage(pageName, element) {
     const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
     const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
 
+    // 1. Read localStorage cache first to load without loading spinner (instantly 0ms)
+    const cachedHTML = localStorage.getItem('guyub_cache_' + pageName);
+    if (cachedHTML) {
+        mainContent.innerHTML = cachedHTML;
+        executeScripts(mainContent);
+        if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
+            window.renderDashboard();
+        }
+        if (typeof window.runGlobalCounterAnimation === 'function') {
+            window.runGlobalCounterAnimation();
+        }
+
+        // Fetch silent update in background to keep data fresh
+        fetchPage(mainUrl)
+            .catch(() => fetchPage(fallbackUrl))
+            .then(html => {
+                if (html && html !== cachedHTML) {
+                    localStorage.setItem('guyub_cache_' + pageName, html);
+                    window.pageCache[pageName] = { html: html, mode: currentMode };
+                    mainContent.innerHTML = html;
+                    executeScripts(mainContent);
+                    if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
+                        window.renderDashboard();
+                    }
+                    if (typeof window.runGlobalCounterAnimation === 'function') {
+                        window.runGlobalCounterAnimation();
+                    }
+                }
+            })
+            .catch(() => {});
+
+        return;
+    }
+
+    // 2. If not cached, do NOT show the spinner! Just run the top loading progress bar
+    showLoadingBar();
+
     fetchPage(mainUrl)
         .catch(() => fetchPage(fallbackUrl))
         .then(html => {
             hideLoadingBar();
             if (!html) return;
             window.pageCache[pageName] = { html: html, mode: currentMode }; // Save cache with mode
+            localStorage.setItem('guyub_cache_' + pageName, html);
             if (pageName === 'dashboard') {
                 localStorage.setItem('guyub_cache_dashboard', html);
             }
@@ -862,6 +889,7 @@ window.invalidatePageCache = function(pageName) {
     if (window.pageCache[pageName]) {
         delete window.pageCache[pageName];
     }
+    localStorage.removeItem('guyub_cache_' + pageName);
 };
 
 function executeScripts(parent) {
@@ -1271,10 +1299,22 @@ function handleLogout() {
             .catch(() => logoutRequest(`${CONFIG.API_FALLBACK_URL}/logout`))
             .then(() => {
                 sessionStorage.removeItem('guyub_active_page');
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('guyub_cache_')) {
+                        localStorage.removeItem(key);
+                    }
+                }
                 window.location.href = 'login.html';
             })
             .catch(() => {
                 sessionStorage.removeItem('guyub_active_page');
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('guyub_cache_')) {
+                        localStorage.removeItem(key);
+                    }
+                }
                 window.location.href = 'login.html';
             });
         }

@@ -50,6 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if ($user->status !== 'Aktif') {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda berstatus \'' . $user->status . '\'. Pendaftaran warga baru memerlukan approval/persetujuan dari pengurus RT sebelum Anda dapat masuk.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

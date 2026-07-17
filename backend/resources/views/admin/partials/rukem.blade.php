@@ -20,8 +20,8 @@
 
             <div class="flex items-center gap-4 flex-wrap">
                 <!-- Quick Stats Badge 1 -->
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
-                    <p class="text-2xl font-black text-white leading-none"><span class="text-xs font-normal">Rp</span> {{ number_format($total_santunan ?? 0, 0, ',', '.') }}</p>
+                <div class="bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-center min-w-[110px]">
+                    <p class="stat-counter text-2xl font-black text-white leading-none" data-value="{{ $total_santunan ?? 0 }}" data-type="currency">Rp 0</p>
                     <p class="text-[9px] font-bold uppercase tracking-widest text-amber-300/70 mt-1">Santunan Disalurkan</p>
                 </div>
 
@@ -133,12 +133,33 @@
 
 <script>
 function hapusRukem(id) {
-    if (!confirm('Hapus data duka cita ini?')) return;
-    const fd = new FormData();
-    fd.append('id', id);
-    fd.append('_token', window.csrfToken);
-    fetch('/rukem/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(res => res.json())
-    .then(data => { alert(data.message); switchPage('rukem', document.querySelector('.menu-active')); });
+    Swal.fire({
+        title: 'Hapus Data Rukem?',
+        text: "Data berita duka & santunan ini akan dihapus.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-3xl p-6 shadow-2xl font-sans',
+            confirmButton: 'rounded-xl font-bold px-5 py-2.5 text-xs',
+            cancelButton: 'rounded-xl font-bold px-5 py-2.5 text-xs'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('_token', window.csrfToken);
+            fetch('/rukem/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json())
+            .then(data => { 
+                Swal.fire({ title: 'Berhasil!', text: 'Data Rukem telah dihapus.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-3xl p-6 font-sans' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('rukem'); }
+                switchPage('rukem', document.querySelector('.menu-active')); 
+            });
+        }
+    });
 }
 </script>

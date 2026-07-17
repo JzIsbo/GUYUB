@@ -56,6 +56,7 @@
             alert(data.message);
             // Refresh halaman parsial via AJAX
             if(typeof switchPage === 'function') {
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('riwayat-gateway'); }
                 switchPage('riwayat-gateway', document.querySelector('.menu-active'));
             } else {
                 window.location.reload();

@@ -18,7 +18,7 @@
                 </div>
 
                 <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
-                    Agenda Kegiatan & Event RT
+                    Agenda Kegiatan & Event
                 </h1>
                 <p class="text-sm text-teal-100/80 font-medium max-w-xl leading-relaxed">
                     Jadwal kerja bakti, rapat warga, pengajian, & acara kemasyarakatan
@@ -66,8 +66,23 @@
     <!-- ============================================================== -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse($list_kegiatan ?? [] as $item)
-        <div class="bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-            <div>
+        <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden">
+            @if(!empty($item->gambar))
+            @php
+                $imgUrl = \Illuminate\Support\Str::startsWith($item->gambar, ['http://', 'https://']) 
+                    ? $item->gambar 
+                    : asset('storage/' . $item->gambar);
+            @endphp
+            <div class="h-44 w-full overflow-hidden relative border-b border-gray-100">
+                <a href="{{ $imgUrl }}" target="_blank" title="Klik untuk gambar penuh">
+                    <img src="{{ $imgUrl }}" 
+                         onerror="this.onerror=null; this.src='/storage/{{ $item->gambar }}';"
+                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
+                         alt="{{ $item->nama_kegiatan }}">
+                </a>
+            </div>
+            @endif
+            <div class="p-6">
                 <div class="flex items-center justify-between mb-4">
                     <span class="bg-teal-50 text-teal-700 px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5">
                         <i class="fa-solid fa-clock text-[10px]"></i> {{ $item->waktu }}
@@ -80,12 +95,12 @@
                 </p>
                 <p class="text-xs text-gray-500 line-clamp-3 mb-6 leading-relaxed">{{ $item->deskripsi ?? 'Kegiatan kebersamaan warga RT.' }}</p>
             </div>
-            <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="px-6 pb-6 pt-4 border-t border-gray-100 flex items-center justify-between">
                 <span class="text-xs font-bold text-teal-600 flex items-center gap-1.5">
                     <i class="fa-solid fa-circle-check text-[10px]"></i> Terbuka untuk Warga
                 </span>
                 @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                <button onclick="hapusKegiatan({{ $item->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all inline-flex items-center justify-center" title="Hapus agenda">
+                <button onclick="hapusKegiatan({{ $item->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all inline-flex items-center justify-center cursor-pointer" title="Hapus agenda">
                     <i class="fa-solid fa-trash text-xs"></i>
                 </button>
                 @endif
@@ -98,7 +113,7 @@
                     <i class="fa-solid fa-calendar-xmark text-2xl text-teal-300"></i>
                 </div>
                 <div>
-                    <p class="font-bold text-gray-400">Belum ada agenda kegiatan RT</p>
+                    <p class="font-bold text-gray-400">Belum ada agenda kegiatan</p>
                     <p class="text-sm text-gray-300 mt-1">Jadwal kegiatan yang dibuat akan tampil di sini</p>
                 </div>
             </div>
@@ -112,8 +127,8 @@
 <div id="modal-tambah-kegiatan" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm p-4">
     <div class="bg-white rounded-[2.5rem] w-full max-w-lg p-8 relative shadow-2xl border border-gray-100">
         <button onclick="document.getElementById('modal-tambah-kegiatan').classList.add('hidden')" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-        <h3 class="text-xl font-black text-gray-800 mb-6">Tambah Agenda Kegiatan RT</h3>
-        <form id="form-kegiatan" action="/kegiatan/store" method="POST" onsubmit="simpanDataUmum(event, 'form-kegiatan', 'kegiatan')">
+        <h3 class="text-xl font-black text-gray-800 mb-6">Tambah Agenda Kegiatan</h3>
+        <form id="form-kegiatan" action="/kegiatan/store" method="POST" enctype="multipart/form-data" onsubmit="simpanDataUmum(event, 'form-kegiatan', 'kegiatan')">
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Kegiatan / Acara</label>
@@ -134,6 +149,10 @@
                     <input type="text" name="lokasi" placeholder="Lapangan Utama RT 01" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500">
                 </div>
                 <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Poster / Foto Banner Kegiatan (Opsional)</label>
+                    <input type="file" name="gambar" accept="image/*" class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2.5 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-xs">
+                </div>
+                <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Deskripsi & Imbauan Peralatan</label>
                     <textarea name="deskripsi" rows="3" placeholder="Harap warga membawa sapu dan cangkul..." class="w-full bg-gray-50 border border-gray-200 font-medium text-gray-700 p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
                 </div>
@@ -148,9 +167,30 @@
 
 <script>
 function hapusKegiatan(id) {
-    if (!confirm('Hapus agenda kegiatan ini?')) return;
-    const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
-    fetch('/kegiatan/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(res => res.json()).then(data => { alert(data.message); switchPage('kegiatan', document.querySelector('.menu-active')); });
+    Swal.fire({
+        title: 'Hapus Agenda Kegiatan?',
+        text: "Agenda kegiatan ini akan dihapus dari daftar.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-3xl p-6 shadow-2xl font-sans',
+            confirmButton: 'rounded-xl font-bold px-5 py-2.5 text-xs',
+            cancelButton: 'rounded-xl font-bold px-5 py-2.5 text-xs'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
+            fetch('/kegiatan/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json()).then(data => { 
+                Swal.fire({ title: 'Berhasil!', text: 'Agenda kegiatan telah dihapus.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-3xl p-6 font-sans' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('kegiatan'); }
+                switchPage('kegiatan', document.querySelector('.menu-active')); 
+            });
+        }
+    });
 }
 </script>

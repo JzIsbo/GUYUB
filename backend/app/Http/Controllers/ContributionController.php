@@ -13,7 +13,7 @@ class ContributionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'nama_iuran'        => 'required|string|max:255',
@@ -50,7 +50,7 @@ class ContributionController extends Controller
      */
     public function update(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'id'                => 'required|integer',
@@ -87,10 +87,11 @@ class ContributionController extends Controller
     /**
      * Remove the specified iuran config.
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         try {
+            $id = $request->id ?? $request->route('id');
             $contribution = Contribution::findOrFail($id);
             $iuranName = $contribution->nama_iuran;
             $contribution->delete();
@@ -104,7 +105,7 @@ class ContributionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal menghapus data iuran.'
+                'message' => 'Gagal menghapus data iuran: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -114,7 +115,7 @@ class ContributionController extends Controller
      */
     public function storePayment(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'warga_id'      => 'required|integer',

@@ -15,19 +15,28 @@ class KegiatanController extends Controller
             'tanggal'       => 'required|date',
             'waktu'         => 'required|string',
             'lokasi'        => 'required|string',
-            'deskripsi'     => 'nullable|string'
+            'deskripsi'     => 'nullable|string',
+            'gambar'        => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120'
         ]);
 
         try {
+            $gambarPath = null;
+            if ($request->hasFile('gambar')) {
+                $gambarPath = $request->file('gambar')->store('kegiatans', 'public');
+            }
+
             DB::table('kegiatans')->insert([
                 'nama_kegiatan' => $request->nama_kegiatan,
                 'tanggal'       => $request->tanggal,
                 'waktu'         => $request->waktu,
                 'lokasi'        => $request->lokasi,
                 'deskripsi'     => $request->deskripsi,
+                'gambar'        => $gambarPath,
                 'created_at'    => now(),
                 'updated_at'    => now()
             ]);
+
+            \App\Http\Controllers\Controller::logActivity('AGENDA KEGIATAN', 'Menerbitkan agenda kegiatan ' . $request->nama_kegiatan, $gambarPath);
 
             return response()->json(['status' => 'success', 'message' => 'Agenda Kegiatan RT berhasil ditambahkan!']);
         } catch (\Exception $e) {

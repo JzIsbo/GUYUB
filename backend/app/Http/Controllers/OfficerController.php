@@ -12,7 +12,7 @@ class OfficerController extends Controller
      */
     public function store(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'warga_id'      => 'required|integer',
@@ -51,7 +51,7 @@ class OfficerController extends Controller
      */
     public function update(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'id'            => 'required|integer',
@@ -90,7 +90,7 @@ class OfficerController extends Controller
      */
     public function destroy($id)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']), 403, 'Akses Ditolak');
         try {
             $officer = Officer::findOrFail($id);
             $officer->delete();

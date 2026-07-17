@@ -3,34 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Check and set device mode cookie based on window width before any content renders
+        (function() {
+            const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+            const cookies = document.cookie.split('; ');
+            const existingCookie = cookies.find(row => row.startsWith('device_mode='));
+            const existingVal = existingCookie ? existingCookie.split('=')[1] : null;
+            if (existingVal !== currentMode) {
+                document.cookie = "device_mode=" + currentMode + "; path=/; max-age=31536000; SameSite=Lax";
+                // Reload on initial load if the mode is wrong, to get correct server-side view
+                if (!window.performance.navigation.type && window.history.length <= 1) {
+                    window.location.reload();
+                }
+            }
+        })();
+    </script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Super Admin - GUYUB</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         window.csrfToken = "{{ csrf_token() }}";
         
-        // Override native alert with modern SweetAlert2 notifications
         window.alert = function(msg) {
-            if (typeof Swal === 'undefined') return;
             let strMsg = String(msg || '');
-            let cleanMsg = strMsg.replace(/^[✅❌🎉]\s*/, '');
             let isError = /gagal|error|❌|peringatan|salah|terjadi kesalahan/i.test(strMsg);
+            let isSuccess = /berhasil|sukses|lunas|✅|konfirmasi|diperbarui|disimpan|dihapus|ditambahkan/i.test(strMsg);
             
-            Swal.fire({
-                title: isError ? 'Perhatian' : 'Berhasil!',
-                text: cleanMsg,
-                icon: isError ? 'error' : 'success',
-                confirmButtonText: 'OK',
-                buttonsStyling: false,
-                customClass: {
-                    popup: 'rounded-[2.5rem] p-6 shadow-2xl border border-gray-100 bg-white',
-                    title: 'text-xl font-extrabold text-gray-800 tracking-tight',
-                    htmlContainer: 'text-sm font-semibold text-gray-600 mt-2',
-                    confirmButton: isError 
-                        ? 'bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-red-200 transition-all text-sm cursor-pointer'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-blue-200 transition-all text-sm cursor-pointer'
+            let cleanMsg = strMsg.replace(/^[✅❌🎉]\s*/, '');
+            
+            if (!document.getElementById('guyub-modal-styles')) {
+                let style = document.createElement('style');
+                style.id = 'guyub-modal-styles';
+                style.innerHTML = `
+                    #guyub-modal-overlay {
+                        position: fixed;
+                        inset: 0;
+                        z-index: 999999;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: rgba(15, 23, 42, 0.4);
+                        backdrop-filter: blur(8px);
+                        -webkit-backdrop-filter: blur(8px);
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+                    .guyub-modal-card {
+                        background: #ffffff;
+                        border: 1px solid rgba(241, 245, 249, 0.8);
+                        box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.22);
+                        border-radius: 2rem;
+                        padding: 2.25rem 2rem 2rem 2rem;
+                        width: calc(100% - 3rem);
+                        max-width: 310px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        text-align: center;
+                        transform: scale(0.9) translateY(15px);
+                        opacity: 0;
+                        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    }
+                    .guyub-modal-icon-wrapper {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 3.5rem;
+                        height: 3.5rem;
+                        border-radius: 1.25rem;
+                        margin-bottom: 1.25rem;
+                        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+                    }
+                    .guyub-icon-success {
+                        background: linear-gradient(135deg, #10b981, #059669);
+                        color: #ffffff;
+                        box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.35);
+                    }
+                    .guyub-icon-error {
+                        background: linear-gradient(135deg, #f43f5e, #e11d48);
+                        color: #ffffff;
+                        box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.35);
+                    }
+                    .guyub-icon-info {
+                        background: linear-gradient(135deg, #3b82f6, #2563eb);
+                        color: #ffffff;
+                        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.35);
+                    }
+                    .guyub-modal-title {
+                        margin: 0;
+                        font-size: 16px;
+                        font-weight: 900;
+                        color: #0f172a;
+                        line-height: 1.2;
+                        font-family: 'Plus Jakarta Sans', sans-serif;
+                        letter-spacing: -0.02em;
+                    }
+                    .guyub-modal-message {
+                        margin: 0.65rem 0 0 0;
+                        font-size: 11px;
+                        font-weight: 600;
+                        color: #64748b;
+                        line-height: 1.55;
+                        font-family: 'Plus Jakarta Sans', sans-serif;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            let overlay = document.createElement('div');
+            overlay.id = 'guyub-modal-overlay';
+            
+            let iconClass = 'guyub-icon-info';
+            let titleText = 'Informasi';
+            let iconHtml = `
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"></path>
+                </svg>
+            `;
+
+            if (isError) {
+                iconClass = 'guyub-icon-error';
+                titleText = 'Perhatian';
+                iconHtml = `
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
+                    </svg>
+                `;
+            } else if (isSuccess) {
+                iconClass = 'guyub-icon-success';
+                titleText = 'Berhasil';
+                iconHtml = `
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                `;
+
+                // SaaS Action title and message mappings
+                if (/kehadiran diperbarui|status.*kehadiran/i.test(cleanMsg)) {
+                    titleText = 'Kehadiran Diperbarui';
+                    cleanMsg = 'Status kehadiran peserta posyandu berhasil disimpan.';
+                } else if (/posyandu.*tambah|posyandu.*jadwal|jadwal.*posyandu/i.test(cleanMsg)) {
+                    titleText = 'Jadwal Posyandu Dibuat';
+                    cleanMsg = 'Jadwal pelaksanaan posyandu baru berhasil diterbitkan.';
+                } else if (/posyandu.*daftar|daftar.*posyandu/i.test(cleanMsg)) {
+                    titleText = 'Peserta Terdaftar';
+                    cleanMsg = 'Peserta baru berhasil didaftarkan ke kegiatan Posyandu.';
+                } else if (/posyandu.*hapus|hapus.*posyandu/i.test(cleanMsg)) {
+                    titleText = 'Pendaftaran Dibatalkan';
+                    cleanMsg = 'Pendaftaran peserta posyandu berhasil dibatalkan.';
+                } else if (/warga.*tambah|tambah.*warga/i.test(cleanMsg)) {
+                    titleText = 'Warga Ditambahkan';
+                    cleanMsg = 'Data profil warga baru berhasil disimpan ke database.';
+                } else if (/warga.*diperbarui|update.*warga/i.test(cleanMsg)) {
+                    titleText = 'Data Warga Diperbarui';
+                    cleanMsg = 'Perubahan profil warga berhasil disimpan.';
+                } else if (/warga.*hapus|hapus.*warga/i.test(cleanMsg)) {
+                    titleText = 'Warga Dihapus';
+                    cleanMsg = 'Data warga beserta seluruh rekam jejaknya telah dihapus.';
+                } else if (/tagihan.*tambah|generate.*tagihan|tagihan.*buat/i.test(cleanMsg)) {
+                    titleText = 'Tagihan Diterbitkan';
+                    cleanMsg = 'Tagihan iuran bulanan warga berhasil diterbitkan.';
+                } else if (/tagihan.*diperbarui|update.*tagihan/i.test(cleanMsg)) {
+                    titleText = 'Tagihan Diperbarui';
+                    cleanMsg = 'Perubahan rincian tagihan berhasil disimpan.';
+                } else if (/tagihan.*hapus|hapus.*tagihan/i.test(cleanMsg)) {
+                    titleText = 'Tagihan Dihapus';
+                    cleanMsg = 'Data tagihan iuran warga telah dihapus dari sistem.';
+                } else if (/verifikasi|pembayaran.*verifikasi/i.test(cleanMsg)) {
+                    titleText = 'Pembayaran Diverifikasi';
+                    cleanMsg = 'Pembayaran iuran warga berhasil diverifikasi.';
+                } else if (/surat.*tambah|surat.*buat/i.test(cleanMsg)) {
+                    titleText = 'Surat Pengantar Diajukan';
+                    cleanMsg = 'Pengajuan surat online berhasil dikirim ke pengurus RT.';
+                } else if (/status.*surat|surat.*status/i.test(cleanMsg)) {
+                    titleText = 'Status Surat Diperbarui';
+                    cleanMsg = 'Persetujuan status surat online berhasil disimpan.';
+                } else if (/aspirasi.*kirim|aspirasi.*tambah/i.test(cleanMsg)) {
+                    titleText = 'Aspirasi Dikirim';
+                    cleanMsg = 'Aspirasi & masukan Anda berhasil dikirim ke pengurus RT.';
+                } else if (/tanggapan.*aspirasi/i.test(cleanMsg)) {
+                    titleText = 'Aspirasi Ditanggapi';
+                    cleanMsg = 'Tanggapan pengurus RT terhadap aspirasi berhasil disimpan.';
+                } else if (/kategori.*tambah|kategori.*buat/i.test(cleanMsg)) {
+                    titleText = 'Kategori Ditambahkan';
+                    cleanMsg = 'Kategori transaksi keuangan baru berhasil disimpan.';
+                } else if (/kategori.*diperbarui|update.*kategori/i.test(cleanMsg)) {
+                    titleText = 'Kategori Diperbarui';
+                    cleanMsg = 'Perubahan kategori transaksi keuangan berhasil disimpan.';
+                } else if (/kategori.*hapus|hapus.*kategori/i.test(cleanMsg)) {
+                    titleText = 'Kategori Dihapus';
+                    cleanMsg = 'Kategori transaksi berhasil dihapus dari sistem.';
+                } else if (/sampah.*catat|sampah.*tambah/i.test(cleanMsg)) {
+                    titleText = 'Setoran Sampah Dicatat';
+                    cleanMsg = 'Setoran tabungan bank sampah warga berhasil dibukukan.';
+                } else if (/pengumuman.*tambah|pengumuman.*siar/i.test(cleanMsg)) {
+                    titleText = 'Pengumuman Disiarkan';
+                    cleanMsg = 'Pengumuman warga berhasil diterbitkan dan disiarkan.';
+                } else if (/perangkat.*simpan|perangkat.*tambah/i.test(cleanMsg)) {
+                    titleText = 'Aset/Inventaris Ditambahkan';
+                    cleanMsg = 'Inventaris aset baru berhasil disimpan.';
+                } else if (/perangkat.*ubah|perangkat.*update/i.test(cleanMsg)) {
+                    titleText = 'Aset/Inventaris Diperbarui';
+                    cleanMsg = 'Perubahan data inventaris aset berhasil disimpan.';
+                } else if (/perangkat.*hapus/i.test(cleanMsg)) {
+                    titleText = 'Aset/Inventaris Dihapus';
+                    cleanMsg = 'Data inventaris aset berhasil dihapus.';
+                } else if (/koperasi.*tambah|koperasi.*produk/i.test(cleanMsg)) {
+                    titleText = 'Produk Koperasi Ditambahkan';
+                    cleanMsg = 'Produk sembako koperasi berhasil ditambahkan.';
+                } else if (/umkm.*tambah|umkm.*buat/i.test(cleanMsg)) {
+                    titleText = 'UMKM Warga Didaftarkan';
+                    cleanMsg = 'Profil UMKM warga berhasil didaftarkan ke etalase.';
+                }
+            }
+
+            overlay.innerHTML = `
+                <div class="guyub-modal-card">
+                    <div class="guyub-modal-icon-wrapper ${iconClass}">
+                        ${iconHtml}
+                    </div>
+                    <h3 class="guyub-modal-title">${titleText}</h3>
+                    <p class="guyub-modal-message">${cleanMsg}</p>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+                let card = overlay.querySelector('.guyub-modal-card');
+                if (card) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1) translateY(0)';
                 }
             });
+
+            function dismissModal() {
+                overlay.style.opacity = '0';
+                let card = overlay.querySelector('.guyub-modal-card');
+                if (card) {
+                    card.style.transform = 'scale(0.9) translateY(15px)';
+                    card.style.opacity = '0';
+                }
+                setTimeout(() => {
+                    if (overlay.parentElement) overlay.remove();
+                }, 300);
+            }
+
+            overlay.onclick = dismissModal;
+
+            setTimeout(dismissModal, 2200);
+        };
+
         // Anti-flicker theme init
         (function() {
             const savedTheme = localStorage.getItem('theme');
@@ -53,6 +278,20 @@
         .sidebar-scroll::-webkit-scrollbar { width: 3px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
         .menu-active { background-color: #2563EB !important; color: white !important; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4); font-weight: 700; }
+        
+        /* Top Loading Progress Bar */
+        #top-loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #3b82f6, #60a5fa, #3b82f6);
+            z-index: 999999;
+            width: 0%;
+            transition: width 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
         
         /* ================= DARK MODE STYLING ================= */
         html.dark, html.dark body, html.dark #main-content { background-color: #0F172A !important; color: #F8FAFC !important; }
@@ -289,34 +528,66 @@
     @php
         // 1. LOGIC HAK AKSES SIDEBAR
         $aksesHalaman = [
-            'Super Admin' => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'status-pembayaran', 'riwayat-gateway', 'qris-va',
-                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'surat-online', 'pengumuman', 'data-warga', 'data-iuran',
-                'data-pengurus-rt', 'data-rt', 'pengguna', 'perangkat-sistem', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas',
-                'export-laporan', 'pengaturan', 'backup-restore', 'aktivitas-pengguna',
-                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
+            'Super Admin'   => [
+                'dashboard', 'pemasukan', 'pengeluaran', 'transaksi', 'kategori',
+                'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'pengguna', 'perangkat-sistem',
+                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan', 'backup-restore', 'aktivitas-pengguna',
+                'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
+                'surat-online', 'pengumuman',
+                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
+                'peraturan-sk', 'kerja-bakti'
             ],
-            'RT'          => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'status-pembayaran', 'qris-va',
-                'surat-online', 'pengumuman', 'data-warga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
+            'RW'            => [
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
+                'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
-                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
+                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
+                'peraturan-sk', 'kerja-bakti'
             ],
-            'Bendahara'   => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'status-pembayaran', 'riwayat-gateway', 'qris-va',
-                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'surat-online', 'pengumuman', 'data-iuran',
+            'Sekretaris RW' => [
+                'dashboard', 'pembayaran-menu', 'tagihan-warga',
+                'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt',
+                'kegiatan', 'aspirasi', 'approval-warga', 'peraturan-sk', 'kerja-bakti'
+            ],
+            'Bendahara RW'  => [
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
+                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan',
+                'koperasi'
+            ],
+            'RT'            => [
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
+                'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
-                'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi'
+                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
+                'peraturan-sk', 'kerja-bakti'
             ],
-            'Warga'       => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'status-pembayaran', 'qris-va',
-                'surat-online', 'pengumuman', 'data-warga', 'data-pengurus-rt', 'pengaturan',
-                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi'
+            'Sekretaris RT' => [
+                'dashboard', 'pembayaran-menu', 'tagihan-warga',
+                'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
+                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'pengaturan',
+                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
+                'peraturan-sk', 'kerja-bakti'
+            ],
+            'Bendahara RT'  => [
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
+                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'surat-online', 'pengumuman', 'data-keluarga', 'data-iuran',
+                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
+                'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi',
+                'peraturan-sk', 'kerja-bakti'
+            ],
+            'Warga'         => [
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online',
+                'surat-online', 'pengumuman', 'data-keluarga', 'data-pengurus-rt', 'pengaturan', 'perangkat-sistem',
+                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
+                'peraturan-sk', 'kerja-bakti'
             ]
         ];
 
         $can = function($menu) use ($aksesHalaman) {
             $role = Auth::check() ? Auth::user()->role : 'Warga';
+            if ($role === 'Super Admin') {
+                return true;
+            }
             return isset($aksesHalaman[$role]) && in_array($menu, $aksesHalaman[$role]);
         };
     @endphp
@@ -330,7 +601,7 @@
             <i class="fa-solid fa-xmark text-lg"></i>
         </button>
 
-        <a href="{{ route('welcome') }}" title="Lihat Halaman Publik GUYUB" class="p-8 flex items-center shrink-0 hover:opacity-90 transition cursor-pointer group">
+        <a href="{{ route('welcome') }}" data-tooltip="Lihat Halaman Publik GUYUB" class="p-8 flex items-center shrink-0 hover:opacity-90 transition cursor-pointer group">
             <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center group-hover:scale-105 transition-transform">
                 <i class="fa-solid fa-house-chimney-window text-[#0F172A] text-xl"></i>
             </div>
@@ -347,14 +618,14 @@
             </a>
             @endif
 
-            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('status-pembayaran') || $can('riwayat-gateway') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori') || $can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
+            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('riwayat-gateway') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori') || $can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
             {{-- 1. KATEGORI: KEUANGAN & LAPORAN --}}
             <div class="pt-8 pb-2 px-4">
                 <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Keuangan & Laporan</p>
             </div>
 
             {{-- ===== DROPDOWN: Pembayaran ===== --}}
-            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('status-pembayaran') || $can('riwayat-gateway') || $can('qris-va'))
+            @if($can('tagihan-warga') || $can('pembayaran-online') || $can('riwayat-gateway') || $can('qris-va'))
             <div class="space-y-1 dropdown-group">
                 <button onclick="toggleDropdown('pembayaran-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Pembayaran">
                     <i class="fa-solid fa-wallet w-6 opacity-50 group-hover:opacity-100"></i>
@@ -365,20 +636,10 @@
                     @php
                         $role = Auth::check() ? Auth::user()->role : 'Warga';
                         $labelTagihan = ($role == 'Warga') ? 'Tagihan Saya' : (($role == 'RT') ? 'Daftar Tagihan Warga' : 'Kelola Tagihan Warga');
-                        $labelStatus = ($role == 'Warga') ? 'Status Pembayaran Saya' : (($role == 'RT') ? 'Daftar Pembayaran Warga' : 'Daftar Pembayaran');
                         $labelQris = ($role == 'Warga') ? 'Rekening & QRIS RT' : (($role == 'RT') ? 'Daftar Rekening & QRIS' : 'Kelola Rekening & QRIS');
                     @endphp
                     @if($can('tagihan-warga'))
                     <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelTagihan }}</a>
-                    @endif
-                    @if($can('pembayaran-online'))
-                    <a href="javascript:void(0)" onclick="switchPage('pembayaran-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengaturan Gateway</a>
-                    @endif
-                    @if($can('status-pembayaran'))
-                    <a href="javascript:void(0)" onclick="switchPage('status-pembayaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelStatus }}</a>
-                    @endif
-                    @if($can('riwayat-gateway'))
-                    <a href="javascript:void(0)" onclick="switchPage('riwayat-gateway', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Log Transaksi Gateway</a>
                     @endif
                     @if($can('qris-va'))
                     <a href="javascript:void(0)" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelQris }}</a>
@@ -413,7 +674,7 @@
             @endif
 
             {{-- ===== DROPDOWN: Laporan ===== --}}
-            @if($can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
+            @if($can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan') || $can('laporan-koperasi'))
             <div class="space-y-1 dropdown-group">
                 <button onclick="toggleDropdown('laporan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Laporan">
                     <i class="fa-solid fa-chart-line w-6 opacity-50 group-hover:opacity-100"></i>
@@ -429,6 +690,9 @@
                     @endif
                     @if($can('laporan-kas'))
                     <a href="javascript:void(0)" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Kas</a>
+                    @endif
+                    @if($can('laporan-koperasi'))
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Koperasi</a>
                     @endif
                     @if($can('export-laporan'))
                     <a href="javascript:void(0)" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Export Laporan</a>
@@ -458,11 +722,11 @@
                     const sidebar = document.getElementById('sidebar');
                     if (!sidebar || !sidebar.classList.contains('sidebar-collapsed')) return;
 
-                    const target = e.target.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button');
+                    const target = e.target.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button, #sidebar [data-tooltip]');
                     if (!target) return;
 
                     // Prevent flickering when hovering child elements inside the link/button
-                    if (e.relatedTarget && e.relatedTarget.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button') === target) {
+                    if (e.relatedTarget && e.relatedTarget.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button, #sidebar [data-tooltip]') === target) {
                         return;
                     }
 
@@ -483,11 +747,11 @@
                 });
 
                 document.addEventListener('mouseout', function(e) {
-                    const target = e.target.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button');
+                    const target = e.target.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button, #sidebar [data-tooltip]');
                     if (!target) return;
 
                     // Prevent hiding when moving mouse inside child elements of the link/button
-                    if (e.relatedTarget && e.relatedTarget.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button') === target) {
+                    if (e.relatedTarget && e.relatedTarget.closest('#sidebar .menu-link, #sidebar .sticky.bottom-0 a, #sidebar .sticky.bottom-0 button, #sidebar [data-tooltip]') === target) {
                         return;
                     }
 
@@ -633,20 +897,26 @@
                     <a href="javascript:void(0)" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Keamanan & Ronda</a>
                     @endif
                     @if($can('kegiatan'))
-                    <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kegiatan RT</a>
+                    <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kegiatan</a>
                     @endif
                     @if($can('rukem'))
                     <a href="javascript:void(0)" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Rukem (Duka Cita)</a>
+                    @endif
+                    @if($can('peraturan-sk'))
+                    <a href="javascript:void(0)" onclick="switchPage('peraturan-sk', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Peraturan & SK RT/RW</a>
+                    @endif
+                    @if($can('kerja-bakti'))
+                    <a href="javascript:void(0)" onclick="switchPage('kerja-bakti', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kerja Bakti</a>
                     @endif
                 </div>
             </div>
             @endif
             @endif
 
-            {{-- 3. KATEGORI: DATA & ASET RT --}}
-            @if($can('data-warga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem'))
+            {{-- 3. KATEGORI: DATA & ASET/INVENTARIS --}}
+            @if($can('data-warga') || $can('data-keluarga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem'))
             <div class="pt-8 pb-2 px-4">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Data & Aset RT</p>
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Data & Aset/Inventaris</p>
             </div>
 
             {{-- ===== DROPDOWN: Data Master ===== --}}
@@ -660,20 +930,26 @@
                     @if($can('data-warga'))
                     <a href="javascript:void(0)" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Warga</a>
                     @endif
+                    @if($can('data-keluarga'))
+                    <a href="javascript:void(0)" onclick="switchPage('data-keluarga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Keluarga</a>
+                    @endif
                     @if($can('data-iuran'))
                     <a href="javascript:void(0)" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Iuran</a>
                     @endif
                     @if($can('data-pengurus-rt'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Pengurus RT</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Pengurus RT & RW</a>
                     @endif
                     @if($can('data-rt'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data RT</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data RT RW</a>
                     @endif
                     @if($can('pengguna'))
                     <a href="javascript:void(0)" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengguna</a>
                     @endif
+                    @if($can('approval-warga'))
+                    <a href="javascript:void(0)" onclick="switchPage('approval-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Persetujuan Warga</a>
+                    @endif
                     @if($can('perangkat-sistem'))
-                    <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aset RT</a>
+                    <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aset/Inventaris</a>
                     @endif
                 </div>
             </div>
@@ -767,10 +1043,10 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 md:gap-4 pl-3 md:pl-6 border-l border-gray-100">
-                    <div onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']'))" class="text-right hidden sm:block cursor-pointer hover:opacity-80 transition" title="Ke Pengaturan Akun">
-                        <p class="text-sm font-black text-gray-800 leading-none lowercase tracking-tighter">{{ Auth::user()->name }}</p>
-                        <p class="text-[9px] text-blue-600 font-black uppercase mt-1 italic tracking-widest leading-none">{{ Auth::user()->role }}</p>
+                <div class="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-6 border-l border-gray-100">
+                    <div onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']') || document.querySelector('.bottom-tab-link[onclick*=\'pengaturan\']'))" class="text-right cursor-pointer hover:opacity-80 transition" title="Ke Pengaturan Akun">
+                        <p class="text-xs md:text-sm font-black text-gray-800 leading-none lowercase tracking-tighter truncate max-w-[80px] sm:max-w-none">{{ Auth::user()->name }}</p>
+                        <p class="text-[8px] md:text-[9px] text-blue-600 font-black uppercase mt-0.5 sm:mt-1 italic tracking-widest leading-none">{{ Auth::user()->role }}</p>
                     </div>
                     <img src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" onclick="openAvatarModal(this.src, '{{ addslashes(Auth::user()->name) }}')" class="h-10 w-10 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover cursor-pointer hover:scale-105 active:scale-95 transition-transform" alt="Avatar" title="Lihat Foto Full">
                 </div>
@@ -810,7 +1086,13 @@
             </button>
             @endif
             
-            <!-- Tab 3: Surat Online -->
+            <!-- Tab 3: Semua Menu (Opens Sheet) -->
+            <button onclick="toggleMobileMenuSheet(true)" class="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
+                <i class="fa-solid fa-ellipsis text-base"></i>
+                <span class="text-[9px] font-bold">Menu</span>
+            </button>
+
+            <!-- Tab 4: Surat Online -->
             @if($can('surat-online'))
             <button onclick="switchPage('surat-online', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
                 <i class="fa-solid fa-envelope text-base"></i>
@@ -818,17 +1100,11 @@
             </button>
             @endif
             
-            <!-- Tab 4: Semua Menu (Opens Sheet) -->
-            <button onclick="toggleMobileMenuSheet(true)" class="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
-                <i class="fa-solid fa-ellipsis text-base"></i>
-                <span class="text-[9px] font-bold">Menu</span>
-            </button>
-            
-            <!-- Tab 5: Pengaturan -->
-            @if($can('pengaturan'))
-            <button onclick="switchPage('pengaturan', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
-                <i class="fa-solid fa-gears text-base"></i>
-                <span class="text-[9px] font-bold">Setelan</span>
+            <!-- Tab 5: Data Keluarga -->
+            @if($can('data-keluarga'))
+            <button onclick="switchPage('data-keluarga', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
+                <i class="fa-solid fa-people-roof text-base"></i>
+                <span class="text-[9px] font-bold">Keluarga</span>
             </button>
             @endif
         </div>
@@ -860,7 +1136,7 @@
             
             <div class="space-y-4">
                 <!-- Section 1: Transaksi & Keuangan -->
-                @if($can('tagihan-warga') || $can('status-pembayaran') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori'))
+                @if($can('tagihan-warga') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori'))
                 <div>
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2.5">Keuangan & Pembayaran</h4>
                     <div class="grid grid-cols-3 gap-2">
@@ -868,12 +1144,6 @@
                         <button onclick="switchPage('tagihan-warga'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
                             <i class="fa-solid fa-wallet text-blue-500 text-base"></i>
                             <span class="text-[9px] font-bold text-gray-700 truncate w-full">{{ (Auth::user()->role == 'Warga') ? 'Tagihan Saya' : 'Tagihan Warga' }}</span>
-                        </button>
-                        @endif
-                        @if($can('status-pembayaran'))
-                        <button onclick="switchPage('status-pembayaran'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
-                            <i class="fa-solid fa-circle-check text-blue-500 text-base"></i>
-                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Status Bayar</span>
                         </button>
                         @endif
                         @if($can('qris-va'))
@@ -980,7 +1250,7 @@
                 @endif
 
                 <!-- Section 3: Master Data & Laporan -->
-                @if($can('data-warga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem') || $can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
+                @if($can('data-warga') || $can('data-keluarga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem') || $can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
                 <div>
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2.5">Master Data & Laporan</h4>
                     <div class="grid grid-cols-3 gap-2">
@@ -988,6 +1258,12 @@
                         <button onclick="switchPage('data-warga'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
                             <i class="fa-solid fa-users text-teal-600 text-base"></i>
                             <span class="text-[9px] font-bold text-gray-700 truncate w-full">Data Warga</span>
+                        </button>
+                        @endif
+                        @if($can('data-keluarga'))
+                        <button onclick="switchPage('data-keluarga'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
+                            <i class="fa-solid fa-people-roof text-indigo-500 text-base"></i>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Data Keluarga</span>
                         </button>
                         @endif
                         @if($can('data-iuran'))
@@ -999,13 +1275,13 @@
                         @if($can('data-pengurus-rt'))
                         <button onclick="switchPage('data-pengurus-rt'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
                             <i class="fa-solid fa-user-tie text-blue-700 text-base"></i>
-                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Pengurus RT</span>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Pengurus RT/RW</span>
                         </button>
                         @endif
                         @if($can('data-rt'))
                         <button onclick="switchPage('data-rt'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
                             <i class="fa-solid fa-database text-slate-600 text-base"></i>
-                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Data RT</span>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Data RT RW</span>
                         </button>
                         @endif
                         @if($can('pengguna'))
@@ -1014,10 +1290,28 @@
                             <span class="text-[9px] font-bold text-gray-700 truncate w-full">Pengguna</span>
                         </button>
                         @endif
+                        @if($can('approval-warga'))
+                        <button onclick="switchPage('approval-warga'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
+                            <i class="fa-solid fa-user-check text-emerald-600 text-base"></i>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Persetujuan</span>
+                        </button>
+                        @endif
+                        @if($can('peraturan-sk'))
+                        <button onclick="switchPage('peraturan-sk'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-indigo-50 rounded-xl transition gap-1.5 min-w-0">
+                            <i class="fa-solid fa-scale-balanced text-indigo-600 text-base"></i>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Peraturan/SK</span>
+                        </button>
+                        @endif
+                        @if($can('kerja-bakti'))
+                        <button onclick="switchPage('kerja-bakti'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-emerald-50 rounded-xl transition gap-1.5 min-w-0">
+                            <i class="fa-solid fa-person-digging text-emerald-600 text-base"></i>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Kerja Bakti</span>
+                        </button>
+                        @endif
                         @if($can('perangkat-sistem'))
                         <button onclick="switchPage('perangkat-sistem'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-blue-50 rounded-xl transition gap-1.5 min-w-0">
                             <i class="fa-solid fa-boxes-stacked text-amber-700 text-base"></i>
-                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Aset RT</span>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Aset/Inventaris</span>
                         </button>
                         @endif
                         @if($can('laporan-keuangan'))
@@ -1077,6 +1371,79 @@
     </div>
 
     <script>
+        // Top Loading Progress Bar Functions
+        window.startLoadingBar = function() {
+            let bar = document.getElementById('top-loading-bar');
+            if (!bar) {
+                bar = document.createElement('div');
+                bar.id = 'top-loading-bar';
+                document.body.appendChild(bar);
+            }
+            bar.style.opacity = '1';
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = '70%';
+            }, 10);
+        };
+
+        window.stopLoadingBar = function() {
+            const bar = document.getElementById('top-loading-bar');
+            if (bar) {
+                bar.style.width = '100%';
+                setTimeout(() => {
+                    bar.style.opacity = '0';
+                }, 200);
+            }
+        };
+
+        window.runGlobalCounterAnimation = function() {
+            const counters = document.querySelectorAll('.stat-counter');
+            counters.forEach(counter => {
+                // Cancel any existing running animation frame to prevent conflict
+                if (counter.dataset.animationId) {
+                    cancelAnimationFrame(parseInt(counter.dataset.animationId));
+                }
+
+                const rawValue = counter.getAttribute('data-value') || '';
+                const target = parseFloat(rawValue.replace(/[^0-9.-]+/g, '')) || 0;
+                const type = counter.getAttribute('data-type') || 'currency';
+                
+                // Only animate nominal currency and warga demographics
+                if (type !== 'currency' && type !== 'warga') return;
+                
+                let current = 0;
+                const duration = 1200; // 1.2 seconds animation
+                const frameRate = 60;
+                const totalFrames = Math.round(duration / (1000 / frameRate));
+                let frame = 0;
+                
+                const animate = () => {
+                    frame++;
+                    const progress = 1 - Math.pow(1 - (frame / totalFrames), 3); // easeOutCubic
+                    current = target * progress;
+                    
+                    if (type === 'currency') {
+                        counter.textContent = 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Math.round(current));
+                    } else if (type === 'warga') {
+                        counter.textContent = Math.round(current) + ' Jiwa';
+                    }
+                    
+                    if (frame < totalFrames) {
+                        counter.dataset.animationId = requestAnimationFrame(animate);
+                    } else {
+                        if (type === 'currency') {
+                            counter.textContent = 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(target);
+                        } else if (type === 'warga') {
+                            counter.textContent = target + ' Jiwa';
+                        }
+                        delete counter.dataset.animationId;
+                    }
+                };
+                
+                counter.dataset.animationId = requestAnimationFrame(animate);
+            });
+        };
+
         // ==========================================
         // AUTO-SET TOOLTIPS FOR COLLAPSED SIDEBAR
         // ==========================================
@@ -1104,6 +1471,70 @@
             // Init Dark / Light Theme state
             if (typeof window.initTheme === 'function') {
                 window.initTheme();
+            }
+
+            // Trigger global counter animation on initial load
+            if (typeof window.runGlobalCounterAnimation === 'function') {
+                window.runGlobalCounterAnimation();
+            }
+
+            // Prefetch all menu pages for instant navigation (zero delay)
+            setTimeout(() => {
+                const links = document.querySelectorAll('[onclick*="switchPage"]');
+                const uniqueUrls = new Set();
+                links.forEach(link => {
+                    const onclickAttr = link.getAttribute('onclick') || '';
+                    const match = onclickAttr.match(/switchPage\(['"]([^'"]+)['"]/);
+                    if (match && match[1]) {
+                        uniqueUrls.add(match[1]);
+                    }
+                });
+                
+                uniqueUrls.forEach(pageName => {
+                    if (pageName !== 'dashboard') {
+                        const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+                        fetch(`/${pageName}?mode=${currentMode}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(response => {
+                            if (response.ok) return response.text();
+                        })
+                        .then(html => {
+                            if (html) window.pageCache[pageName] = { html: html, mode: currentMode };
+                        })
+                        .catch(() => {});
+                    }
+                });
+
+                // Add mouseenter and touchstart listener to prefetch hovered/touched links even faster
+                links.forEach(link => {
+                    const startPrefetch = () => {
+                        const onclickAttr = link.getAttribute('onclick') || '';
+                        const match = onclickAttr.match(/switchPage\(['"]([^'"]+)['"]/);
+                        if (match && match[1]) {
+                            const pageName = match[1];
+                            const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+                            if (!window.pageCache[pageName] || window.pageCache[pageName].mode !== currentMode) {
+                                fetch(`/${pageName}?mode=${currentMode}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                                .then(response => {
+                                    if (response.ok) return response.text();
+                                })
+                                .then(html => {
+                                    if (html) window.pageCache[pageName] = { html: html, mode: currentMode };
+                                })
+                                .catch(() => {});
+                            }
+                        }
+                    };
+                    link.addEventListener('mouseenter', startPrefetch);
+                    link.addEventListener('touchstart', startPrefetch, { passive: true });
+                });
+            }, 1000);
+
+            // Cache the initial rendered page content
+            const initialPage = '{{ $page }}';
+            const mainContent = document.getElementById('main-content');
+            if (mainContent && initialPage) {
+                const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+                window.pageCache[initialPage] = { html: mainContent.innerHTML, mode: currentMode };
             }
         });
 
@@ -1260,6 +1691,12 @@
                 } catch (scriptErr) {
                     console.warn('Script execution notice:', scriptErr);
                 }
+                
+                // Trigger count animation for any loaded page
+                if (typeof window.runGlobalCounterAnimation === 'function') {
+                    window.runGlobalCounterAnimation();
+                }
+
                 // Pemicu Grafik Dashboard
                 if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
                     try {
@@ -1274,36 +1711,19 @@
             // Skip cache if reloading the SAME page (mutation refresh from save/delete)
             const currentPage = window.location.pathname.replace(/^\//, '');
             const isSamePageReload = (currentPage === pageName);
-            const cachedHtml = isSamePageReload ? null : window.pageCache[pageName];
+            
+            const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
+            const cachedData = isSamePageReload ? null : window.pageCache[pageName];
+            const cachedHtml = (cachedData && cachedData.mode === currentMode) ? cachedData.html : null;
+
             if (cachedHtml) {
                 // Instant load from cache
                 renderPage(cachedHtml);
                 window.history.pushState({}, '', `/${pageName}`);
-
-                // Revalidate in the background
-                fetch(`/${pageName}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(response => {
-                    if (response.status === 401) { window.location.href = '/login'; return; }
-                    if (!response.ok) throw new Error();
-                    return response.text();
-                })
-                .then(html => {
-                    if (html && window.pageCache[pageName] !== html) {
-                        window.pageCache[pageName] = html;
-                        renderPage(html);
-                    }
-                })
-                .catch(() => { /* Silent fail for background revalidation */ });
             } else {
-                // Cache miss: normal load with full spinner
-                mainContent.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full min-h-[400px] space-y-4">
-                        <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                        <p class="text-gray-400 font-bold italic animate-pulse tracking-widest uppercase text-xs">MENGAKSES HALAMAN ${pageName.replace(/-/g, ' ').toUpperCase()}...</p>
-                    </div>
-                `;
-
-                fetch(`/${pageName}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                if (typeof window.startLoadingBar === 'function') window.startLoadingBar();
+                // Cache miss: load in background without blocking screen
+                fetch(`/${pageName}?mode=${currentMode}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                 .then(async response => {
                     if (response.status === 401) {
                         window.location.href = '/login';
@@ -1316,12 +1736,14 @@
                     return text;
                 })
                 .then(html => {
+                    if (typeof window.stopLoadingBar === 'function') window.stopLoadingBar();
                     if (!html) return;
-                    window.pageCache[pageName] = html;
+                    window.pageCache[pageName] = { html: html, mode: currentMode };
                     renderPage(html);
                     window.history.pushState({}, '', `/${pageName}`);
                 })
                 .catch(error => {
+                    if (typeof window.stopLoadingBar === 'function') window.stopLoadingBar();
                     mainContent.innerHTML = `
                         <div class="p-10 bg-white rounded-[2.5rem] border border-red-100 shadow-sm text-center min-h-[400px] flex flex-col justify-center items-center">
                             <i class="fa-solid fa-triangle-exclamation text-5xl text-red-400 mb-4"></i>
@@ -1538,6 +1960,7 @@
             window.toggleNotificationDropdown();
             
             const targetLink = document.querySelector('.menu-link[onclick*="aktivitas-pengguna"]');
+            if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('aktivitas-pengguna'); }
             switchPage('aktivitas-pengguna', targetLink);
         };
 
@@ -1599,7 +2022,43 @@
                 if (icon) icon.className = 'fa-solid fa-moon text-sm text-slate-500';
                 if (btn) btn.title = 'Ubah ke Mode Gelap';
             }
+            
+            if (typeof window.renderDashboard === 'function') {
+                setTimeout(window.renderDashboard, 100);
+            }
+            if (typeof window.renderDashboardMobile === 'function') {
+                setTimeout(window.renderDashboardMobile, 100);
+            }
+            if (typeof window.renderDemografiChart === 'function') {
+                setTimeout(window.renderDemografiChart, 100);
+            }
+            if (typeof window.renderDemografiChartMobile === 'function') {
+                setTimeout(window.renderDemografiChartMobile, 100);
+            }
         }
+
+        window.showDropdown = function(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('hidden');
+        };
+
+        window.filterCustomDropdown = function(inputId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            if (!input || !dropdown) return;
+            const filter = input.value.toLowerCase();
+            dropdown.classList.remove('hidden');
+            
+            const items = dropdown.querySelectorAll('.dropdown-item, .dropdown-item-m');
+            items.forEach(item => {
+                const txt = item.textContent || item.innerText;
+                if (txt.toLowerCase().includes(filter)) {
+                    item.style.display = "";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        };
     </script>
 
     <!-- Modal Full View Avatar -->

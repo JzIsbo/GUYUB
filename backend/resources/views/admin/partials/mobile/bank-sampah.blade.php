@@ -14,7 +14,7 @@
                     </div>
                     <span class="text-[8px] font-black uppercase tracking-[2px] text-emerald-300/80">Layanan Warga</span>
                 </div>
-                <h1 class="text-lg font-black tracking-tight">Bank Sampah RT</h1>
+                <h1 class="text-lg font-black tracking-tight">Bank Sampah</h1>
                 <p class="text-[10px] text-white/50 font-medium mt-0.5">Kelola setoran daur ulang warga.</p>
             </div>
 
@@ -24,7 +24,7 @@
                     <p class="text-[7px] font-bold uppercase tracking-widest text-emerald-300/70 mt-0.5">Terkumpul</p>
                 </div>
                 <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-3 py-2 text-center min-w-[85px]">
-                    <p class="text-lg font-black text-white leading-none"><span class="text-[9px] font-normal">Rp</span> {{ number_format($total_rupiah ?? 0, 0, ',', '.') }}</p>
+                    <p class="stat-counter text-lg font-black text-white leading-none" data-value="{{ $total_rupiah ?? 0 }}" data-type="currency">Rp 0</p>
                     <p class="text-[7px] font-bold uppercase tracking-widest text-emerald-300/70 mt-0.5">Nilai Tabungan</p>
                 </div>
 
@@ -82,17 +82,40 @@
         <form id="form-bank-sampah" action="/bank-sampah/store" method="POST" onsubmit="simpanDataUmum(event, 'form-bank-sampah', 'bank-sampah')">
             <div class="space-y-3">
                 <div>
-                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1.5">Nama Warga Penyetor</label>
-                    <input type="text" name="nama_warga" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Pilih Warga Penyetor</label>
+                    <div class="relative">
+                        <input type="hidden" name="nama_warga" id="nama_warga_penyetor_hidden_mobile" required>
+                        <div class="relative">
+                            <input type="text" id="penyetor_search_input_mobile" placeholder="🔍 Cari & pilih nama warga..." 
+                                   onfocus="showDropdown('penyetor_dropdown_mobile')" 
+                                   onkeyup="filterCustomDropdown('penyetor_search_input_mobile', 'penyetor_dropdown_mobile')" 
+                                   autocomplete="off"
+                                   class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[9px]"></i>
+                        </div>
+
+                        <div id="penyetor_dropdown_mobile" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-30 max-h-48 overflow-y-auto divide-y divide-gray-50">
+                            @foreach($all_warga ?? [] as $w)
+                                <div onclick="selectPenyetorOptionMobile('{{ addslashes($w->nama_lengkap) }}')" 
+                                     class="dropdown-item-m px-3 py-2 hover:bg-emerald-50 cursor-pointer transition flex items-center justify-between text-[11px] font-semibold text-gray-700">
+                                    <div>
+                                        <span class="block font-bold">{{ $w->nama_lengkap }}</span>
+                                        <span class="text-[9px] text-gray-400 font-normal">Blok {{ $w->blok_rumah }}</span>
+                                    </div>
+                                    <span class="text-[9px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full font-bold">{{ $w->umur ? $w->umur.' Thn' : '-' }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1.5">Jenis Sampah</label>
-                        <select name="jenis_sampah" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="Botol Plastik">Botol Plastik</option>
-                            <option value="Kardus & Kertas">Kardus & Kertas</option>
-                            <option value="Besi & Logam">Besi & Logam</option>
-                            <option value="Minyak Jelantah">Minyak Jelantah</option>
+                        <select name="jenis_sampah" id="jenis_sampah_select_mobile" onchange="hitungKonversiRupiahMobile()" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="Botol Plastik" data-harga="3000">Botol Plastik (Rp 3.000 / Kg)</option>
+                            <option value="Kardus & Kertas" data-harga="2500">Kardus & Kertas (Rp 2.500 / Kg)</option>
+                            <option value="Besi & Logam" data-harga="7000">Besi & Logam (Rp 7.000 / Kg)</option>
+                            <option value="Minyak Jelantah" data-harga="6000">Minyak Jelantah (Rp 6.000 / L)</option>
                         </select>
                     </div>
                     <div>
@@ -103,11 +126,11 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1.5">Berat Total (Kg)</label>
-                        <input type="number" step="0.1" name="berat_kg" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <input type="number" step="0.1" name="berat_kg" id="berat_kg_input_mobile" oninput="hitungKonversiRupiahMobile()" placeholder="Contoh: 2.5" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1.5">Konversi Rupiah (Rp)</label>
-                        <input type="number" name="total_rupiah" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <input type="number" name="total_rupiah" id="total_rupiah_input_mobile" required class="w-full bg-emerald-50 border border-emerald-200 font-extrabold text-emerald-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Otomatis">
                     </div>
                 </div>
             </div>
@@ -120,13 +143,83 @@
 </div>
 
 <script>
+function hitungKonversiRupiahMobile() {
+    const jenisSelect = document.getElementById('jenis_sampah_select_mobile');
+    const beratInput = document.getElementById('berat_kg_input_mobile');
+    const rupiahInput = document.getElementById('total_rupiah_input_mobile');
+    if (!jenisSelect || !beratInput || !rupiahInput) return;
+
+    const selectedOption = jenisSelect.options[jenisSelect.selectedIndex];
+    const hargaPerKg = parseFloat(selectedOption ? selectedOption.getAttribute('data-harga') : 3000) || 3000;
+    const berat = parseFloat(beratInput.value) || 0;
+
+    const total = Math.round(berat * hargaPerKg);
+    rupiahInput.value = total > 0 ? total : '';
+}
+
+function showDropdown(id) {
+    document.getElementById(id).classList.remove('hidden');
+}
+
+function filterCustomDropdown(inputId, dropdownId) {
+    const input = document.getElementById(inputId);
+    const filter = input.value.toLowerCase();
+    const dropdown = document.getElementById(dropdownId);
+    dropdown.classList.remove('hidden');
+    
+    const items = dropdown.getElementsByClassName('dropdown-item-m');
+    for (let i = 0; i < items.length; i++) {
+        const txt = items[i].textContent || items[i].innerText;
+        if (txt.toLowerCase().includes(filter)) {
+            items[i].style.display = "";
+        } else {
+            items[i].style.display = "none";
+        }
+    }
+}
+
+function selectPenyetorOptionMobile(nama) {
+    document.getElementById('penyetor_search_input_mobile').value = nama;
+    document.getElementById('nama_warga_penyetor_hidden_mobile').value = nama;
+    document.getElementById('penyetor_dropdown_mobile').classList.add('hidden');
+}
+
+document.addEventListener('click', function(e) {
+    const pInputM = document.getElementById('penyetor_search_input_mobile');
+    const pDropM = document.getElementById('penyetor_dropdown_mobile');
+    if (pInputM && pDropM && !pInputM.contains(e.target) && !pDropM.contains(e.target)) {
+        pDropM.classList.add('hidden');
+    }
+});
+
 function hapusBankSampah(id) {
-    if (!confirm('Hapus riwayat setoran ini?')) return;
-    const fd = new FormData();
-    fd.append('id', id);
-    fd.append('_token', window.csrfToken);
-    fetch('/bank-sampah/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(res => res.json())
-    .then(data => { alert(data.message); switchPage('bank-sampah', document.querySelector('.menu-active')); });
+    Swal.fire({
+        title: 'Hapus Setoran?',
+        text: "Data setoran sampah ini akan dihapus.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-2xl p-4 shadow-xl font-sans text-xs',
+            confirmButton: 'rounded-xl font-bold px-4 py-2 text-[11px]',
+            cancelButton: 'rounded-xl font-bold px-4 py-2 text-[11px]'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('_token', window.csrfToken);
+            fetch('/bank-sampah/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json())
+            .then(data => { 
+                Swal.fire({ title: 'Berhasil!', text: 'Setoran sampah dihapus.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-2xl p-4 font-sans text-xs' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('bank-sampah'); }
+                switchPage('bank-sampah', document.querySelector('.menu-active')); 
+            });
+        }
+    });
 }
 </script>

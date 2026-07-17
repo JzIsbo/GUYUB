@@ -50,18 +50,29 @@ class RondaController extends Controller
         $request->validate([
             'pelapor'        => 'required|string',
             'jenis_kejadian' => 'required|string',
-            'deskripsi'      => 'required|string'
+            'deskripsi'      => 'required|string',
+            'waktu_kejadian' => 'nullable|string',
+            'foto'           => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120'
         ]);
 
         try {
+            $fotoPath = null;
+            if ($request->hasFile('foto')) {
+                $fotoPath = $request->file('foto')->store('incidents', 'public');
+            }
+
             DB::table('incidents')->insert([
                 'pelapor'        => $request->pelapor,
                 'jenis_kejadian' => $request->jenis_kejadian,
                 'deskripsi'      => $request->deskripsi,
+                'waktu_kejadian' => $request->waktu_kejadian ?? date('H:i') . ' WIB',
+                'foto'           => $fotoPath,
                 'status'         => 'Perlu Penanganan',
                 'created_at'     => now(),
                 'updated_at'     => now()
             ]);
+
+            \App\Http\Controllers\Controller::logActivity('LAPOR KEJADIAN', 'Melaporkan kejadian ' . $request->jenis_kejadian . ' (Pelapor: ' . $request->pelapor . ')', $fotoPath);
 
             return response()->json(['status' => 'success', 'message' => 'Laporan Kejadian berhasil dikirim ke Petugas RT!']);
         } catch (\Exception $e) {

@@ -12,10 +12,12 @@ class Device extends Model
     // Menghubungkan model ke tabel 'devices'
     protected $table = 'devices';
 
-    // Kolom yang diizinkan untuk diisi data dari form
     protected $fillable = [
         'nama_perangkat',
-        'jenis_perangkat', // <-- Wajib sama dengan input name di Blade
+        'jenis_perangkat',
         'kondisi',
+        'nomor_serial',
+        'keterangan',
+        'jumlah',
     ];
 }

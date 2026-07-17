@@ -9,6 +9,14 @@
         </button>
     </div>
 
+    {{-- Search Bar --}}
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+        <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-sm"></i>
+            <input type="text" id="search-pengguna" placeholder="Cari nama pengguna atau email..." class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all" onkeyup="filterPengguna(this.value)">
+        </div>
+    </div>
+
     <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.02)] overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -23,7 +31,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse($list_pengguna ?? [] as $user)
-                    <tr class="hover:bg-gray-50/50 transition-colors">
+                    <tr class="user-row hover:bg-gray-50/50 transition-colors" data-search="{{ strtolower($user->name . ' ' . $user->email) }}">
                         <td class="p-6 text-sm font-bold text-gray-800">{{ $user->name }}</td>
                         <td class="p-6 text-sm font-medium text-gray-500">{{ $user->email }}</td>
                         <td class="p-6">
@@ -32,16 +40,42 @@
                             </span>
                         </td>
                         <td class="p-6">
-                            <span class="inline-flex items-center gap-1.5 text-xs font-bold {{ ($user->is_aktif) ? 'text-emerald-600' : 'text-gray-400' }}">
-                                <span class="w-2 h-2 rounded-full {{ ($user->is_aktif) ? 'bg-emerald-500' : 'bg-gray-300' }}"></span>
-                                {{ $user->status }}
-                            </span>
+                            @if($user->status === 'Pending')
+                                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-500 bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 px-2.5 py-1 rounded-xl">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                    Menunggu Persetujuan
+                                </span>
+                            @elseif($user->status === 'Ditolak')
+                                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 px-2.5 py-1 rounded-xl">
+                                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                    Ditolak
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 text-xs font-bold {{ ($user->is_aktif) ? 'text-emerald-600' : 'text-gray-400' }}">
+                                    <span class="w-2 h-2 rounded-full {{ ($user->is_aktif) ? 'bg-emerald-500' : 'bg-gray-300' }}"></span>
+                                    {{ $user->status }}
+                                </span>
+                            @endif
                         </td>
                         <td class="p-6 text-center">
                             <div class="flex items-center justify-center gap-2">
+                                @if($user->status === 'Pending')
+                                @if($user->foto_ktp)
+                                <a href="{{ asset($user->foto_ktp) }}" target="_blank" class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer" title="Lihat Foto KTP">
+                                    <i class="fa-solid fa-address-card text-xs"></i>
+                                </a>
+                                @endif
+                                <button onclick="approveWarga({{ $user->id }}, '{{ addslashes($user->name) }}', 'Aktif')" class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition inline-flex items-center justify-center cursor-pointer font-bold" title="Setujui Pendaftaran">
+                                    <i class="fa-solid fa-check text-xs"></i>
+                                </button>
+                                <button onclick="approveWarga({{ $user->id }}, '{{ addslashes($user->name) }}', 'Ditolak')" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer font-bold" title="Tolak Pendaftaran">
+                                    <i class="fa-solid fa-xmark text-xs"></i>
+                                </button>
+                                @else
                                 <button onclick="editPengguna({{ $user->id }}, '{{ $user->name }}', '{{ $user->role }}', '{{ $user->status ?? 'Aktif' }}')" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer" title="Edit Role">
                                     <i class="fa-solid fa-pen text-xs"></i>
                                 </button>
+                                @endif
                                 @if($user->id !== Auth::id())
                                 <button onclick="hapusPengguna({{ $user->id }}, '{{ addslashes($user->name) }}')" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center cursor-pointer" title="Hapus Akun">
                                     <i class="fa-solid fa-trash text-xs"></i>
@@ -92,7 +126,12 @@
                             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Hak Akses (Role)</label>
                             <select name="role" required class="w-full bg-gray-50 border border-gray-200 text-sm font-bold text-gray-700 py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                                 <option value="Super Admin">Super Admin</option>
-                                <option value="RT">RT</option> <option value="Bendahara">Bendahara</option>
+                                <option value="RW">RW (Ketua RW)</option>
+                                <option value="Sekretaris RW">Sekretaris RW</option>
+                                <option value="Bendahara RW">Bendahara RW</option>
+                                <option value="RT">RT (Ketua RT)</option>
+                                <option value="Sekretaris RT">Sekretaris RT</option>
+                                <option value="Bendahara RT">Bendahara RT</option>
                                 <option value="Warga">Warga</option>
                             </select>
                         </div>
@@ -134,6 +173,7 @@ function simpanPengguna(event) {
             document.getElementById('modal-pengguna').classList.add('hidden');
             form.reset();
             alert('Berhasil! ' + data.message);
+            if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('pengguna'); }
             switchPage('pengguna', document.querySelector('.menu-active'));
         } else {
             alert('Gagal: ' + data.message);
@@ -146,10 +186,10 @@ function simpanPengguna(event) {
 }
 
 function editPengguna(id, name, role, status) {
-    const newRole = prompt('Ubah Role untuk "' + name + '"\n\nPilihan: Super Admin, RT, Bendahara, Warga\n\nRole saat ini: ' + role, role);
+    const newRole = prompt('Ubah Role untuk "' + name + '"\n\nPilihan: Super Admin, RW, Sekretaris RW, Bendahara RW, RT, Sekretaris RT, Bendahara RT, Warga\n\nRole saat ini: ' + role, role);
     if (!newRole || newRole === role) return;
-    if (!['Super Admin', 'RT', 'Bendahara', 'Warga'].includes(newRole)) {
-        alert('Role tidak valid. Pilih: Super Admin, RT, Bendahara, atau Warga');
+    if (!['Super Admin', 'RW', 'Sekretaris RW', 'Bendahara RW', 'RT', 'Sekretaris RT', 'Bendahara RT', 'Warga'].includes(newRole)) {
+        alert('Role tidak valid. Pilih role resmi yang tersedia.');
         return;
     }
     const fd = new FormData();
@@ -158,6 +198,7 @@ function editPengguna(id, name, role, status) {
     fd.append('_token', window.csrfToken);
     fetch('{{ route("pengguna.update") }}', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(r => r.json())
+    if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('pengguna'); }
     .then(d => { alert(d.message || 'Role diperbarui'); switchPage('pengguna', document.querySelector('.menu-active')); })
     .catch(() => alert('Gagal memperbarui role.'));
 }
@@ -169,7 +210,39 @@ function hapusPengguna(id, name) {
     fd.append('_token', window.csrfToken);
     fetch('{{ route("pengguna.delete") }}', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(r => r.json())
+    if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('pengguna'); }
     .then(d => { alert(d.message || 'Akun dihapus'); switchPage('pengguna', document.querySelector('.menu-active')); })
     .catch(() => alert('Gagal menghapus akun.'));
+}
+
+function approveWarga(id, name, status) {
+    const actionText = status === 'Aktif' ? 'menyetujui' : 'menolak';
+    if (!confirm('Apakah Anda yakin ingin ' + actionText + ' pendaftaran warga "' + name + '"?')) return;
+    
+    const fd = new FormData();
+    fd.append('id', id);
+    fd.append('status', status);
+    fd.append('_token', window.csrfToken);
+    
+    fetch('{{ route("pengguna.update") }}', { 
+        method: 'POST', 
+        body: fd, 
+        headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(r => r.json())
+    .then(d => { 
+        alert(d.message || 'Status pendaftaran diperbarui'); 
+        if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('pengguna'); }
+        switchPage('pengguna', document.querySelector('.menu-active')); 
+    })
+    .catch(() => alert('Gagal memperbarui status pendaftaran.'));
+}
+
+function filterPengguna(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('.user-row').forEach(row => {
+        const data = row.getAttribute('data-search') || '';
+        row.style.display = (!q || data.includes(q)) ? '' : 'none';
+    });
 }
 </script>

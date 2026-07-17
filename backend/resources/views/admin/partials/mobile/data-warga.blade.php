@@ -143,13 +143,27 @@
                                     @else
                                         <span class="px-1 py-0.5 rounded text-[7px] font-black uppercase bg-emerald-100 text-emerald-700">{{ $statusLabel }}</span>
                                     @endif
+                                    @if($w->umur >= 60)
+                                        <span class="px-1 py-0.5 rounded text-[7px] font-black uppercase bg-amber-100 text-amber-700">Lansia</span>
+                                    @endif
+                                    <span class="px-1 py-0.5 rounded text-[7px] font-bold bg-indigo-50 text-indigo-600">{{ $w->jenis_kelamin }}</span>
                                 </div>
-                                <p class="text-[8px] font-medium text-gray-400 truncate">{{ $w->nik }}</p>
+                                <div class="flex items-center gap-1 flex-wrap">
+                                    <p class="text-[8px] font-medium text-gray-400">{{ $w->nik }}</p>
+                                    @if($w->umur)
+                                    <span class="text-[7px] text-gray-300">·</span>
+                                    <span class="text-[8px] text-gray-400">{{ $w->umur }} thn</span>
+                                    @endif
+                                    @if($w->agama)
+                                    <span class="text-[7px] text-gray-300">·</span>
+                                    <span class="text-[8px] text-gray-400">{{ $w->agama }}</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         @if($isAdmin)
                         <div class="flex items-center gap-1 shrink-0 ml-1">
-                            <button type="button" onclick="bukaModalEdit({{ $w->id }}, '{{ $w->nomor_kk }}', '{{ $w->nik }}', '{{ addslashes($w->nama_lengkap) }}', '{{ $w->no_telepon }}', '{{ $w->blok_rumah }}', '{{ $w->status_keluarga }}', '{{ $w->status_domisili }}')" class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 inline-flex items-center justify-center cursor-pointer">
+                            <button type="button" onclick="bukaModalEdit({{ $w->id }}, '{{ $w->nomor_kk }}', '{{ $w->nik }}', '{{ addslashes($w->nama_lengkap) }}', '{{ $w->jenis_kelamin }}', '{{ $w->umur }}', '{{ $w->agama }}', '{{ $w->no_telepon }}', '{{ $w->blok_rumah }}', '{{ $w->status_keluarga }}', '{{ $w->status_domisili }}')" class="w-6 h-6 rounded-md bg-blue-50 text-blue-500 inline-flex items-center justify-center cursor-pointer">
                                 <i class="fa-solid fa-pen text-[8px]"></i>
                             </button>
                             <button type="button" onclick="hapusWarga({{ $w->id }})" class="w-6 h-6 rounded-md bg-red-50 text-red-500 inline-flex items-center justify-center cursor-pointer">
@@ -199,9 +213,35 @@
                     <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">NIK</label>
                     <input type="number" id="nik" name="nik" required class="w-full bg-gray-50 border border-gray-200 py-2 px-3 rounded-xl mt-1 font-bold text-gray-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                 </div>
-                <div>
-                    <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Nama Lengkap</label>
-                    <input type="text" id="nama_lengkap" name="nama_lengkap" required class="w-full bg-gray-50 border border-gray-200 py-2 px-3 rounded-xl mt-1 font-bold text-gray-700 text-sm focus:outline-none focus:border-blue-500">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Nama Lengkap</label>
+                        <input type="text" id="nama_lengkap" name="nama_lengkap" required class="w-full bg-gray-50 border border-gray-200 py-2 px-3 rounded-xl mt-1 font-bold text-gray-700 text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Jenis Kelamin</label>
+                        <select id="jenis_kelamin" name="jenis_kelamin" required class="w-full bg-gray-50 border border-gray-200 py-2 px-3 rounded-xl mt-1 font-bold text-gray-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Umur (Tahun)</label>
+                        <input type="number" id="umur" name="umur" min="0" max="150" placeholder="Cth: 35" class="w-full bg-gray-50 border border-gray-200 py-2 px-3 rounded-xl mt-1 font-bold text-gray-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Agama</label>
+                        <select id="agama" name="agama" class="w-full bg-gray-50 border border-gray-200 py-2 px-3 rounded-xl mt-1 font-bold text-gray-700 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="Islam">Islam</option>
+                            <option value="Kristen">Kristen</option>
+                            <option value="Katolik">Katolik</option>
+                            <option value="Hindu">Hindu</option>
+                            <option value="Buddha">Buddha</option>
+                            <option value="Konghucu">Konghucu</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -314,12 +354,15 @@
         document.getElementById('status_keluarga').value = 'Anak';
     }
 
-    function bukaModalEdit(id, kk, nik, nama, telepon, blok, status, domisili) {
+    function bukaModalEdit(id, kk, nik, nama, jk, umur, agama, telepon, blok, status, domisili) {
         bukaModal('modal-form-warga', 'Edit Data Warga', false);
         document.getElementById('warga_id').value = id;
         document.getElementById('nomor_kk').value = kk;
         document.getElementById('nik').value = nik;
         document.getElementById('nama_lengkap').value = nama;
+        document.getElementById('jenis_kelamin').value = jk || 'Laki-laki';
+        document.getElementById('umur').value = umur || '';
+        document.getElementById('agama').value = agama || 'Islam';
         document.getElementById('no_telepon').value = telepon;
         document.getElementById('blok_rumah').value = blok;
         document.getElementById('status_keluarga').value = status;
@@ -351,9 +394,88 @@
     }
 
     function hapusWarga(id) {
-        if(!confirm('Yakin ingin menghapus data warga ini?')) return;
-        fetch('/admin/warga/delete/' + id, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ _method: 'DELETE' }) })
-        .then(response => response.json())
-        .then(data => { if(data.success) { location.reload(); } else { alert('Gagal menghapus data.'); } });
+        const doDelete = () => {
+            const token = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+            fetch('/admin/warga/delete/' + id, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ _method: 'DELETE' })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP error ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: data.message || 'Data warga berhasil dihapus.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        alert(data.message || 'Data warga berhasil dihapus.');
+                    }
+                    
+                    // Invalidate caches
+                    if (typeof window.invalidatePageCache === 'function') {
+                        window.invalidatePageCache('data-warga');
+                        window.invalidatePageCache('data-keluarga');
+                    }
+                    
+                    // Reload current page view in SPA
+                    if (typeof switchPage === 'function') {
+                        switchPage('data-warga', document.querySelector('.menu-active'));
+                    } else {
+                        location.reload();
+                    }
+                } else {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire('Gagal!', data.message || 'Gagal menghapus data.', 'error');
+                    } else {
+                        alert(data.message || 'Gagal menghapus data.');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire('Error!', 'Terjadi kesalahan pada server atau jaringan.', 'error');
+                } else {
+                    alert('Terjadi kesalahan pada jaringan atau server.');
+                }
+            });
+        };
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Hapus Data Warga?',
+                text: 'Data warga ini beserta seluruh rekam jejak iurannya akan dihapus secara permanen!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl p-4 font-sans text-xs'
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    doDelete();
+                }
+            });
+        } else {
+            if (confirm('Yakin ingin menghapus data warga ini?')) {
+                doDelete();
+            }
+        }
     }
 </script>

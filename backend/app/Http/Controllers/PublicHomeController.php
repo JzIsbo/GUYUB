@@ -22,12 +22,14 @@ class PublicHomeController extends Controller
         $totalUmkm = 0;
         $totalKegiatan = 0;
 
+        $rt_info = null;
         try {
             $announcements = DB::table('pengumumans')->where('status', 'Aktif')->orderBy('created_at', 'desc')->take(10)->get();
             $umkms = DB::table('umkms')->where('status', 'Aktif')->orderBy('created_at', 'desc')->get();
             $posyandus = DB::table('posyandus')->orderBy('tanggal', 'asc')->take(5)->get();
             $rondas = DB::table('rondas')->get();
             $kegiatans = DB::table('kegiatans')->orderBy('tanggal', 'asc')->take(10)->get();
+            $rt_info = DB::table('rt_details')->first();
 
             $totalWarga = DB::table('wargas')->count();
             $totalUmkm = DB::table('umkms')->where('status', 'Aktif')->count();
@@ -46,7 +48,8 @@ class PublicHomeController extends Controller
                 'kegiatans' => $kegiatans,
                 'totalWarga' => $totalWarga,
                 'totalUmkm' => $totalUmkm,
-                'totalKegiatan' => $totalKegiatan
+                'totalKegiatan' => $totalKegiatan,
+                'rt_info' => $rt_info
             ]);
         }
 
@@ -58,7 +61,8 @@ class PublicHomeController extends Controller
             'kegiatans' => $kegiatans,
             'totalWarga' => $totalWarga,
             'totalUmkm' => $totalUmkm,
-            'totalKegiatan' => $totalKegiatan
+            'totalKegiatan' => $totalKegiatan,
+            'rt_info' => $rt_info
         ]);
     }
 }

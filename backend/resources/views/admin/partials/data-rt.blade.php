@@ -2,7 +2,7 @@
 
     <div class="bg-gradient-to-br from-[#0F172A] to-[#1E293B] p-8 rounded-[2.5rem] shadow-xl text-white h-fit relative overflow-hidden">
         <div class="relative z-10">
-            <span class="bg-blue-500/10 text-blue-400 text-[10px] px-3 py-1.5 rounded-xl font-black border border-blue-500/20 uppercase tracking-widest">Profil Lingkungan</span>
+            <span class="bg-blue-500/10 text-blue-400 text-[10px] px-3 py-1.5 rounded-xl font-black border border-blue-500/20 uppercase tracking-widest">Profil Lingkungan RT & RW</span>
             <h2 class="text-3xl font-black mt-4 tracking-tight">RT {{ $rt_info->nomor_rt ?? '00' }} / RW {{ $rt_info->nomor_rw ?? '00' }}</h2>
             <p class="text-gray-400 text-sm mt-1 font-bold uppercase tracking-wider">{{ $rt_info->nama_wilayah ?? 'Belum Diatur' }}</p>
 
@@ -15,7 +15,7 @@
     </div>
 
     <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-gray-50 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.02)]">
-        <h3 class="text-xl font-black text-gray-800 mb-2 tracking-tight">Konfigurasi Identitas RT</h3>
+        <h3 class="text-xl font-black text-gray-800 mb-2 tracking-tight">Konfigurasi Identitas RT & RW</h3>
         <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-6">Perbarui data identitas pimpinan wilayah</p>
 
         <form id="form-rt-lokal" onsubmit="simpanProfilRt(event)">

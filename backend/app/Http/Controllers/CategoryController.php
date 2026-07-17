@@ -12,7 +12,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'nama'      => 'required|string|max:255',
@@ -51,7 +51,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'id'        => 'required|integer',
@@ -92,7 +92,7 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         try {
             $category = Category::findOrFail($id);
             $catName = $category->nama;

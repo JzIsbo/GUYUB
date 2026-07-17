@@ -49,8 +49,15 @@
                     <p class="text-[10px] text-gray-500 font-medium mt-0.5 truncate">{{ $item->deskripsi ?? '-' }}</p>
                     <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Periode: <span class="text-gray-600 font-extrabold">{{ $item->periode_penagihan }}</span></p>
                 </div>
-                <div class="text-right shrink-0">
-                    <p class="font-black text-gray-900 text-xs font-mono">Rp {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                <div class="flex items-center gap-2 shrink-0">
+                    <div class="text-right">
+                        <p class="font-black text-gray-900 text-xs font-mono">Rp {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                    </div>
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'Bendahara']))
+                    <button onclick="hapusIuran({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center cursor-pointer" title="Hapus">
+                        <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
+                    @endif
                 </div>
             </div>
         @empty
@@ -115,3 +122,36 @@
     </div>
 
 </div>
+
+<script>
+function hapusIuran(id) {
+    Swal.fire({
+        title: 'Hapus Master Iuran?',
+        text: "Master iuran ini akan dihapus.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-2xl p-4 shadow-xl font-sans text-xs',
+            confirmButton: 'rounded-xl font-bold px-4 py-2 text-[11px]',
+            cancelButton: 'rounded-xl font-bold px-4 py-2 text-[11px]'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('_token', window.csrfToken);
+            fetch('/admin/iuran/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json())
+            .then(data => { 
+                Swal.fire({ title: 'Berhasil!', text: 'Master iuran dihapus.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-2xl p-4 font-sans text-xs' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('data-iuran'); }
+                switchPage('data-iuran', document.querySelector('.menu-active')); 
+            });
+        }
+    });
+}
+</script>

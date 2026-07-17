@@ -71,6 +71,7 @@
                                     <span class="px-1 py-0.2 rounded text-[7px] font-bold border ${badgeClass} shrink-0">${item.action || '-'}</span>
                                     <span class="text-[9px] text-gray-500 truncate">${item.description || ''}</span>
                                 </div>
+                                ${item.foto ? `<div class="mt-1.5"><img src="/storage/${item.foto}" class="h-16 w-full object-cover rounded-lg border border-gray-200 shadow-sm" alt="Bukti Foto"></div>` : ''}
                             </div>
                         </div>
                     </div>`;

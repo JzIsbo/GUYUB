@@ -13,7 +13,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         $request->validate([
             'tanggal'    => 'required|date',
             'kategori'   => 'required|string',
@@ -72,7 +72,7 @@ class TransactionController extends Controller
      */
     public function update(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         $request->merge([
             'nominal' => $request->jumlah ?? $request->nominal
         ]);
@@ -116,7 +116,7 @@ class TransactionController extends Controller
      */
     public function destroy(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'Bendahara']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Bendahara RW', 'RT', 'Bendahara RT']), 403, 'Akses Ditolak');
         $request->validate(['id' => 'required']);
 
         try {
@@ -145,6 +145,9 @@ class TransactionController extends Controller
      */
     public function export(Request $request, $tipe = 'all')
     {
+        if ($tipe === 'all' && $request->has('tipe')) {
+            $tipe = $request->query('tipe');
+        }
         $format = $request->query('format', 'excel');
 
         if ($tipe == 'kas') {
@@ -156,6 +159,14 @@ class TransactionController extends Controller
             $data = Transaction::where('kategori', 'LIKE', '%Iuran%')
                 ->orderBy('tanggal', 'desc')
                 ->get();
+        } elseif ($tipe == 'koperasi') {
+            $raw_data = DB::table('koperasi_finances')
+                ->orderBy('tanggal', 'desc')
+                ->get();
+            $data = $raw_data->map(function($item) {
+                $item->jenis = $item->tipe;
+                return $item;
+            });
         } else {
             $data = Transaction::orderBy('tanggal', 'desc')->get();
         }
@@ -200,7 +211,8 @@ class TransactionController extends Controller
             .total-row { background-color: #F8FAFC; font-weight: bold; }
         </style></head><body>';
 
-        $output .= '<div class="title">LAPORAN KEUANGAN KAS ' . strtoupper($tipe) . '</div>';
+        $titleText = $tipe == 'koperasi' ? 'LAPORAN KEUANGAN KOPERASI WARGA' : 'LAPORAN KEUANGAN KAS ' . strtoupper($tipe);
+        $output .= '<div class="title">' . $titleText . '</div>';
         $output .= '<div class="subtitle">' . $namaRT . ' - ' . $alamatRT . '<br>Tanggal Unduh: ' . date('d-m-Y H:i') . '</div>';
         
         $output .= '<table><thead><tr>';

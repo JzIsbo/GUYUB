@@ -56,13 +56,28 @@
         </h3>
         <div class="space-y-2">
             @forelse($list_incidents ?? [] as $item)
-            <div class="bg-red-50/50 p-3 rounded-xl border border-red-100 text-xs">
-                <div class="flex items-center justify-between mb-1.5">
+            <div class="bg-red-50/50 p-3 rounded-xl border border-red-100 text-xs space-y-2">
+                <div class="flex items-center justify-between">
                     <span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[9px]">{{ $item->jenis_kejadian }}</span>
-                    <span class="text-[9px] text-gray-400">{{ $item->created_at }}</span>
+                    <div class="text-right">
+                        <span class="text-[10px] text-red-600 font-extrabold block"><i class="fa-regular fa-clock mr-0.5"></i> {{ $item->waktu_kejadian ?? \Carbon\Carbon::parse($item->created_at)->format('H:i') . ' WIB' }}</span>
+                        <span class="text-[8px] text-gray-400 font-medium">{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</span>
+                    </div>
                 </div>
                 <h4 class="font-black text-gray-800 text-[11px]">Pelapor: {{ $item->pelapor }}</h4>
-                <p class="text-[10px] text-gray-600 mt-0.5">{{ $item->deskripsi }}</p>
+                <p class="text-[10px] text-gray-600 leading-normal">{{ $item->deskripsi }}</p>
+                
+                @if(!empty($item->foto))
+                <div class="mt-1.5">
+                    <a href="{{ asset('storage/' . $item->foto) }}" target="_blank">
+                        <img src="{{ asset('storage/' . $item->foto) }}" 
+                             onerror="this.onerror=null; this.src='/storage/{{ $item->foto }}';"
+                             class="rounded-xl max-h-44 w-full object-cover border-2 border-red-200 shadow-md" 
+                             alt="Foto Bukti Kejadian">
+                    </a>
+                </div>
+                @endif
+
                 <div class="mt-2 flex justify-between items-center pt-1.5 border-t border-red-100/50">
                     <span class="text-[9px] uppercase font-black text-amber-600">{{ $item->status }}</span>
                     @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
@@ -97,17 +112,56 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Daftar Petugas</label>
-                    <input type="text" name="petugas_ronda" placeholder="Bpk Budi, Bpk Agus" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Daftar Petugas Ronda (Nama Warga)</label>
+                    <input type="hidden" name="petugas_ronda" id="petugas_ronda_hidden_mobile" required>
+                    <div id="selected_petugas_tags_mobile" class="flex flex-wrap gap-1 mb-1.5"></div>
+                    <div class="relative">
+                        <input type="text" id="petugas_search_input_mobile" placeholder="🔍 Cari & tambah nama..." 
+                               onfocus="showDropdown('petugas_dropdown_mobile')" 
+                               onkeyup="filterCustomDropdown('petugas_search_input_mobile', 'petugas_dropdown_mobile')" 
+                               autocomplete="off"
+                               class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-slate-500">
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[9px]"></i>
+
+                        <div id="petugas_dropdown_mobile" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-30 max-h-40 overflow-y-auto divide-y divide-gray-50">
+                            @foreach($all_warga ?? [] as $w)
+                                <div onclick="tambahPetugasOptionMobile('{{ addslashes($w->nama_lengkap) }}')" 
+                                     class="dropdown-item-m px-3 py-1.5 hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-[11px] font-semibold text-gray-700">
+                                    <span>{{ $w->nama_lengkap }}</span>
+                                    <span class="text-[9px] text-gray-400">Blok {{ $w->blok_rumah }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Koordinator</label>
-                        <input type="text" name="koordinator" placeholder="Bpk RT" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                        <div class="relative">
+                            <input type="hidden" name="koordinator" id="koordinator_hidden_mobile" required>
+                            <div class="relative">
+                                <input type="text" id="koordinator_search_input_mobile" placeholder="🔍 Cari..." 
+                                       onfocus="showDropdown('koordinator_dropdown_mobile')" 
+                                       onkeyup="filterCustomDropdown('koordinator_search_input_mobile', 'koordinator_dropdown_mobile')" 
+                                       autocomplete="off"
+                                       class="w-full bg-gray-50 border py-2 px-2.5 pr-6 rounded-xl font-bold text-gray-700 text-xs focus:outline-none focus:ring-2 focus:ring-slate-500">
+                                <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[9px]"></i>
+                            </div>
+
+                            <div id="koordinator_dropdown_mobile" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-30 max-h-40 overflow-y-auto divide-y divide-gray-50">
+                                @foreach($all_warga ?? [] as $w)
+                                    <div onclick="selectKoordinatorOptionMobile('{{ addslashes($w->nama_lengkap) }}')" 
+                                         class="dropdown-item-m px-3 py-1.5 hover:bg-slate-50 cursor-pointer transition flex items-center justify-between text-[11px] font-semibold text-gray-700">
+                                        <span>{{ $w->nama_lengkap }}</span>
+                                        <span class="text-[9px] text-gray-400">Blok {{ $w->blok_rumah }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Jam Shift</label>
-                        <input type="text" name="jam_shift" value="22:00 - 04:00 WIB" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                        <input type="text" name="jam_shift" value="22:00 - 04:00 WIB" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-xs font-bold text-gray-700">
                     </div>
                 </div>
             </div>
@@ -124,20 +178,53 @@
     <div class="bg-white rounded-2xl w-full max-w-[95vw] p-5 relative shadow-2xl">
         <button onclick="document.getElementById('modal-laporkan-kejadian').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400"><i class="fa-solid fa-xmark text-lg"></i></button>
         <h3 class="text-sm font-black text-red-600 mb-4 flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Lapor Kejadian / Darurat</h3>
-        <form id="form-incident" action="/incident/store" method="POST" onsubmit="simpanDataUmum(event, 'form-incident', 'keamanan')">
+        <form id="form-incident" action="/incident/store" method="POST" enctype="multipart/form-data" onsubmit="simpanDataUmum(event, 'form-incident', 'keamanan')">
             <div class="space-y-3">
                 <div>
                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Nama Pelapor</label>
-                    <input type="text" name="pelapor" value="{{ Auth::user()->name }}" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                    <div class="relative">
+                        <input type="hidden" name="pelapor" id="nama_pelapor_hidden_mobile" required>
+                        <div class="relative">
+                            <input type="text" id="pelapor_search_input_mobile" placeholder="🔍 Cari & pilih nama pelapor..." 
+                                   onfocus="showDropdown('pelapor_dropdown_mobile')" 
+                                   onkeyup="filterCustomDropdown('pelapor_search_input_mobile', 'pelapor_dropdown_mobile')" 
+                                   autocomplete="off"
+                                   class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500">
+                            <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[9px]"></i>
+                        </div>
+
+                        <div id="pelapor_dropdown_mobile" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-30 max-h-48 overflow-y-auto divide-y divide-gray-50">
+                            @foreach($all_warga ?? [] as $w)
+                                <div onclick="selectPelaporOptionMobile('{{ addslashes($w->nama_lengkap) }}')" 
+                                     class="dropdown-item-m px-3 py-2 hover:bg-red-50 cursor-pointer transition flex items-center justify-between text-[11px] font-semibold text-gray-700">
+                                    <div>
+                                        <span class="block font-bold">{{ $w->nama_lengkap }}</span>
+                                        <span class="text-[9px] text-gray-400 font-normal">Blok {{ $w->blok_rumah }}</span>
+                                    </div>
+                                    <span class="text-[9px] text-red-600 bg-red-50 px-1.5 py-0.5 rounded-full font-bold">{{ $w->umur ? $w->umur.' Thn' : '-' }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Jenis Kejadian</label>
+                        <select name="jenis_kejadian" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm font-bold text-gray-700">
+                            <option value="Pencurian / Mencurigakan">Pencurian / Mencurigakan</option>
+                            <option value="Kebakaran / Potensi Bahaya">Kebakaran / Potensi Bahaya</option>
+                            <option value="Keributan / Keramaian">Keributan / Keramaian</option>
+                            <option value="Kerusakan Fasilitas Publik">Kerusakan Fasilitas Publik</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Waktu Kejadian</label>
+                        <input type="text" name="waktu_kejadian" value="{{ date('H:i') }} WIB" placeholder="Contoh: 02:30 WIB" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-xs font-bold text-gray-700">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Jenis Kejadian</label>
-                    <select name="jenis_kejadian" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm font-bold text-gray-700">
-                        <option value="Pencurian / Mencurigakan">Pencurian / Mencurigakan</option>
-                        <option value="Kebakaran / Potensi Bahaya">Kebakaran / Potensi Bahaya</option>
-                        <option value="Keributan / Keramaian">Keributan / Keramaian</option>
-                        <option value="Kerusakan Fasilitas Publik">Kerusakan Fasilitas Publik</option>
-                    </select>
+                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Foto Kejadian (Opsional)</label>
+                    <input type="file" name="foto" accept="image/*" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-xs text-gray-600 font-medium">
                 </div>
                 <div>
                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Kronologi / Lokasi</label>
@@ -153,16 +240,133 @@
 </div>
 
 <script>
-function hapusRonda(id) {
-    if (!confirm('Hapus jadwal ronda ini?')) return;
-    const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
-    fetch('/ronda/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(res => res.json()).then(data => { alert(data.message); switchPage('keamanan', document.querySelector('.menu-active')); });
+function showDropdown(id) {
+    document.getElementById(id).classList.remove('hidden');
 }
+
+function filterCustomDropdown(inputId, dropdownId) {
+    const input = document.getElementById(inputId);
+    const filter = input.value.toLowerCase();
+    const dropdown = document.getElementById(dropdownId);
+    dropdown.classList.remove('hidden');
+    
+    const items = dropdown.getElementsByClassName('dropdown-item-m');
+    for (let i = 0; i < items.length; i++) {
+        const txt = items[i].textContent || items[i].innerText;
+        if (txt.toLowerCase().includes(filter)) {
+            items[i].style.display = "";
+        } else {
+            items[i].style.display = "none";
+        }
+    }
+}
+
+let selectedPetugasListMobile = [];
+
+function updatePetugasDisplayMobile() {
+    const container = document.getElementById('selected_petugas_tags_mobile');
+    const hiddenInput = document.getElementById('petugas_ronda_hidden_mobile');
+    if (!container || !hiddenInput) return;
+
+    container.innerHTML = '';
+    selectedPetugasListMobile.forEach((nama, index) => {
+        const tag = document.createElement('span');
+        tag.className = 'inline-flex items-center gap-1 bg-slate-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm';
+        tag.innerHTML = `<span>${nama}</span><button type="button" onclick="hapusPetugasTagMobile(${index})" class="hover:text-rose-300 text-gray-300 ml-1 font-black text-xs">&times;</button>`;
+        container.appendChild(tag);
+    });
+    hiddenInput.value = selectedPetugasListMobile.join(', ');
+}
+
+function tambahPetugasOptionMobile(nama) {
+    if (!selectedPetugasListMobile.includes(nama)) {
+        selectedPetugasListMobile.push(nama);
+        updatePetugasDisplayMobile();
+    }
+    document.getElementById('petugas_search_input_mobile').value = '';
+    document.getElementById('petugas_dropdown_mobile').classList.add('hidden');
+}
+
+function hapusPetugasTagMobile(index) {
+    selectedPetugasListMobile.splice(index, 1);
+    updatePetugasDisplayMobile();
+}
+
+function selectKoordinatorOptionMobile(nama) {
+    document.getElementById('koordinator_search_input_mobile').value = nama;
+    document.getElementById('koordinator_hidden_mobile').value = nama;
+    document.getElementById('koordinator_dropdown_mobile').classList.add('hidden');
+}
+
+function selectPelaporOptionMobile(nama) {
+    document.getElementById('pelapor_search_input_mobile').value = nama;
+    document.getElementById('nama_pelapor_hidden_mobile').value = nama;
+    document.getElementById('pelapor_dropdown_mobile').classList.add('hidden');
+}
+
+document.addEventListener('click', function(e) {
+    ['pelapor', 'petugas', 'koordinator'].forEach(prefix => {
+        const inputM = document.getElementById(prefix + '_search_input_mobile');
+        const dropM = document.getElementById(prefix + '_dropdown_mobile');
+        if (inputM && dropM && !inputM.contains(e.target) && !dropM.contains(e.target)) {
+            dropM.classList.add('hidden');
+        }
+    });
+});
+
+function hapusRonda(id) {
+    Swal.fire({
+        title: 'Hapus Ronda?',
+        text: "Shift ronda malam ini akan dihapus.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-2xl p-4 shadow-xl font-sans text-xs',
+            confirmButton: 'rounded-xl font-bold px-4 py-2 text-[11px]',
+            cancelButton: 'rounded-xl font-bold px-4 py-2 text-[11px]'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
+            fetch('/ronda/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json()).then(data => { 
+                Swal.fire({ title: 'Berhasil!', text: 'Jadwal ronda dihapus.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-2xl p-4 font-sans text-xs' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('keamanan'); }
+                switchPage('keamanan', document.querySelector('.menu-active')); 
+            });
+        }
+    });
+}
+
 function hapusIncident(id) {
-    if (!confirm('Tandai laporan selesai dan hapus?')) return;
-    const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
-    fetch('/incident/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(res => res.json()).then(data => { alert(data.message); switchPage('keamanan', document.querySelector('.menu-active')); });
+    Swal.fire({
+        title: 'Selesaikan Laporan?',
+        text: "Laporan kejadian ini akan diselesaikan & dihapus.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Selesaikan',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-2xl p-4 shadow-xl font-sans text-xs',
+            confirmButton: 'rounded-xl font-bold px-4 py-2 text-[11px]',
+            cancelButton: 'rounded-xl font-bold px-4 py-2 text-[11px]'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
+            fetch('/incident/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json()).then(data => { 
+                Swal.fire({ title: 'Laporan Selesai!', text: 'Laporan telah diselesaikan.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-2xl p-4 font-sans text-xs' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('keamanan'); }
+                switchPage('keamanan', document.querySelector('.menu-active')); 
+            });
+        }
+    });
 }
 </script>

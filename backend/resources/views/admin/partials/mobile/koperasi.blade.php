@@ -40,28 +40,25 @@
     {{-- ========== CARD LIST ========== --}}
     <div class="space-y-2">
         @forelse($list_koperasi ?? [] as $item)
-            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
-                <div class="flex items-center justify-between gap-3">
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2">
-                            <p class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama_produk }}</p>
-                            <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[8px] font-bold shrink-0">{{ $item->kategori }}</span>
-                        </div>
-                        <div class="flex items-center gap-3 mt-1">
-                            <span class="text-[11px] font-bold text-emerald-600">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
-                            <span class="text-[9px] text-gray-500">Stok: {{ $item->stok }} Pcs</span>
-                        </div>
-                        <p class="text-[9px] text-gray-400 mt-0.5"><i class="fa-solid fa-user text-[7px] mr-0.5"></i> {{ $item->penjual }}</p>
+            <div class="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex gap-3 items-center">
+                <img src="{{ $item->foto ? $item->foto : 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80' }}" alt="{{ $item->nama_produk }}" class="w-14 h-14 rounded-lg object-cover border border-gray-100 shrink-0">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5">
+                        <p class="font-bold text-gray-800 text-[12px] truncate">{{ $item->nama_produk }}</p>
+                        <span class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[8px] font-bold shrink-0">{{ $item->kategori }}</span>
                     </div>
-                    <div class="shrink-0">
-                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
-                        <button onclick="hapusKoperasi({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
-                            <i class="fa-solid fa-trash text-[9px]"></i>
-                        </button>
-                        @else
-                        <span class="text-[9px] text-gray-400 italic">Lihat</span>
-                        @endif
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-[11px] font-bold text-blue-600">Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
+                        <span class="text-[9px] font-semibold text-emerald-600">Stok: {{ $item->stok }} {{ $item->satuan ?? 'pcs' }}</span>
                     </div>
+                    <p class="text-[9px] text-gray-400 mt-0.5 truncate">{{ $item->deskripsi ?? 'Penyedia bahan pangan pokok.' }}</p>
+                </div>
+                <div class="shrink-0">
+                    @if(in_array(Auth::user()->role, ['Super Admin', 'RT', 'Bendahara']))
+                    <button onclick="hapusKoperasi({{ $item->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
+                        <i class="fa-solid fa-trash text-[9px]"></i>
+                    </button>
+                    @endif
                 </div>
             </div>
         @empty
@@ -79,7 +76,7 @@
             <i class="fa-solid fa-xmark text-sm"></i>
         </button>
         <h3 class="text-sm font-black text-gray-800 mb-4">Tambah Produk Koperasi</h3>
-        <form id="form-koperasi" action="/koperasi/store" method="POST" onsubmit="simpanDataUmum(event, 'form-koperasi', 'koperasi')">
+        <form id="form-koperasi" action="/koperasi/store" method="POST" enctype="multipart/form-data" onsubmit="simpanDataUmum(event, 'form-koperasi', 'koperasi')">
             <div class="space-y-3">
                 <div>
                     <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nama Produk</label>
@@ -110,6 +107,10 @@
                         <input type="text" name="penjual" value="Koperasi RT" class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-2 px-3 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Upload Foto Produk (Opsional)</label>
+                    <input type="file" name="foto" accept="image/*" class="w-full bg-gray-50 border border-gray-200 font-medium text-xs text-gray-700 p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
             </div>
             <div class="mt-5 flex justify-end gap-2">
                 <button type="button" onclick="document.getElementById('modal-tambah-koperasi').classList.add('hidden')" class="px-4 py-2 rounded-xl font-bold text-gray-500 hover:bg-gray-100 text-xs">Batal</button>
@@ -121,12 +122,51 @@
 
 <script>
 function hapusKoperasi(id) {
-    if (!confirm('Hapus produk ini dari koperasi?')) return;
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Konfirmasi Aksi',
+            text: 'Hapus produk ini dari koperasi?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-3xl p-6 shadow-2xl font-sans',
+                confirmButton: 'rounded-xl font-bold px-5 py-2.5 text-xs',
+                cancelButton: 'rounded-xl font-bold px-5 py-2.5 text-xs'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                execHapusKoperasiMobile(id);
+            }
+        });
+    } else {
+        if (window.confirm('Hapus produk ini dari koperasi?')) {
+            execHapusKoperasiMobile(id);
+        }
+    }
+}
+
+function execHapusKoperasiMobile(id) {
     const fd = new FormData();
     fd.append('id', id);
     fd.append('_token', window.csrfToken);
     fetch('/koperasi/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(res => res.json())
-    .then(data => { alert(data.message); switchPage('koperasi', document.querySelector('.menu-active')); });
+    .then(data => {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ title: 'Berhasil!', text: data.message || 'Produk terhapus.', icon: 'success', confirmButtonColor: '#2563eb' })
+            .then(() => {
+                if (typeof window.invalidatePageCache === 'function') window.invalidatePageCache('koperasi');
+                switchPage('koperasi', document.querySelector(".menu-link[onclick*='koperasi']") || document.querySelector('.menu-active'));
+            });
+        } else {
+            alert(data.message);
+            if (typeof window.invalidatePageCache === 'function') window.invalidatePageCache('koperasi');
+            switchPage('koperasi', document.querySelector(".menu-link[onclick*='koperasi']") || document.querySelector('.menu-active'));
+        }
+    });
 }
 </script>

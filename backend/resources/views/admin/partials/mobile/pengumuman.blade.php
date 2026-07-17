@@ -157,6 +157,7 @@ function hapusPengumuman(id) {
     }).then(res => res.json()).then(data => {
         alert(data.message);
         if (typeof switchPage === 'function') {
+            if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('pengumuman'); }
             switchPage('pengumuman', document.querySelector('.menu-active'));
         } else {
             window.location.reload();

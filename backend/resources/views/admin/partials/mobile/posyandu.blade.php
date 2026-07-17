@@ -45,7 +45,13 @@
                 </div>
                 <div class="min-w-0">
                     <h3 class="font-black text-gray-800 text-[11px] truncate">{{ $item->nama_kegiatan }}</h3>
-                    <p class="text-[8px] text-gray-400 mt-0.5"><i class="fa-regular fa-calendar mr-0.5"></i> {{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/y') }} · {{ $item->lokasi }}</p>
+                    <p class="text-[8px] text-gray-400 mt-0.5">
+                        <i class="fa-regular fa-calendar mr-0.5"></i> {{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/y') }} 
+                        @if($item->waktu_mulai)
+                        · <i class="fa-regular fa-clock mr-0.5"></i> {{ substr($item->waktu_mulai, 0, 5) }}{{ $item->waktu_selesai ? ' - ' . substr($item->waktu_selesai, 0, 5) : ' - Selesai' }}
+                        @endif
+                        · {{ $item->lokasi }}
+                    </p>
                 </div>
             </div>
             <div class="flex items-center gap-1 shrink-0">
@@ -75,7 +81,7 @@
                 <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50/80 border border-gray-100 text-[10px]">
                     <div class="min-w-0 flex-1">
                         <p class="font-bold text-gray-800 text-[10px] truncate">{{ $peserta->nama_peserta }}</p>
-                        <p class="text-[8px] text-gray-400 mt-0.2 truncate">{{ $peserta->kategori }} · {{ $peserta->usia ?? '-' }} · {{ $peserta->tinggi_badan ? 'TB: '.$peserta->tinggi_badan.'cm' : '' }} {{ $peserta->berat_badan ? 'BB: '.$peserta->berat_badan.'kg' : '' }}</p>
+                        <p class="text-[8px] text-gray-400 mt-0.2 truncate">{{ $peserta->kategori }} · {{ $peserta->usia ?? '-' }} · {{ $peserta->jenis_kelamin }} · {{ $peserta->tinggi_badan ? 'TB: '.$peserta->tinggi_badan.'cm' : '' }} {{ $peserta->berat_badan ? 'BB: '.$peserta->berat_badan.'kg' : '' }}</p>
                     </div>
                     <div class="flex items-center gap-1 shrink-0 ml-1">
                         @if($peserta->status == 'Terdaftar')
@@ -140,6 +146,16 @@
                         <input type="date" name="tanggal" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
                     </div>
                 </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Waktu Mulai</label>
+                        <input type="time" name="waktu_mulai" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Waktu Selesai</label>
+                        <input type="time" name="waktu_selesai" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                    </div>
+                </div>
                 <div>
                     <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Lokasi</label>
                     <input type="text" name="lokasi" placeholder="Balai Warga" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
@@ -166,18 +182,48 @@
         <form id="form-daftar-peserta" action="/posyandu/daftar" method="POST" onsubmit="simpanDataUmum(event, 'form-daftar-peserta', 'posyandu')">
             <input type="hidden" name="posyandu_id" id="daftar_posyandu_id">
             <div class="space-y-3">
-                <div>
-                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Nama Peserta</label>
-                    <input type="text" name="nama_peserta" placeholder="Nama" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                <!-- Integrated Searchable Select Peserta Mobile -->
+                <div class="relative">
+                    <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Pilih Peserta (Warga)</label>
+                    <input type="hidden" name="nama_peserta" id="nama_peserta_hidden_mobile" required>
+                    
+                    <div class="relative">
+                        <input type="text" id="peserta_search_input_mobile" placeholder="🔍 Cari & pilih nama peserta..." 
+                               onfocus="showDropdown('peserta_dropdown_mobile')" 
+                               onkeyup="filterCustomDropdown('peserta_search_input_mobile', 'peserta_dropdown_mobile')" 
+                               autocomplete="off"
+                               class="w-full bg-gray-50 border py-2 px-3 pr-8 rounded-xl font-bold text-gray-700 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]"></i>
+                    </div>
+
+                    <div id="peserta_dropdown_mobile" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-30 max-h-48 overflow-y-auto divide-y divide-gray-50">
+                        @foreach($all_warga ?? [] as $w)
+                            <div onclick="selectPesertaOptionMobile('{{ addslashes($w->nama_lengkap) }}', '{{ $w->umur }}', '{{ addslashes($w->status_keluarga) }}', '{{ $w->nomor_kk }}', '{{ $w->jenis_kelamin }}')" 
+                                 class="dropdown-item-m px-3 py-2 hover:bg-rose-50 cursor-pointer transition flex items-center justify-between text-[11px] font-semibold text-gray-700">
+                                <div>
+                                    <span class="block font-bold">{{ $w->nama_lengkap }}</span>
+                                    <span class="text-[9px] text-gray-400 font-normal">{{ $w->status_keluarga }} · Blok {{ $w->blok_rumah }}</span>
+                                </div>
+                                <span class="text-[9px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full font-bold">{{ $w->umur ? $w->umur.' Thn' : '-' }}</span>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
                     <div>
-                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Usia</label>
-                        <input type="text" name="usia" placeholder="2 Tahun / 65 Tahun" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Usia (Otomatis)</label>
+                        <input type="text" name="usia" id="daftar_usia_input_mobile" placeholder="Usia" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-xs font-bold text-gray-700">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Gender</label>
+                        <select name="jenis_kelamin" id="daftar_jenis_kelamin_mobile" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-xs font-bold text-gray-700">
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Kategori</label>
-                        <select name="kategori" id="daftar_kategori" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm font-bold text-gray-700">
+                        <select name="kategori" id="daftar_kategori_mobile" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-xs font-bold text-gray-700">
                             <option value="Balita">Balita</option>
                             <option value="Lansia">Lansia</option>
                             <option value="Ibu Hamil">Ibu Hamil</option>
@@ -187,26 +233,53 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Tinggi Badan (cm)</label>
-                        <input type="text" name="tinggi_badan" placeholder="75" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                        <input type="text" name="tinggi_badan" placeholder="75" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm font-bold text-gray-700">
                     </div>
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Berat Badan (kg)</label>
-                        <input type="text" name="berat_badan" placeholder="8.5" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
+                        <input type="text" name="berat_badan" placeholder="8.5" class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm font-bold text-gray-700">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Pendaftar</label>
-                        @if(Auth::user()->role === 'Warga')
-                        <input type="text" name="nama_pendaftar" value="{{ Auth::user()->name }}" readonly class="w-full bg-gray-100 border py-2 px-3 rounded-xl text-sm text-gray-500">
-                        @else
-                        <input type="text" name="nama_pendaftar" placeholder="Nama" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm">
-                        @endif
+                        <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Pendaftar (Satu KK)</label>
+                        <!-- Integrated Searchable Select Pendaftar Mobile -->
+                        <div class="relative">
+                            <input type="hidden" name="nama_pendaftar" id="nama_pendaftar_hidden_mobile" value="" required>
+                            <div class="relative">
+                                <input type="text" id="pendaftar_search_input_mobile" value="" placeholder="🔍 Pilih pendaftar se-KK..." 
+                                       onfocus="showDropdown('pendaftar_dropdown_mobile')" 
+                                       onkeyup="filterCustomDropdown('pendaftar_search_input_mobile', 'pendaftar_dropdown_mobile')" 
+                                       autocomplete="off"
+                                       class="w-full bg-gray-50 border py-2 px-2.5 pr-6 rounded-xl font-bold text-gray-700 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[9px]"></i>
+                            </div>
+
+                            <div id="pendaftar_dropdown_mobile" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-30 max-h-40 overflow-y-auto divide-y divide-gray-50">
+                                @foreach($all_warga ?? [] as $w)
+                                    <div onclick="selectPendaftarOptionMobile('{{ addslashes($w->nama_lengkap) }}', '{{ addslashes($w->status_keluarga) }}')" 
+                                         data-kk="{{ $w->nomor_kk }}"
+                                         class="dropdown-item-m pendaftar-item-kk-m px-3 py-1.5 hover:bg-rose-50 cursor-pointer transition flex items-center justify-between text-[11px] font-semibold text-gray-700">
+                                        <span>{{ $w->nama_lengkap }}</span>
+                                        <span class="text-[9px] text-gray-400">{{ $w->status_keluarga }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-[9px] font-bold text-gray-400 uppercase mb-1">Hubungan</label>
-                        <select name="hubungan" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm font-bold text-gray-700">
-                            <option value="Ibu">Ibu</option><option value="Ayah">Ayah</option><option value="Nenek">Nenek</option><option value="Kakek">Kakek</option><option value="Cucu">Cucu</option><option value="Anak">Anak</option><option value="Keluarga">Keluarga</option>
+                        <select name="hubungan" id="daftar_hubungan_mobile" required class="w-full bg-gray-50 border py-2 px-3 rounded-xl text-sm font-bold text-gray-700">
+                            <option value="Ibu">Ibu</option>
+                            <option value="Ayah">Ayah</option>
+                            <option value="Nenek">Nenek</option>
+                            <option value="Kakek">Kakek</option>
+                            <option value="Cucu">Cucu</option>
+                            <option value="Anak">Anak</option>
+                            <option value="Suami">Suami</option>
+                            <option value="Istri">Istri</option>
+                            <option value="Diri Sendiri">Diri Sendiri</option>
+                            <option value="Keluarga">Keluarga</option>
                         </select>
                     </div>
                 </div>
@@ -224,30 +297,177 @@
 </div>
 
 <script>
+const allWargaListMobile = @json($all_warga ?? []);
+let selectedPesertaStatusMobile = '';
+
+function selectPesertaOptionMobile(nama, umur, statusKeluarga, nomorKk, jk) {
+    document.getElementById('peserta_search_input_mobile').value = nama;
+    document.getElementById('nama_peserta_hidden_mobile').value = nama;
+    document.getElementById('peserta_dropdown_mobile').classList.add('hidden');
+
+    const usiaInput = document.getElementById('daftar_usia_input_mobile');
+    const jkSelect = document.getElementById('daftar_jenis_kelamin_mobile');
+    const pendaftarInputHidden = document.getElementById('nama_pendaftar_hidden_mobile');
+    const pendaftarInputSearch = document.getElementById('pendaftar_search_input_mobile');
+
+    selectedPesertaStatusMobile = statusKeluarga;
+
+    // 1. Isikan Jenis Kelamin
+    if (jk && jk !== '') {
+        jkSelect.value = jk;
+    }
+
+    // 1. Isikan Usia
+    if (umur && umur !== '') {
+        usiaInput.value = umur + ' Tahun';
+    } else {
+        usiaInput.value = '';
+    }
+
+    // 2. Filter opsi pendaftar HANYA untuk anggota keluarga se-KK yang sama
+    const pendaftarItems = document.querySelectorAll('#pendaftar_dropdown_mobile .pendaftar-item-kk-m');
+    pendaftarItems.forEach(item => {
+        const itemKk = item.getAttribute('data-kk');
+        if (itemKk == nomorKk) {
+            item.classList.remove('hidden-by-kk');
+            item.style.display = '';
+        } else {
+            item.classList.add('hidden-by-kk');
+            item.style.display = 'none';
+        }
+    });
+
+    // 3. Auto-select Pendaftar default (Kepala Keluarga / Ibu dalam 1 KK yang sama)
+    const familyMembers = allWargaListMobile.filter(w => w.nomor_kk == nomorKk);
+    let pendaftarObj = null;
+
+    if (statusKeluarga === 'Kepala Keluarga') {
+        pendaftarObj = familyMembers.find(w => w.status_keluarga === 'Kepala Keluarga') || familyMembers[0];
+    } else if (statusKeluarga === 'Istri') {
+        pendaftarObj = familyMembers.find(w => w.status_keluarga === 'Kepala Keluarga') || familyMembers.find(w => w.status_keluarga === 'Istri');
+    } else {
+        // Anak / Lainnya: Pendaftar utamanya adalah Ibu (Istri) atau Ayah (Kepala Keluarga)
+        pendaftarObj = familyMembers.find(w => w.status_keluarga === 'Istri') || familyMembers.find(w => w.status_keluarga === 'Kepala Keluarga') || familyMembers[0];
+    }
+
+    if (pendaftarObj) {
+        const pendaftarNama = pendaftarObj.nama_lengkap;
+        if (pendaftarInputHidden) pendaftarInputHidden.value = pendaftarNama;
+        if (pendaftarInputSearch) pendaftarInputSearch.value = pendaftarNama;
+
+        // Auto-select hubungan
+        updateHubunganAutoMobile(nama, pendaftarNama, statusKeluarga, pendaftarObj.status_keluarga);
+    }
+}
+
+function selectPendaftarOptionMobile(pendaftarNama, pendaftarStatus) {
+    document.getElementById('pendaftar_search_input_mobile').value = pendaftarNama;
+    document.getElementById('nama_pendaftar_hidden_mobile').value = pendaftarNama;
+    document.getElementById('pendaftar_dropdown_mobile').classList.add('hidden');
+
+    const pesertaNama = document.getElementById('nama_peserta_hidden_mobile').value;
+    updateHubunganAutoMobile(pesertaNama, pendaftarNama, selectedPesertaStatusMobile, pendaftarStatus);
+}
+
+function updateHubunganAutoMobile(pesertaNama, pendaftarNama, pesertaStatus, pendaftarStatus) {
+    const hubunganSelect = document.getElementById('daftar_hubungan_mobile');
+    if (!hubunganSelect) return;
+
+    if (pesertaNama === pendaftarNama) {
+        hubunganSelect.value = 'Diri Sendiri';
+    } else if (pesertaStatus === 'Anak') {
+        if (pendaftarStatus === 'Istri') {
+            hubunganSelect.value = 'Ibu';
+        } else if (pendaftarStatus === 'Kepala Keluarga') {
+            hubunganSelect.value = 'Ayah';
+        } else {
+            hubunganSelect.value = 'Keluarga';
+        }
+    } else if (pesertaStatus === 'Istri') {
+        if (pendaftarStatus === 'Kepala Keluarga') {
+            hubunganSelect.value = 'Suami';
+        } else if (pendaftarStatus === 'Anak') {
+            hubunganSelect.value = 'Anak';
+        } else {
+            hubunganSelect.value = 'Keluarga';
+        }
+    } else if (pesertaStatus === 'Kepala Keluarga') {
+        if (pendaftarStatus === 'Istri') {
+            hubunganSelect.value = 'Istri';
+        } else if (pendaftarStatus === 'Anak') {
+            hubunganSelect.value = 'Anak';
+        } else {
+            hubunganSelect.value = 'Keluarga';
+        }
+    } else {
+        hubunganSelect.value = 'Keluarga';
+    }
+}
+
+// Global click event to close mobile dropdowns
+document.addEventListener('click', function(e) {
+    const pInputM = document.getElementById('peserta_search_input_mobile');
+    const pDropM = document.getElementById('peserta_dropdown_mobile');
+    if (pInputM && pDropM && !pInputM.contains(e.target) && !pDropM.contains(e.target)) {
+        pDropM.classList.add('hidden');
+    }
+
+    const dInputM = document.getElementById('pendaftar_search_input_mobile');
+    const dDropM = document.getElementById('pendaftar_dropdown_mobile');
+    if (dInputM && dDropM && !dInputM.contains(e.target) && !dDropM.contains(e.target)) {
+        dDropM.classList.add('hidden');
+    }
+});
+
 function bukaModalDaftar(posyanduId, namaKegiatan, targetPeserta) {
+    document.getElementById('form-daftar-peserta').reset();
     document.getElementById('daftar_posyandu_id').value = posyanduId;
     document.getElementById('daftar-modal-title').textContent = 'Daftarkan Peserta';
     document.getElementById('daftar-modal-subtitle').textContent = namaKegiatan;
-    const kategoriSelect = document.getElementById('daftar_kategori');
-    if (targetPeserta.toLowerCase().includes('lansia')) kategoriSelect.value = 'Lansia';
-    else if (targetPeserta.toLowerCase().includes('hamil')) kategoriSelect.value = 'Ibu Hamil';
-    else kategoriSelect.value = 'Balita';
+
+    const pSearchM = document.getElementById('peserta_search_input_mobile');
+    const pHiddenM = document.getElementById('nama_peserta_hidden_mobile');
+    const dSearchM = document.getElementById('pendaftar_search_input_mobile');
+    const dHiddenM = document.getElementById('nama_pendaftar_hidden_mobile');
+
+    if (pSearchM) pSearchM.value = '';
+    if (pHiddenM) pHiddenM.value = '';
+    if (dSearchM) dSearchM.value = '';
+    if (dHiddenM) dHiddenM.value = '';
+
+    // Show all items initially
+    const pendaftarItemsM = document.querySelectorAll('#pendaftar_dropdown_mobile .pendaftar-item-kk-m');
+    pendaftarItemsM.forEach(item => {
+        item.classList.remove('hidden-by-kk');
+        item.style.display = '';
+    });
+
+    const kategoriSelect = document.getElementById('daftar_kategori_mobile');
+    if (kategoriSelect) {
+        if (targetPeserta.toLowerCase().includes('lansia')) kategoriSelect.value = 'Lansia';
+        else if (targetPeserta.toLowerCase().includes('hamil')) kategoriSelect.value = 'Ibu Hamil';
+        else kategoriSelect.value = 'Balita';
+    }
+
     document.getElementById('modal-daftar-peserta').classList.remove('hidden');
 }
 function hapusPosyandu(id) {
     if (!confirm('Hapus agenda posyandu ini?')) return;
     const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
+    if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('posyandu'); }
     fetch('/posyandu/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(res => res.json()).then(data => { alert(data.message); switchPage('posyandu', document.querySelector('.menu-active')); });
 }
 function hapusPendaftaran(id) {
     if (!confirm('Batalkan pendaftaran peserta?')) return;
     const fd = new FormData(); fd.append('id', id); fd.append('_token', window.csrfToken);
+    if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('posyandu'); }
     fetch('/posyandu/daftar/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(res => res.json()).then(data => { alert(data.message); switchPage('posyandu', document.querySelector('.menu-active')); });
 }
 function ubahStatusPeserta(id, status) {
     const fd = new FormData(); fd.append('id', id); fd.append('status', status); fd.append('_token', window.csrfToken);
+    if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('posyandu'); }
     fetch('/posyandu/daftar/status', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(res => res.json()).then(data => { alert(data.message); switchPage('posyandu', document.querySelector('.menu-active')); });
 }

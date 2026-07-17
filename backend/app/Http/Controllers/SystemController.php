@@ -24,6 +24,8 @@ class SystemController extends Controller
 
         try {
             $user = Auth::user();
+            $oldName = $user->name;
+
             $user->name = $request->name;
             $user->email = $request->email;
 
@@ -40,19 +42,47 @@ class SystemController extends Controller
 
             $user->save();
 
+            // Synchronize Data Diri Wargas Record
+            $warga = DB::table('wargas')->where('nama_lengkap', $oldName)->first();
+            $wargaData = [
+                'nama_lengkap'    => $request->name,
+                'nik'             => $request->filled('nik') ? $request->nik : ($warga->nik ?? null),
+                'nomor_kk'        => $request->filled('nomor_kk') ? $request->nomor_kk : ($warga->nomor_kk ?? null),
+                'jenis_kelamin'   => $request->filled('jenis_kelamin') ? $request->jenis_kelamin : ($warga->jenis_kelamin ?? 'Laki-laki'),
+                'no_telepon'      => $request->filled('no_telepon') ? $request->no_telepon : ($warga->no_telepon ?? null),
+                'umur'            => $request->filled('umur') ? (int) $request->umur : ($warga->umur ?? 30),
+                'agama'           => $request->filled('agama') ? $request->agama : ($warga->agama ?? 'Islam'),
+                'blok_rumah'      => $request->filled('blok_rumah') ? $request->blok_rumah : ($warga->blok_rumah ?? 'Blok A'),
+                'status_keluarga' => $request->filled('status_keluarga') ? $request->status_keluarga : ($warga->status_keluarga ?? 'Kepala Keluarga'),
+                'updated_at'      => now()
+            ];
+
+            if ($user->photo) {
+                $wargaData['foto_ktp'] = $user->photo;
+            }
+
+            if ($warga) {
+                DB::table('wargas')->where('id', $warga->id)->update($wargaData);
+            } else {
+                DB::table('wargas')->insert(array_merge($wargaData, [
+                    'status_domisili' => 'Tetap',
+                    'created_at'      => now()
+                ]));
+            }
+
             // Refresh user session with fresh data
             Auth::setUser($user->fresh());
 
-            self::logActivity('UPDATE PROFIL', "Memperbarui profil akun: Nama menjadi '{$request->name}', Email menjadi '{$request->email}'");
+            self::logActivity('UPDATE DATA DIRI', "Memperbarui data diri pengguna: Nama '{$request->name}', NIK: '" . ($request->nik ?? '-') . "', Email: '{$request->email}'");
 
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Profil berhasil diperbarui!'
+                'message' => 'Data diri & profil pengguna berhasil diperbarui!'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Gagal memperbarui profil: ' . $e->getMessage()
+                'message' => 'Gagal memperbarui data diri: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -140,6 +170,7 @@ class SystemController extends Controller
                     'users.role',
                     'activity_logs.action',
                     'activity_logs.description',
+                    'activity_logs.foto',
                     'activity_logs.created_at'
                 )
                 ->orderBy('activity_logs.created_at', 'desc')

@@ -107,8 +107,9 @@
                                 ${item.action || '-'}
                             </span>
                         </td>
-                        <td class="px-5 py-2.5 text-xs text-gray-600 font-medium max-w-xs truncate">
-                            ${item.description || '-'}
+                        <td class="px-5 py-2.5 text-xs text-gray-600 font-medium max-w-xs">
+                            <p class="truncate">${item.description || '-'}</p>
+                            ${item.foto ? `<div class="mt-1"><img src="/storage/${item.foto}" class="h-14 w-24 object-cover rounded-lg border border-gray-200 shadow-sm" alt="Bukti Foto"></div>` : ''}
                         </td>
                         <td class="px-5 py-2.5 text-right text-[10px] text-gray-400 font-medium whitespace-nowrap">
                             <i class="fa-regular fa-clock mr-0.5"></i> ${item.waktu_berlalu || '-'}

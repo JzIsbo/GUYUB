@@ -2,7 +2,7 @@
     <!-- Profile Card -->
     <div class="bg-gradient-to-br from-[#0F172A] to-[#1E293B] p-4 rounded-2xl shadow-xl text-white relative overflow-hidden">
         <div class="relative z-10">
-            <span class="bg-blue-500/10 text-blue-400 text-[8px] px-2 py-1 rounded-lg font-black border border-blue-500/20 uppercase tracking-wider">Profil RT</span>
+            <span class="bg-blue-500/10 text-blue-400 text-[8px] px-2 py-1 rounded-lg font-black border border-blue-500/20 uppercase tracking-wider">Profil RT & RW</span>
             <h2 class="text-lg font-black mt-2 tracking-tight">RT {{ $rt_info->nomor_rt ?? '00' }} / RW {{ $rt_info->nomor_rw ?? '00' }}</h2>
             <p class="text-gray-400 text-[10px] mt-0.5 font-bold uppercase tracking-wider">{{ $rt_info->nama_wilayah ?? 'Belum Diatur' }}</p>
             <div class="mt-3 pt-3 border-t border-white/5">
@@ -15,7 +15,7 @@
 
     <!-- Form -->
     <div class="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
-        <h3 class="text-sm font-black text-gray-800 mb-1">Konfigurasi Identitas RT</h3>
+        <h3 class="text-sm font-black text-gray-800 mb-1">Konfigurasi Identitas RT & RW</h3>
         <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-3">Perbarui data pimpinan wilayah</p>
 
         <form id="form-rt-lokal" onsubmit="simpanProfilRt(event)">

@@ -44,7 +44,8 @@
                             <th class="p-4 rounded-l-2xl font-bold">Nama Iuran</th>
                             <th class="p-4 font-bold">Periode Penagihan</th>
                             <th class="p-4 font-bold text-center">Sifat</th>
-                            <th class="p-4 rounded-r-2xl font-bold text-right">Tarif / Nominal</th>
+                            <th class="p-4 font-bold text-right">Tarif / Nominal</th>
+                            <th class="p-4 rounded-r-2xl font-bold text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-sm">
@@ -63,10 +64,17 @@
                                     @endif
                                 </td>
                                 <td class="p-4 font-black text-gray-900 text-right tracking-tight">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                <td class="p-4 text-center">
+                                    @if(in_array(Auth::user()->role, ['Super Admin', 'Bendahara']))
+                                    <button onclick="hapusIuran({{ $item->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all inline-flex items-center justify-center cursor-pointer" title="Hapus Master Iuran">
+                                        <i class="fa-solid fa-trash text-xs"></i>
+                                    </button>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center p-10">
+                                <td colspan="5" class="text-center p-10">
                                     <div class="flex flex-col items-center justify-center text-gray-400">
                                         <i class="fa-solid fa-wallet text-4xl mb-3 text-gray-300"></i>
                                         <p class="font-medium italic">Belum ada jenis penagihan iuran yang diatur...</p>
@@ -135,3 +143,36 @@
     </div>
 
 </div>
+
+<script>
+function hapusIuran(id) {
+    Swal.fire({
+        title: 'Hapus Master Iuran?',
+        text: "Kategori iuran warga ini akan dihapus dari konfigurasi.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-3xl p-6 shadow-2xl font-sans',
+            confirmButton: 'rounded-xl font-bold px-5 py-2.5 text-xs',
+            cancelButton: 'rounded-xl font-bold px-5 py-2.5 text-xs'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('_token', window.csrfToken);
+            fetch('/admin/iuran/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json())
+            .then(data => { 
+                Swal.fire({ title: 'Berhasil!', text: 'Master iuran telah dihapus.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-3xl p-6 font-sans' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('data-iuran'); }
+                switchPage('data-iuran', document.querySelector('.menu-active')); 
+            });
+        }
+    });
+}
+</script>

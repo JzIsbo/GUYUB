@@ -14,6 +14,8 @@ class PosyanduController extends Controller
             'nama_kegiatan'  => 'required|string|max:255',
             'target_peserta' => 'required|string',
             'tanggal'        => 'required|date',
+            'waktu_mulai'    => 'nullable|string|max:10',
+            'waktu_selesai'  => 'nullable|string|max:10',
             'lokasi'         => 'required|string',
             'keterangan'     => 'nullable|string'
         ]);
@@ -23,6 +25,8 @@ class PosyanduController extends Controller
                 'nama_kegiatan'  => $request->nama_kegiatan,
                 'target_peserta' => $request->target_peserta,
                 'tanggal'        => $request->tanggal,
+                'waktu_mulai'    => $request->waktu_mulai ?: null,
+                'waktu_selesai'  => $request->waktu_selesai ?: null,
                 'lokasi'         => $request->lokasi,
                 'keterangan'     => $request->keterangan,
                 'created_at'     => now(),
@@ -54,6 +58,7 @@ class PosyanduController extends Controller
         $request->validate([
             'posyandu_id'    => 'required|integer',
             'nama_peserta'   => 'required|string|max:255',
+            'jenis_kelamin'  => 'required|string|max:20',
             'usia'           => 'nullable|string|max:50',
             'tinggi_badan'   => 'nullable|string|max:20',
             'berat_badan'    => 'nullable|string|max:20',
@@ -67,6 +72,7 @@ class PosyanduController extends Controller
             DB::table('posyandu_pendaftarans')->insert([
                 'posyandu_id'    => $request->posyandu_id,
                 'nama_peserta'   => $request->nama_peserta,
+                'jenis_kelamin'  => $request->jenis_kelamin,
                 'usia'           => $request->usia,
                 'tinggi_badan'   => $request->tinggi_badan,
                 'berat_badan'    => $request->berat_badan,

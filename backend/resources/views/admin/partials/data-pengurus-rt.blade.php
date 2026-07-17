@@ -32,8 +32,8 @@
                     <span class="text-[11px] font-bold text-blue-200 uppercase tracking-widest">Struktur Organisasi</span>
                 </div>
                 {{-- Title --}}
-                <h1 class="text-2xl lg:text-3xl font-black text-white tracking-tight">Data Pengurus RT</h1>
-                <p class="text-sm text-blue-200/70 font-medium max-w-md">Manajemen struktur organisasi pimpinan lingkungan</p>
+                <h1 class="text-2xl lg:text-3xl font-black text-white tracking-tight">Data Pengurus RT & RW</h1>
+                <p class="text-sm text-blue-200/70 font-medium max-w-md">Manajemen struktur organisasi pimpinan lingkungan RT & RW</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-3">
@@ -44,7 +44,7 @@
                 </div>
 
                 {{-- Add Button --}}
-                @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                @if(in_array(Auth::user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']))
                 <button type="button" onclick="document.getElementById('modal-tambah-pengurus').classList.remove('hidden')" class="bg-blue-500 hover:bg-blue-400 text-white px-5 py-3 rounded-2xl font-bold text-sm shadow-lg hover:shadow-blue-500/25 transition-all flex items-center gap-2">
                     <i class="fa-solid fa-plus text-xs"></i>
                     Tambah Pengurus
@@ -63,8 +63,8 @@
                     <i class="fa-solid fa-list-ul text-blue-500 text-sm"></i>
                 </div>
                 <div>
-                    <h3 class="text-sm font-bold text-gray-800">Daftar Pengurus</h3>
-                    <p class="text-[11px] text-gray-400 font-medium">Seluruh jabatan pengurus RT</p>
+                    <h3 class="text-sm font-bold text-gray-800">Daftar Pengurus RT & RW</h3>
+                    <p class="text-[11px] text-gray-400 font-medium">Seluruh jabatan pengurus RT & RW</p>
                 </div>
             </div>
         </div>
@@ -77,14 +77,14 @@
                         <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Jabatan</th>
                         <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mulai</th>
                         <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                        @if(in_array(Auth::user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']))
                         <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Aksi</th>
                         @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse($list_pengurus ?? [] as $item)
-                    <tr class="hover:bg-blue-50/30 transition-colors duration-150">
+                    <tr id="row-pengurus-{{ $item->id }}" class="hover:bg-blue-50/30 transition-colors duration-150">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -106,14 +106,14 @@
                                 {{ $item->status_aktif }}
                             </span>
                         </td>
-                        @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
+                        @if(in_array(Auth::user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']))
                         <td class="px-6 py-4">
-                            <div class="flex items-center justify-center gap-1">
-                                <button type="button" onclick="bukaModalEdit('{{ $item->id }}', '{{ addslashes($item->jabatan) }}', '{{ $item->tanggal_mulai }}', '{{ $item->status_aktif }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-100 hover:text-blue-700 transition-all flex items-center justify-center" title="Edit">
-                                    <i class="fa-solid fa-pen text-xs"></i>
+                            <div class="flex items-center justify-end gap-2">
+                                <button type="button" onclick="window.bukaModalEdit('{{ $item->id }}', '{{ addslashes($item->jabatan) }}', '{{ $item->tanggal_mulai }}', '{{ $item->status_aktif }}')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all flex items-center justify-center" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
                                 </button>
-                                <button type="button" onclick="hapusPengurus('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition-all flex items-center justify-center" title="Hapus">
-                                    <i class="fa-solid fa-trash text-xs"></i>
+                                <button type="button" onclick="window.hapusPengurus('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition-all flex items-center justify-center" title="Hapus">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
                                 </button>
                             </div>
                         </td>
@@ -121,17 +121,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center gap-3">
-                                <div class="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
-                                    <i class="fa-solid fa-user-tie text-gray-300 text-xl"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-400">Belum ada pengurus RT</p>
-                                    <p class="text-xs text-gray-300 mt-0.5">Tambahkan pengurus untuk memulai</p>
-                                </div>
-                            </div>
-                        </td>
+                        <td colspan="5" class="py-8 text-center text-gray-400 font-medium italic">Belum ada data pengurus RT.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -142,7 +132,7 @@
 
 <div id="modal-tambah-pengurus" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
     <div class="bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl">
-        <h2 class="text-xl font-bold mb-6">Tambah Pengurus</h2>
+        <h2 class="text-xl font-bold mb-6">Tambah Pengurus Baru</h2>
         <form id="form-tambah-pengurus" action="{{ route('pengurus.store') }}" method="POST" onsubmit="simpanDataUmum(event, 'form-tambah-pengurus', 'data-pengurus-rt')">
             @csrf
             <div class="mb-4">
@@ -154,8 +144,24 @@
                 </select>
             </div>
             <div class="mb-4">
-                <label class="block text-xs font-bold text-gray-500 mb-2">Jabatan</label>
-                <input type="text" name="jabatan" class="w-full p-3 border rounded-xl" required>
+                <label class="block text-xs font-bold text-gray-500 mb-2">Jabatan Pengurus</label>
+                <select name="jabatan" class="w-full p-3 border rounded-xl font-bold text-gray-700 bg-gray-50 focus:bg-white transition-all" required>
+                    <option value="">-- Pilih Jabatan --</option>
+                    <option value="Ketua RW">Ketua RW</option>
+                    <option value="Sekretaris RW">Sekretaris RW</option>
+                    <option value="Bendahara RW">Bendahara RW</option>
+                    <option value="Penasihat RW">Penasihat RW</option>
+                    <option value="Ketua RT">Ketua RT</option>
+                    <option value="Wakil Ketua RT">Wakil Ketua RT</option>
+                    <option value="Sekretaris RT">Sekretaris RT</option>
+                    <option value="Bendahara RT">Bendahara RT</option>
+                    <option value="Koordinator Keamanan & Ronda">Koordinator Keamanan & Ronda</option>
+                    <option value="Koordinator Kebersihan & Lingkungan">Koordinator Kebersihan & Lingkungan</option>
+                    <option value="Koordinator Posyandu & Kesehatan">Koordinator Posyandu & Kesehatan</option>
+                    <option value="Koordinator Humas & Sosial">Koordinator Humas & Sosial</option>
+                    <option value="Koordinator Koperasi & UMKM">Koordinator Koperasi & UMKM</option>
+                    <option value="Penasihat RT">Penasihat RT</option>
+                </select>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
@@ -185,8 +191,23 @@
             @csrf
             <input type="hidden" name="id" id="edit-id">
             <div class="mb-4">
-                <label class="block text-xs font-bold text-gray-500 mb-2">Jabatan</label>
-                <input type="text" name="jabatan" id="edit-jabatan" class="w-full p-3 border rounded-xl" required>
+                <label class="block text-xs font-bold text-gray-500 mb-2">Jabatan Pengurus</label>
+                <select name="jabatan" id="edit-jabatan" class="w-full p-3 border rounded-xl font-bold text-gray-700 bg-gray-50 focus:bg-white transition-all" required>
+                    <option value="Ketua RW">Ketua RW</option>
+                    <option value="Sekretaris RW">Sekretaris RW</option>
+                    <option value="Bendahara RW">Bendahara RW</option>
+                    <option value="Penasihat RW">Penasihat RW</option>
+                    <option value="Ketua RT">Ketua RT</option>
+                    <option value="Wakil Ketua RT">Wakil Ketua RT</option>
+                    <option value="Sekretaris RT">Sekretaris RT</option>
+                    <option value="Bendahara RT">Bendahara RT</option>
+                    <option value="Koordinator Keamanan & Ronda">Koordinator Keamanan & Ronda</option>
+                    <option value="Koordinator Kebersihan & Lingkungan">Koordinator Kebersihan & Lingkungan</option>
+                    <option value="Koordinator Posyandu & Kesehatan">Koordinator Posyandu & Kesehatan</option>
+                    <option value="Koordinator Humas & Sosial">Koordinator Humas & Sosial</option>
+                    <option value="Koordinator Koperasi & UMKM">Koordinator Koperasi & UMKM</option>
+                    <option value="Penasihat RT">Penasihat RT</option>
+                </select>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
@@ -210,26 +231,88 @@
 </div>
 
 <script>
-function hapusPengurus(id) {
-    if(!confirm('Yakin ingin menghapus data pengurus ini?')) return;
-    fetch(`/admin/pengurus/delete/${id}`, {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === 'success') {
-            if (typeof switchPage === 'function') switchPage('data-pengurus-rt');
-            else window.location.reload();
-        } else { alert('Gagal: ' + data.message); }
-    });
-}
+window.hapusPengurus = function(id) {
+    const doDelete = () => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+        fetch(`/admin/pengurus/delete/${id}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const el = document.getElementById(`row-pengurus-${id}`);
+                if (el) el.remove();
 
-function bukaModalEdit(id, jabatan, tanggal, status) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Data pengurus RT telah berhasil dihapus.',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        customClass: { popup: 'rounded-3xl p-6 font-sans' }
+                    });
+                } else {
+                    alert('Data pengurus RT berhasil dihapus.');
+                }
+
+                if (typeof window.invalidatePageCache === 'function') window.invalidatePageCache('data-pengurus-rt');
+                if (typeof switchPage === 'function') switchPage('data-pengurus-rt', document.querySelector('.menu-active'));
+            } else {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: data.message || 'Gagal menghapus data.',
+                        icon: 'error',
+                        customClass: { popup: 'rounded-3xl p-6 font-sans' }
+                    });
+                } else {
+                    alert('Gagal: ' + (data.message || 'Gagal menghapus data.'));
+                }
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ title: 'Error!', text: 'Terjadi kesalahan koneksi.', icon: 'error' });
+            } else {
+                alert('Terjadi kesalahan koneksi saat menghapus data.');
+            }
+        });
+    };
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Hapus Data Pengurus?',
+            text: 'Data pengurus RT ini akan dihapus secara permanen dari sistem.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus Data',
+            cancelButtonText: 'Batal',
+            customClass: { popup: 'rounded-3xl p-6 font-sans' }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                doDelete();
+            }
+        });
+    } else {
+        if (confirm('Yakin ingin menghapus data pengurus ini?')) {
+            doDelete();
+        }
+    }
+};
+
+window.bukaModalEdit = function(id, jabatan, tanggal, status) {
     document.getElementById('edit-id').value = id;
     document.getElementById('edit-jabatan').value = jabatan;
     document.getElementById('edit-tanggal').value = tanggal;
     document.getElementById('edit-status').value = status;
     document.getElementById('modal-edit-pengurus').classList.remove('hidden');
-}
+};
 </script>

@@ -14,12 +14,15 @@ class DataWargaController extends Controller
      */
     public function store(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'nomor_kk'        => 'required|numeric',
                 'nik'             => 'required|numeric|unique:wargas,nik',
                 'nama_lengkap'    => 'required|string|max:255',
+                'jenis_kelamin'   => 'required|string|max:20',
+                'umur'            => 'nullable|integer|min:0|max:150',
+                'agama'           => 'nullable|string|max:20',
                 'no_telepon'      => 'nullable|string|max:20',
                 'blok_rumah'      => 'required|string|max:255',
                 'status_keluarga' => 'required|string',
@@ -59,12 +62,15 @@ class DataWargaController extends Controller
      */
     public function update(Request $request)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']), 403, 'Akses Ditolak');
         try {
             $request->validate([
                 'id'              => 'required',
                 'nik'             => 'required|numeric|unique:wargas,nik,' . $request->id,
                 'nama_lengkap'    => 'required|string|max:255',
+                'jenis_kelamin'   => 'required|string|max:20',
+                'umur'            => 'nullable|integer|min:0|max:150',
+                'agama'           => 'nullable|string|max:20',
                 'no_telepon'      => 'nullable|string|max:20',
                 'blok_rumah'      => 'required|string',
                 'status_keluarga' => 'required|string',
@@ -105,7 +111,7 @@ class DataWargaController extends Controller
      */
     public function destroy(Request $request, $id = null)
     {
-        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'RT', 'Sekretaris RT']), 403, 'Akses Ditolak');
         $targetId = $id ?? $request->id;
 
         if (!$targetId) {

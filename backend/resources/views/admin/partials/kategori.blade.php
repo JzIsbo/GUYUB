@@ -25,7 +25,7 @@
                             <i class="fa-solid fa-layer-group text-amber-400 text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-lg font-black text-white leading-none">{{ count($list_kategori) }}</p>
+                            <p class="text-lg font-black text-white leading-none">{{ count($list_kategori ?? []) }}</p>
                             <p class="text-[10px] text-blue-300/60 font-semibold uppercase tracking-wider">Total Kategori</p>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    @forelse($list_kategori as $item)
+                    @forelse($list_kategori ?? [] as $item)
                         <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
                             <td class="p-4 font-bold text-gray-800">
                                 <i class="fa-solid fa-money-bill-wave text-emerald-400 mr-2"></i> {{ $item->nama }}

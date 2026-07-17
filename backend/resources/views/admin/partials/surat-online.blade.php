@@ -177,6 +177,7 @@ function ubahStatusSurat(id, status) {
         method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }
     }).then(res => res.json()).then(data => {
         alert(data.message);
+        if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
         switchPage('surat-online', document.querySelector('.menu-active'));
     });
 }

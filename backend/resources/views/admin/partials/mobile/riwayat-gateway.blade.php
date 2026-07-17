@@ -42,7 +42,15 @@
         if (!confirm('Yakin ingin menghapus seluruh log?')) return;
         fetch('/payment/logs/clear', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' } })
         .then(response => response.json())
-        .then(data => { alert(data.message); if(typeof switchPage === 'function') { switchPage('riwayat-gateway', document.querySelector('.menu-active')); } else { window.location.reload(); } })
+        .then(data => {
+            alert(data.message);
+            if (typeof window.invalidatePageCache === 'function') window.invalidatePageCache('riwayat-gateway');
+            if (typeof switchPage === 'function') {
+                switchPage('riwayat-gateway', document.querySelector(".menu-link[onclick*='riwayat-gateway']") || document.querySelector('.menu-active'));
+            } else {
+                window.location.reload();
+            }
+        })
         .catch(error => { alert('Gagal membersihkan log.'); });
     }
 </script>

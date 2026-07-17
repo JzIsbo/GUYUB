@@ -41,6 +41,15 @@ class SelfHealingDatabaseService
             }
         }
 
+        // 1b. wargas table foto_ktp column check
+        if (Schema::hasTable('wargas')) {
+            if (!Schema::hasColumn('wargas', 'foto_ktp')) {
+                Schema::table('wargas', function ($table) {
+                    $table->string('foto_ktp')->nullable();
+                });
+            }
+        }
+
         // 2. devices (Aset & Perangkat) table
         if (!Schema::hasTable('devices')) {
             Schema::create('devices', function ($table) {
@@ -104,6 +113,7 @@ class SelfHealingDatabaseService
             Schema::create('qris_settings', function ($table) {
                 $table->id();
                 $table->string('qris_data')->default('KAS-RT-01-PEMBAYARAN-VALID');
+                $table->string('qris_image')->nullable();
                 $table->string('bank_1_name')->default('Bank BCA');
                 $table->string('bank_1_number')->default('8721 0092 112');
                 $table->string('bank_1_owner')->default('a.n Kas RT 01 (Bpk. Budi)');
@@ -151,7 +161,12 @@ class SelfHealingDatabaseService
                 $table->decimal('harga', 15, 2);
                 $table->integer('stok')->default(0);
                 $table->string('penjual')->default('Koperasi RT');
+                $table->string('foto')->nullable();
                 $table->timestamps();
+            });
+        } elseif (!Schema::hasColumn('koperasi_items', 'foto')) {
+            Schema::table('koperasi_items', function ($table) {
+                $table->string('foto')->nullable()->after('penjual');
             });
         }
 
@@ -244,6 +259,8 @@ class SelfHealingDatabaseService
                 $table->string('pelapor');
                 $table->string('jenis_kejadian'); // Pencurian, Kebakaran, Keributan, Lainnya
                 $table->text('deskripsi');
+                $table->string('foto')->nullable();
+                $table->string('waktu_kejadian')->nullable();
                 $table->string('status')->default('Perlu Penanganan');
                 $table->timestamps();
             });
@@ -291,6 +308,41 @@ class SelfHealingDatabaseService
                 $table->string('status')->default('Menunggu Response');
                 $table->timestamps();
             });
+        }
+
+        // 16b. Koperasi Finances table
+        if (!Schema::hasTable('koperasi_finances')) {
+            Schema::create('koperasi_finances', function ($table) {
+                $table->id();
+                $table->unsignedBigInteger('user_id')->nullable();
+                $table->date('tanggal');
+                $table->string('tipe'); // pemasukan, pengeluaran
+                $table->string('kategori'); // Simpanan Warga, Angsuran Pinjaman, Pembelian Sembako, Bantuan Modal UMKM, Operasional, Lain-lain
+                $table->decimal('nominal', 15, 2);
+                $table->text('keterangan')->nullable();
+                $table->string('bukti_transaksi')->nullable();
+                $table->timestamps();
+            });
+        }
+
+        // 17. tagihans table structure update (self-healing for receipt uploads)
+        if (Schema::hasTable('tagihans')) {
+            if (!Schema::hasColumn('tagihans', 'bukti_bayar')) {
+                Schema::table('tagihans', function ($table) {
+                    $table->string('bukti_bayar')->nullable()->after('status');
+                });
+            }
+            if (!Schema::hasColumn('tagihans', 'catatan')) {
+                Schema::table('tagihans', function ($table) {
+                    $table->text('catatan')->nullable()->after('bukti_bayar');
+                });
+            }
+        }
+
+        // Create upload directory if it does not exist
+        $uploadPath = public_path('uploads/bukti_bayar');
+        if (!file_exists($uploadPath)) {
+            @mkdir($uploadPath, 0755, true);
         }
 
         // --- AUTOMATIC SAMPLE DATA SEEDER FOR PUBLIC MODULES ---
@@ -429,6 +481,41 @@ class SelfHealingDatabaseService
                     ['hari' => 'Jumat', 'petugas_ronda' => 'Bpk. Qasim, Bpk. Rian, Bpk. Syaiful, Bpk. Taufik', 'koordinator' => 'Bpk. Rian', 'jam_shift' => '22:00 - 04:00 WIB', 'created_at' => now(), 'updated_at' => now()],
                     ['hari' => 'Sabtu', 'petugas_ronda' => 'Bpk. Umar, Bpk. Victor, Bpk. Wahyu, Bpk. Yoga', 'koordinator' => 'Bpk. Wahyu', 'jam_shift' => '22:00 - 04:00 WIB', 'created_at' => now(), 'updated_at' => now()],
                     ['hari' => 'Minggu', 'petugas_ronda' => 'Bpk. Zainal, Bpk. Agung, Bpk. Bambang, Bpk. Doni', 'koordinator' => 'Bpk. Zainal', 'jam_shift' => '22:00 - 04:00 WIB', 'created_at' => now(), 'updated_at' => now()],
+                ]);
+            }
+            // Seed Koperasi Finances if empty
+            if (DB::table('koperasi_finances')->count() === 0) {
+                DB::table('koperasi_finances')->insert([
+                    [
+                        'tanggal' => date('Y-m-d', strtotime('-5 days')),
+                        'tipe' => 'pemasukan',
+                        'kategori' => 'Simpanan Warga',
+                        'nominal' => 250000.00,
+                        'keterangan' => 'Setoran Simpanan Pokok & Wajib Budi Santoso',
+                        'bukti_transaksi' => null,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ],
+                    [
+                        'tanggal' => date('Y-m-d', strtotime('-3 days')),
+                        'tipe' => 'pengeluaran',
+                        'kategori' => 'Pembelian Sembako',
+                        'nominal' => 150000.00,
+                        'keterangan' => 'Belanja Restock Minyak Goreng Koperasi',
+                        'bukti_transaksi' => null,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ],
+                    [
+                        'tanggal' => date('Y-m-d', strtotime('-1 days')),
+                        'tipe' => 'pemasukan',
+                        'kategori' => 'Angsuran Pinjaman',
+                        'nominal' => 200000.00,
+                        'keterangan' => 'Angsuran Bulan Pertama Pinjaman Dimas Saputra',
+                        'bukti_transaksi' => null,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]
                 ]);
             }
         } catch (\Exception $e) {

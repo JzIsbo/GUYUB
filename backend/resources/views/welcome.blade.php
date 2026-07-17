@@ -228,7 +228,17 @@
                 font-size: 22px;
             }
         }
-
+        @keyframes logoPulse {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.15); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.15); }
+            70% { transform: scale(1); }
+        }
+        .logo-beat {
+            animation: logoPulse 1.8s infinite ease-in-out;
+            display: inline-block;
+        }
     </style>
 
 </head>
@@ -243,24 +253,24 @@
     <div class="absolute bottom-[-100px] left-[-100px] w-[220px] h-[220px] rounded-full bg-blue-300/20"></div>
 
     {{-- NAVBAR --}}
-    <nav class="relative z-30 container-custom flex items-center justify-between px-5 lg:px-8 py-4 transition-all duration-300">
+    <nav class="relative z-30 container-custom flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-5 lg:px-8 py-4 transition-all duration-300">
 
         {{-- LOGO --}}
-        <div class="flex items-center gap-3">
+        <div class="flex flex-col items-center text-center gap-1.5 sm:flex-row sm:text-left sm:gap-3 shrink-0">
 
-            <div class="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center">
 
-                <i class="fa-solid fa-people-roof text-lg text-white"></i>
+                <i class="fa-solid fa-people-roof logo-beat text-base sm:text-lg text-white"></i>
 
             </div>
 
-            <div>
+            <div class="flex flex-col items-center sm:items-start">
 
-                <h1 class="text-white text-lg font-bold">
+                <h1 class="text-white text-base sm:text-lg font-bold leading-none">
                     GUYUB
                 </h1>
 
-                <p class="text-blue-100 text-[11px]">
+                <p class="text-blue-100 text-[10px] sm:text-[11px] mt-1.5 text-center sm:text-left font-medium leading-normal">
                     Gerbang Urusan dan Layanan Warga Bersama
                 </p>
 
@@ -290,27 +300,34 @@
         </div>
 
         {{-- LOGIN / DASHBOARD & THEME TOGGLE --}}
-        <div class="flex items-center gap-2">
-            <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition backdrop-blur-md cursor-pointer" title="Mode Gelap / Terang">
-                <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
+        <div class="flex items-center justify-between mt-1 sm:mt-0 shrink-0 w-full sm:w-auto">
+            {{-- HAMBURGER BUTTON (KIRI MENTOK) --}}
+            <button onclick="toggleMobileNavbar()" class="lg:hidden w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white focus:outline-none transition hover:bg-white/20">
+                <i id="hamburger-icon" class="fa-solid fa-bars text-xs sm:text-base"></i>
             </button>
-            @auth
-            <a href="/dashboard"
-               class="px-4 py-2 rounded-xl bg-white text-blue-700 text-xs sm:text-sm font-semibold hover:bg-blue-50 transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-gauge-high text-[10px] sm:text-xs"></i>
-                <span>Dashboard</span>
-            </a>
-            @else
-            <a href="{{ route('login') }}"
-               class="px-4 py-2 rounded-xl bg-white text-blue-700 text-xs sm:text-sm font-semibold hover:bg-blue-50 transition shadow-sm">
-                Login
-            </a>
-            @endauth
 
-            {{-- HAMBURGER BUTTON --}}
-            <button onclick="toggleMobileNavbar()" class="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white focus:outline-none transition hover:bg-white/20">
-                <i id="hamburger-icon" class="fa-solid fa-bars text-base"></i>
-            </button>
+            {{-- THEME & BUTTONS (KANAN MENTOK) --}}
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition backdrop-blur-md cursor-pointer" title="Mode Gelap / Terang">
+                    <i class="fa-solid fa-moon text-xs sm:text-sm" id="theme-toggle-icon"></i>
+                </button>
+                @auth
+                <a href="/dashboard"
+                   class="px-4 py-2 rounded-xl bg-white text-blue-700 text-xs sm:text-sm font-semibold hover:bg-blue-50 transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-gauge-high text-[10px] sm:text-xs"></i>
+                    <span>Dashboard</span>
+                </a>
+                @else
+                <a href="{{ route('register') }}"
+                   class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-semibold transition">
+                    Daftar Warga
+                </a>
+                <a href="{{ route('login') }}"
+                   class="px-4 py-2 rounded-xl bg-white text-blue-700 text-xs sm:text-sm font-semibold hover:bg-blue-50 transition shadow-sm">
+                    Login
+                </a>
+                @endauth
+            </div>
         </div>
 
         {{-- MOBILE NAV DROPDOWN --}}
@@ -318,7 +335,13 @@
             <a href="#beranda" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Beranda</a>
             <a href="#fitur" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Fitur & Layanan</a>
             <a href="#tentang" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Tentang</a>
-            <a href="#kontak" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1">Kontak</a>
+            <a href="#kontak" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Kontak</a>
+            @auth
+            <a href="/dashboard" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-2 text-center bg-white text-blue-700 rounded-xl font-bold mt-2 shadow-lg">Dashboard</a>
+            @else
+            <a href="{{ route('register') }}" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Daftar Warga</a>
+            <a href="{{ route('login') }}" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-2 text-center bg-white text-blue-700 rounded-xl font-bold mt-2 shadow-lg">Login</a>
+            @endauth
         </div>
 
     </nav>
@@ -331,102 +354,105 @@
             {{-- LEFT --}}
             <div class="lg:col-span-7">
 
-                {{-- BADGE --}}
-                <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full glass text-white mb-4 sm:mb-6">
+                 {{-- TITLE --}}
+                 <h1 class="hero-title text-white font-extrabold">
+ 
+                     Digitalisasi
+                     <span class="text-blue-300">
+                         Pelayanan RT/RW
+                     </span>
+ 
+                 </h1>
+ 
+                 {{-- DESC --}}
+                 <p class="hero-desc mt-4 sm:mt-6 text-blue-100 max-w-[520px]">
+ 
+                     Kelola data warga, iuran, surat pengantar,
+                     pengumuman, dan aktivitas lingkungan
+                     dengan sistem modern berbasis web.
+ 
+                 </p>
+ 
+                 {{-- BUTTON --}}
+                 <div class="flex flex-wrap mobile-center gap-3 mt-6 sm:mt-8">
+ 
+                     @auth
+                     <a href="/dashboard"
+                        class="btn-primary px-5 py-3 rounded-xl text-white text-xs sm:text-sm font-semibold transition-all duration-300">
+                         <i class="fa-solid fa-gauge-high mr-1.5"></i>
+                         Buka Dashboard
+                     </a>
+                     @else
+                     <a href="{{ route('login') }}"
+                        class="btn-primary px-5 py-3 rounded-xl text-white text-xs sm:text-sm font-semibold transition-all duration-300">
+                         <i class="fa-solid fa-right-to-bracket mr-1.5"></i>
+                         Masuk Sekarang
+                     </a>
+                     <a href="{{ route('register') }}"
+                        class="px-5 py-3 rounded-xl glass border border-white/20 text-white text-xs sm:text-sm font-semibold hover:bg-white/20 transition">
+                         Daftar Warga Baru
+                     </a>
+                     @endauth
+ 
+                     <a href="#fitur"
+                        class="px-5 py-3 rounded-xl glass text-white text-xs sm:text-sm font-semibold hover:bg-white/20 transition">
+ 
+                         Lihat Fitur
+ 
+                     </a>
+ 
+                 </div>
+ 
+                 {{-- STATS --}}
+                 <div class="stats-grid grid grid-cols-3 gap-2.5 sm:gap-4 mt-6 sm:mt-8">
+ 
+                     <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
+ 
+                         <h2 class="text-white text-sm sm:text-xl font-bold">
+                             24/7
+                         </h2>
+ 
+                         <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
+                             Akses Sistem
+                         </p>
+ 
+                     </div>
+ 
+                     <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
+ 
+                         <h2 class="text-white text-sm sm:text-xl font-bold">
+                             100%
+                         </h2>
+ 
+                         <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
+                             Digital
+                         </p>
+ 
+                     </div>
+ 
+                     <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
+ 
+                         <h2 class="text-white text-sm sm:text-xl font-bold">
+                             Aman
+                         </h2>
+ 
+                         <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
+                             Data Terenkripsi
+                         </p>
+ 
+                     </div>
+ 
+                 </div>
 
-                    <i class="fa-solid fa-shield-halved text-blue-300 text-xs"></i>
-
-                    <span class="text-[10px] sm:text-xs font-medium">
-                        Aman • Modern • Terintegrasi
-                    </span>
-
-                </div>
-
-                {{-- TITLE --}}
-                <h1 class="hero-title text-white font-extrabold">
-
-                    Digitalisasi
-                    <span class="text-blue-300">
-                        Pelayanan RT
-                    </span>
-
-                </h1>
-
-                {{-- DESC --}}
-                <p class="hero-desc mt-4 sm:mt-6 text-blue-100 max-w-[520px]">
-
-                    Kelola data warga, iuran, surat pengantar,
-                    pengumuman, dan aktivitas lingkungan
-                    dengan sistem modern berbasis web.
-
-                </p>
-
-                {{-- BUTTON --}}
-                <div class="flex flex-wrap mobile-center gap-3 mt-6 sm:mt-8">
-
-                    @auth
-                    <a href="/dashboard"
-                       class="btn-primary px-5 py-3 rounded-xl text-white text-xs sm:text-sm font-semibold transition-all duration-300">
-                        <i class="fa-solid fa-gauge-high mr-1.5"></i>
-                        Buka Dashboard
-                    </a>
-                    @else
-                    <a href="{{ route('login') }}"
-                       class="btn-primary px-5 py-3 rounded-xl text-white text-xs sm:text-sm font-semibold transition-all duration-300">
-                        <i class="fa-solid fa-right-to-bracket mr-1.5"></i>
-                        Masuk Sekarang
-                    </a>
-                    @endauth
-
-                    <a href="#fitur"
-                       class="px-5 py-3 rounded-xl glass text-white text-xs sm:text-sm font-semibold hover:bg-white/20 transition">
-
-                        Lihat Fitur
-
-                    </a>
-
-                </div>
-
-                {{-- STATS --}}
-                <div class="stats-grid grid grid-cols-3 gap-2.5 sm:gap-4 mt-6 sm:mt-8">
-
-                    <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
-
-                        <h2 class="text-white text-sm sm:text-xl font-bold">
-                            24/7
-                        </h2>
-
-                        <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
-                            Akses Sistem
-                        </p>
-
-                    </div>
-
-                    <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
-
-                        <h2 class="text-white text-sm sm:text-xl font-bold">
-                            100%
-                        </h2>
-
-                        <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
-                            Digital
-                        </p>
-
-                    </div>
-
-                    <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
-
-                        <h2 class="text-white text-sm sm:text-xl font-bold">
-                            Aman
-                        </h2>
-
-                        <p class="text-blue-100 text-[9px] sm:text-[11px] mt-1 sm:mt-2">
-                            Data Terenkripsi
-                        </p>
-
-                    </div>
-
-                </div>
+                 {{-- BADGE (MOVED HERE BELOW 100% DIGITAL / STATS) --}}
+                 <div class="flex sm:block justify-center mt-6 sm:mt-8">
+                     <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full glass text-white">
+                         <i class="fa-solid fa-shield-halved text-blue-300 text-xs"></i>
+                         <span class="text-[10px] sm:text-xs font-medium">
+                             Aman • Modern • Terintegrasi
+                         </span>
+                     </div>
+                 </div>
 
             </div>
 
@@ -523,7 +549,7 @@
         
         <div class="text-center mb-8 sm:mb-12">
             <span class="text-blue-600 font-extrabold text-[10px] sm:text-xs uppercase tracking-widest bg-blue-50 px-3.5 py-1.5 rounded-full">Layanan Informasi Terbuka</span>
-            <h2 class="section-title font-black text-gray-800 tracking-tight mt-3">Direktori Publik RT</h2>
+            <h2 class="section-title font-black text-gray-800 tracking-tight mt-3">Direktori Publik</h2>
             <p class="text-gray-500 mt-2 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
                 Informasi dan pelayanan lingkungan warga dapat diakses secara langsung tanpa masuk ke sistem.
             </p>
@@ -538,7 +564,7 @@
                 <i class="fa-solid fa-shop"></i> UMKM Warga
             </button>
             <button onclick="switchPublicTab('tab-kegiatan', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer">
-                <i class="fa-solid fa-calendar-check"></i> Kegiatan RT
+                <i class="fa-solid fa-calendar-check"></i> Kegiatan
             </button>
             <button onclick="switchPublicTab('tab-posyandu', this)" class="public-tab-btn bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold px-3 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-heart-pulse"></i> Posyandu
@@ -616,7 +642,7 @@
                     </div>
                 </div>
                 @empty
-                <div class="col-span-full text-center py-10 text-gray-400 italic text-xs sm:text-sm">Belum ada agenda kegiatan RT terdekat.</div>
+                <div class="col-span-full text-center py-10 text-gray-400 italic text-xs sm:text-sm">Belum ada agenda kegiatan terdekat.</div>
                 @endforelse
             </div>
 
@@ -737,16 +763,16 @@
 </section>
 
 {{-- SECTION KONTAK --}}
-<section id="kontak" class="py-10 sm:py-16 bg-white">
+<section id="kontak" class="py-10 sm:py-16 bg-white dark:bg-[#0B0F19]">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
 
         {{-- HEADER --}}
         <div class="text-center mb-8 sm:mb-12">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-rose-100 text-rose-600 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-3">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-3 border border-rose-200/50 dark:border-rose-800/40">
                 <i class="fa-solid fa-headset"></i> Kontak & Bantuan
             </div>
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-3">Hubungi Kami</h2>
-            <p class="text-gray-500 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed">Punya pertanyaan atau kendala? Hubungi pengurus RT atau kirim pesan langsung melalui formulir di bawah ini.</p>
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white mb-3">Hubungi Kami</h2>
+            <p class="text-gray-500 dark:text-slate-400 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed">Punya pertanyaan atau kendala? Hubungi pengurus RT atau kirim pesan langsung melalui formulir di bawah ini.</p>
         </div>
 
         <div class="grid lg:grid-cols-2 gap-8 sm:gap-12">
@@ -755,70 +781,70 @@
             <div class="space-y-3 sm:space-y-4">
                 @php $rt = $rt_info ?? null; @endphp
 
-                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-blue-50 rounded-2xl border border-blue-100">
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-blue-50 dark:bg-slate-800/90 rounded-2xl border border-blue-100 dark:border-white/10">
                     <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow shrink-0">
                         <i class="fa-solid fa-people-roof text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] sm:text-xs text-blue-500 font-semibold uppercase tracking-wider">Nama RT / RW</p>
-                        <p class="font-bold text-gray-800 text-xs sm:text-sm">RT {{ $rt->nomor_rt ?? '001' }} / RW {{ $rt->nomor_rw ?? '001' }} — {{ $rt->nama_wilayah ?? 'Wilayah RT' }}</p>
+                        <p class="text-[10px] sm:text-xs text-blue-600 dark:text-blue-400 font-semibold uppercase tracking-wider">Nama RT / RW</p>
+                        <p class="font-bold text-gray-800 dark:text-white text-xs sm:text-sm">RT {{ $rt->nomor_rt ?? '05' }} / RW {{ $rt->nomor_rw ?? '12' }} — {{ $rt->nama_wilayah ?? 'Perumahan Grand Guyub Residence' }}</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-emerald-50 dark:bg-slate-800/90 rounded-2xl border border-emerald-100 dark:border-white/10">
                     <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow shrink-0">
                         <i class="fa-solid fa-location-dot text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] sm:text-xs text-emerald-600 font-semibold uppercase tracking-wider">Alamat Sekretariat</p>
-                        <p class="font-bold text-gray-800 text-xs sm:text-sm">{{ $rt->alamat_lengkap ?? 'Sekretariat RT setempat' }}</p>
+                        <p class="text-[10px] sm:text-xs text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">Alamat Sekretariat</p>
+                        <p class="font-bold text-gray-800 dark:text-white text-xs sm:text-sm leading-relaxed">{{ $rt->alamat_lengkap ?? 'Jl. Harmony Boulevard No. 1, Blok A5, Perumahan Grand Guyub Residence' }}</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-amber-50 rounded-2xl border border-amber-100">
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-amber-50 dark:bg-slate-800/90 rounded-2xl border border-amber-200/60 dark:border-white/10">
                     <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow shrink-0">
                         <i class="fa-brands fa-whatsapp text-base sm:text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] sm:text-xs text-amber-600 font-semibold uppercase tracking-wider">WhatsApp Pengurus</p>
-                        <a href="https://wa.me/6281234567890" target="_blank" class="font-bold text-gray-800 text-xs sm:text-sm hover:text-amber-600 transition">+62 812-3456-7890</a>
+                        <p class="text-[10px] sm:text-xs text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">WhatsApp Pengurus</p>
+                        <a href="https://wa.me/6281234567890" target="_blank" class="font-bold text-gray-900 dark:text-amber-300 text-xs sm:text-sm hover:underline transition">+62 812-3456-7890</a>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-indigo-50 rounded-2xl border border-indigo-100">
+                <div class="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-indigo-50 dark:bg-slate-800/90 rounded-2xl border border-indigo-100 dark:border-white/10">
                     <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow shrink-0">
                         <i class="fa-solid fa-clock text-sm sm:text-base"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] sm:text-xs text-indigo-600 font-semibold uppercase tracking-wider">Jam Layanan</p>
-                        <p class="font-bold text-gray-800 text-xs sm:text-sm">Senin – Jumat: 08.00 – 16.00 WIB</p>
+                        <p class="text-[10px] sm:text-xs text-indigo-600 dark:text-indigo-400 font-semibold uppercase tracking-wider">Jam Layanan</p>
+                        <p class="font-bold text-gray-800 dark:text-white text-xs sm:text-sm">Senin – Sabtu: 08.00 – 17.00 WIB</p>
                     </div>
                 </div>
             </div>
 
             {{-- KANAN: Form Pesan --}}
-            <div class="bg-gray-50 rounded-3xl p-5 sm:p-8 border border-gray-100 shadow-sm">
-                <h3 class="text-sm sm:text-lg font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-2">
-                    <i class="fa-solid fa-paper-plane text-blue-600"></i> Kirim Pesan
+            <div class="bg-gray-50 dark:bg-slate-800/80 rounded-3xl p-5 sm:p-8 border border-gray-100 dark:border-white/10 shadow-sm">
+                <h3 class="text-sm sm:text-lg font-bold text-gray-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane text-blue-600 dark:text-blue-400"></i> Kirim Pesan
                 </h3>
                 <form id="kontak-form" class="space-y-3 sm:space-y-4" onsubmit="kirimKontak(event)">
                     <div>
-                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 mb-1">Nama Lengkap</label>
-                        <input type="text" id="kontak-nama" required placeholder="Nama kamu..." class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition">
+                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nama Lengkap</label>
+                        <input type="text" id="kontak-nama" required placeholder="Nama kamu..." class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white dark:bg-slate-900 text-gray-800 dark:text-white transition">
                     </div>
                     <div>
-                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 mb-1">Nomor HP / WhatsApp</label>
-                        <input type="tel" id="kontak-hp" placeholder="08xx-xxxx-xxxx" class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition">
+                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Nomor HP / WhatsApp</label>
+                        <input type="tel" id="kontak-hp" placeholder="08xx-xxxx-xxxx" class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white dark:bg-slate-900 text-gray-800 dark:text-white transition">
                     </div>
                     <div>
-                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 mb-1">Pesan / Pertanyaan</label>
-                        <textarea id="kontak-pesan" required rows="3" placeholder="Tuliskan pesan atau pertanyaan kamu di sini..." class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white transition resize-none"></textarea>
+                        <label class="block text-[10px] sm:text-xs font-semibold text-gray-600 dark:text-slate-300 mb-1">Pesan / Pertanyaan</label>
+                        <textarea id="kontak-pesan" required rows="3" placeholder="Tuliskan pesan atau pertanyaan kamu di sini..." class="w-full px-3.5 py-2 sm:py-3 rounded-xl border border-gray-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white dark:bg-slate-900 text-gray-800 dark:text-white transition resize-none"></textarea>
                     </div>
-                    <button type="submit" class="w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md shadow-blue-200">
+                    <button type="submit" class="w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-md shadow-blue-200 dark:shadow-none">
                         <i class="fa-brands fa-whatsapp text-base"></i> Kirim via WhatsApp
                     </button>
                 </form>
-                <p id="kontak-sukses" class="hidden mt-3 text-center text-emerald-600 font-semibold text-xs sm:text-sm">✅ Pesan berhasil dikirim via WhatsApp!</p>
+                <p id="kontak-sukses" class="hidden mt-3 text-center text-emerald-600 dark:text-emerald-400 font-semibold text-xs sm:text-sm">✅ Pesan berhasil dikirim via WhatsApp!</p>
             </div>
 
         </div>

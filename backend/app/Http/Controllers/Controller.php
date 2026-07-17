@@ -7,7 +7,7 @@ abstract class Controller
     /**
      * Log user activity to the database.
      */
-    public static function logActivity($action, $description = null)
+    public static function logActivity($action, $description = null, $foto = null)
     {
         if (auth()->check()) {
             try {
@@ -15,6 +15,7 @@ abstract class Controller
                     'user_id'     => auth()->id(),
                     'action'      => strtoupper($action),
                     'description' => $description,
+                    'foto'        => $foto,
                     'created_at'  => now(),
                     'updated_at'  => now()
                 ]);

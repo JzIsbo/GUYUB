@@ -87,7 +87,35 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Pengirim</label>
-                    <input type="text" name="nama_warga" value="{{ Auth::user()->name }}" placeholder="Boleh diisi Anonim" class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="hidden" name="nama_warga" id="aspirasi_pengirim_hidden" value="{{ Auth::user()->name }}">
+                    <div class="relative">
+                        <input type="text" id="aspirasi_pengirim_search_input" value="{{ Auth::user()->name }}" placeholder="🔍 Cari & pilih nama warga pengirim..." 
+                               onfocus="showDropdown('aspirasi_pengirim_dropdown')" 
+                               onkeyup="filterCustomDropdown('aspirasi_pengirim_search_input', 'aspirasi_pengirim_dropdown')" 
+                               autocomplete="off"
+                               class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-3 px-4 pr-10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+
+                        <div id="aspirasi_pengirim_dropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 max-h-56 overflow-y-auto divide-y divide-gray-50">
+                            <div onclick="selectAspirasiPengirimOption('Anonim')" 
+                                 class="dropdown-item px-4 py-2.5 hover:bg-indigo-50 cursor-pointer transition flex items-center justify-between text-xs font-semibold text-gray-700">
+                                <div>
+                                    <span class="block font-bold text-indigo-600">👤 Anonim (Hamba Allah)</span>
+                                    <span class="text-[10px] text-gray-400 font-normal">Kirim tanpa menyertakan nama</span>
+                                </div>
+                            </div>
+                            @foreach($all_warga ?? [] as $w)
+                                <div onclick="selectAspirasiPengirimOption('{{ addslashes($w->nama_lengkap) }}')" 
+                                     class="dropdown-item px-4 py-2.5 hover:bg-indigo-50 cursor-pointer transition flex items-center justify-between text-xs font-semibold text-gray-700">
+                                    <div>
+                                        <span class="block font-bold">{{ $w->nama_lengkap }}</span>
+                                        <span class="text-[10px] text-gray-400 font-normal">Blok {{ $w->blok_rumah }}</span>
+                                    </div>
+                                    <span class="text-[10px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full font-bold">{{ $w->umur ? $w->umur.' Thn' : '-' }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Topik / Subjek Masukan</label>
@@ -138,19 +166,55 @@
 </div>
 
 <script>
+function selectAspirasiPengirimOption(nama) {
+    document.getElementById('aspirasi_pengirim_search_input').value = nama;
+    document.getElementById('aspirasi_pengirim_hidden').value = nama;
+    document.getElementById('aspirasi_pengirim_dropdown').classList.add('hidden');
+}
+
+document.addEventListener('click', function(e) {
+    const pInput = document.getElementById('aspirasi_pengirim_search_input');
+    const pDrop = document.getElementById('aspirasi_pengirim_dropdown');
+    if (pInput && pDrop && !pInput.contains(e.target) && !pDrop.contains(e.target)) {
+        pDrop.classList.add('hidden');
+    }
+});
+
 function bukaTanggapan(id, tanggapan, status) {
     document.getElementById('tanggapan-id').value = id;
     document.getElementById('tanggapan-teks').value = tanggapan || '';
     document.getElementById('tanggapan-status').value = status || 'Diterima & Ditindaklanjuti';
     document.getElementById('modal-tanggapan-rt').classList.remove('hidden');
 }
+
 function hapusAspirasi(id) {
-    if (!confirm('Hapus aspirasi ini dari daftar?')) return;
-    const fd = new FormData();
-    fd.append('id', id);
-    fd.append('_token', window.csrfToken);
-    fetch('/aspirasi/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(res => res.json())
-    .then(data => { alert(data.message); switchPage('aspirasi', document.querySelector('.menu-active')); });
+    Swal.fire({
+        title: 'Hapus Aspirasi?',
+        text: "Masukan/aspirasi warga ini akan dihapus.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-3xl p-6 shadow-2xl font-sans',
+            confirmButton: 'rounded-xl font-bold px-5 py-2.5 text-xs',
+            cancelButton: 'rounded-xl font-bold px-5 py-2.5 text-xs'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const fd = new FormData();
+            fd.append('id', id);
+            fd.append('_token', window.csrfToken);
+            fetch('/aspirasi/delete', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.json())
+            .then(data => { 
+                Swal.fire({ title: 'Berhasil!', text: 'Aspirasi telah dihapus.', icon: 'success', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-3xl p-6 font-sans' } });
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('aspirasi'); }
+                switchPage('aspirasi', document.querySelector('.menu-active')); 
+            });
+        }
+    });
 }
 </script>

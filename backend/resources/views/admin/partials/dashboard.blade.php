@@ -162,74 +162,79 @@
 {{-- 🎴 MODAL KARTU KELUARGA DIGITAL --}}
 {{-- ════════════════════════════════════════════════════════════════════ --}}
 <div id="modal-kartu-keluarga" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100 relative">
+    <!-- Wrapper utama dengan overflow-visible agar tombol tidak terpotong sudut melengkung -->
+    <div class="relative w-full max-w-4xl max-h-[90vh] flex flex-col overflow-visible">
+        <!-- Tombol Close (Sudut Kanan Atas Mutlak) -->
+        <button onclick="document.getElementById('modal-kartu-keluarga').classList.add('hidden')" class="absolute top-4 right-4 z-50 w-8 h-8 rounded-full bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-500 dark:text-gray-300 flex items-center justify-center transition-all cursor-pointer shadow-lg border border-gray-150 dark:border-slate-700">
+            <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
 
-        {{-- Official KK Card Banner Header --}}
-        <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white p-6 rounded-3xl mb-6 shadow-md relative overflow-hidden">
-            <button onclick="document.getElementById('modal-kartu-keluarga').classList.add('hidden')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-all cursor-pointer border border-white/10 z-20">
-                <i class="fa-solid fa-xmark text-xs"></i>
-            </button>
-            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-indigo-500/10 rounded-full blur-3xl"></div>
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
-                <div>
-                    <span class="text-[9px] font-black uppercase tracking-[3px] text-blue-300">Republik Indonesia &bull; KARTU KELUARGA DIGITAL</span>
-                    <h2 class="text-2xl font-black font-mono tracking-wider mt-1 text-amber-300">NO. {{ $user_warga->nomor_kk ?? '-' }}</h2>
-                    <p class="text-xs text-blue-200 mt-1 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Alamat: {{ $user_warga->blok_rumah ?? 'Lingkungan RT/RW' }}</p>
+        <!-- Box Konten Utama dengan overflow-y-auto -->
+        <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full h-full overflow-y-auto shadow-2xl border border-gray-100">
+            {{-- Official KK Card Banner Header --}}
+            <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white p-6 rounded-3xl mb-6 shadow-md relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
+                    <div>
+                        <span class="text-[9px] font-black uppercase tracking-[3px] text-blue-300">Republik Indonesia &bull; KARTU KELUARGA DIGITAL</span>
+                        <h2 class="text-2xl font-black font-mono tracking-wider mt-1 text-amber-300">NO. {{ $user_warga->nomor_kk ?? '-' }}</h2>
+                        <p class="text-xs text-blue-200 mt-1 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Alamat: {{ $user_warga->blok_rumah ?? 'Lingkungan RT/RW' }}</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-right shrink-0">
+                        <p class="text-[9px] text-blue-200 uppercase font-black tracking-widest">Total Anggota</p>
+                        <p class="text-2xl font-black text-white leading-none mt-0.5">{{ count($family_members ?? []) }} Jiwa</p>
+                    </div>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-right shrink-0">
-                    <p class="text-[9px] text-blue-200 uppercase font-black tracking-widest">Total Anggota</p>
-                    <p class="text-2xl font-black text-white leading-none mt-0.5">{{ count($family_members ?? []) }} Jiwa</p>
-                </div>
+                <i class="fa-solid fa-address-card absolute -bottom-8 -right-8 text-white/5 text-[140px] pointer-events-none"></i>
             </div>
-            <i class="fa-solid fa-address-card absolute -bottom-8 -right-8 text-white/5 text-[140px] pointer-events-none"></i>
-        </div>
 
-        {{-- KK Table --}}
-        <div class="overflow-x-auto rounded-2xl border border-gray-150 shadow-sm mb-6">
-            <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                    <tr class="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] border-b border-gray-200">
-                        <th class="p-4">No</th>
-                        <th class="p-4">Nama Lengkap</th>
-                        <th class="p-4">NIK</th>
-                        <th class="p-4">Hubungan</th>
-                        <th class="p-4">Usia</th>
-                        <th class="p-4">Agama</th>
-                        <th class="p-4">Status Domisili</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($family_members ?? [] as $idx => $m)
-                    <tr class="hover:bg-indigo-50/30 transition-colors">
-                        <td class="p-4 font-bold text-gray-400">{{ $idx + 1 }}</td>
-                        <td class="p-4 font-extrabold text-slate-800">{{ $m->nama_lengkap }}</td>
-                        <td class="p-4 font-mono text-gray-600">{{ $m->nik }}</td>
-                        <td class="p-4">
-                            <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold uppercase {{ $m->status_keluarga == 'Kepala Keluarga' ? 'bg-indigo-100 text-indigo-700' : ($m->status_keluarga == 'Istri' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700') }}">
-                                {{ $m->status_keluarga }}
-                            </span>
-                        </td>
-                        <td class="p-4 font-semibold text-gray-600">{{ $m->umur ? $m->umur . ' Tahun' : '-' }}</td>
-                        <td class="p-4 font-semibold text-gray-600">{{ $m->agama ?? '-' }}</td>
-                        <td class="p-4">
-                            <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                {{ $m->status_domisili ?? 'Tetap' }}
-                            </span>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="p-6 text-center text-gray-400 italic">Tidak ada data anggota keluarga.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+            {{-- KK Table --}}
+            <div class="overflow-x-auto rounded-2xl border border-gray-150 shadow-sm mb-6">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] border-b border-gray-200">
+                            <th class="p-4">No</th>
+                            <th class="p-4">Nama Lengkap</th>
+                            <th class="p-4">NIK</th>
+                            <th class="p-4">Hubungan</th>
+                            <th class="p-4">Usia</th>
+                            <th class="p-4">Agama</th>
+                            <th class="p-4">Status Domisili</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($family_members ?? [] as $idx => $m)
+                        <tr class="hover:bg-indigo-50/30 transition-colors">
+                            <td class="p-4 font-bold text-gray-400">{{ $idx + 1 }}</td>
+                            <td class="p-4 font-extrabold text-slate-800">{{ $m->nama_lengkap }}</td>
+                            <td class="p-4 font-mono text-gray-600">{{ $m->nik }}</td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold uppercase {{ $m->status_keluarga == 'Kepala Keluarga' ? 'bg-indigo-100 text-indigo-700' : ($m->status_keluarga == 'Istri' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700') }}">
+                                    {{ $m->status_keluarga }}
+                                </span>
+                            </td>
+                            <td class="p-4 font-semibold text-gray-600">{{ $m->umur ? $m->umur . ' Tahun' : '-' }}</td>
+                            <td class="p-4 font-semibold text-gray-600">{{ $m->agama ?? '-' }}</td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                    {{ $m->status_domisili ?? 'Tetap' }}
+                                </span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="p-6 text-center text-gray-400 italic">Tidak ada data anggota keluarga.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="flex justify-end gap-2">
-            <button onclick="document.getElementById('modal-kartu-keluarga').classList.add('hidden')" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-extrabold text-xs rounded-xl transition border-none cursor-pointer">
-                Tutup
-            </button>
+            <div class="flex justify-end gap-2">
+                <button onclick="document.getElementById('modal-kartu-keluarga').classList.add('hidden')" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-extrabold text-xs rounded-xl transition border-none cursor-pointer">
+                    Tutup
+                </button>
+            </div>
         </div>
     </div>
 </div>

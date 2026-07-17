@@ -96,3 +96,29 @@ window.quickLogin = function(email, password) {
     }
 };
 
+document.addEventListener('DOMContentLoaded', function() {
+    const isDark = document.documentElement.classList.contains('dark');
+    applyTheme(isDark);
+});
+
+window.toggleTheme = function() {
+    const isCurrentDark = document.documentElement.classList.contains('dark');
+    const newDarkState = !isCurrentDark;
+    applyTheme(newDarkState);
+    localStorage.setItem('theme', newDarkState ? 'dark' : 'light');
+};
+
+function applyTheme(isDark) {
+    const icon = document.getElementById('theme-toggle-icon');
+    const btn = document.getElementById('theme-toggle-btn');
+    if (isDark) {
+        document.documentElement.classList.add('dark');
+        if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-400';
+        if (btn) btn.title = 'Ubah ke Mode Terang';
+    } else {
+        document.documentElement.classList.remove('dark');
+        if (icon) icon.className = 'fa-solid fa-moon text-sm text-slate-500';
+        if (btn) btn.title = 'Ubah ke Mode Gelap';
+    }
+}
+

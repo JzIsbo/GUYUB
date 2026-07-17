@@ -834,7 +834,7 @@ function applyTheme(isDark) {
         if (btn) btn.title = 'Ubah ke Mode Terang';
     } else {
         document.documentElement.classList.remove('dark');
-        if (icon) icon.className = 'fa-solid fa-moon text-sm text-white/80';
+        if (icon) icon.className = 'fa-solid fa-moon text-sm text-slate-500';
         if (btn) btn.title = 'Ubah ke Mode Gelap';
     }
 }

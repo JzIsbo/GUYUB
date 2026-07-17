@@ -77,7 +77,8 @@ class SystemController extends Controller
 
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Data diri & profil pengguna berhasil diperbarui!'
+                'message' => 'Data diri & profil pengguna berhasil diperbarui!',
+                'user'    => $user->fresh()
             ]);
         } catch (\Exception $e) {
             return response()->json([

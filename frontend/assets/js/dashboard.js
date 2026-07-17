@@ -3,6 +3,59 @@
 let currentUser = null;
 window.pageCache = {};
 
+function getInitialsAvatar(name) {
+    const cleanName = (name || 'User').trim();
+    const parts = cleanName.split(/\s+/);
+    let initials = '';
+    if (parts.length > 0) {
+        initials += parts[0][0];
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1][0];
+        }
+    }
+    initials = initials.toUpperCase();
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><linearGradient id="avatar-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563eb" /><stop offset="100%" stop-color="#1d4ed8" /></linearGradient></defs><rect width="100" height="100" rx="40" fill="url(#avatar-grad)" /><text x="50%" y="54%" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="38" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${initials}</text></svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg.trim());
+}
+
+window.updateUserProfileUI = function(user) {
+    if (!user) return;
+    
+    // Update welcome message
+    const welcomeMsg = document.getElementById('welcome-message');
+    if (welcomeMsg) {
+        const expectedWelcome = `Halo, ${user.name} 👋`;
+        if (welcomeMsg.innerText !== expectedWelcome) {
+            welcomeMsg.innerText = expectedWelcome;
+        }
+    }
+    
+    // Update profile name
+    const profileName = document.getElementById('profile-name');
+    if (profileName) {
+        if (profileName.innerText !== user.name) {
+            profileName.innerText = user.name;
+        }
+    }
+    
+    // Update profile role
+    const profileRole = document.getElementById('profile-role');
+    if (profileRole) {
+        if (profileRole.innerText !== user.role) {
+            profileRole.innerText = user.role;
+        }
+    }
+    
+    // Update profile avatar source without triggering a reload if unchanged
+    const profileAvatar = document.getElementById('profile-avatar');
+    if (profileAvatar) {
+        const targetSrc = user.photo || getInitialsAvatar(user.name);
+        if (profileAvatar.getAttribute('src') !== targetSrc) {
+            profileAvatar.src = targetSrc;
+        }
+    }
+};
+
 // ==========================================
 // 1. INLINE CUSTOM ALERT MODAL OVERRIDE
 // ==========================================
@@ -179,10 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (cachedUser) {
         try {
             const user = JSON.parse(cachedUser);
-            document.getElementById('welcome-message').innerText = `Halo, ${user.name} 👋`;
-            document.getElementById('profile-name').innerText = user.name;
-            document.getElementById('profile-role').innerText = user.role;
-            document.getElementById('profile-avatar').src = user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2563EB&color=fff`;
+            window.updateUserProfileUI(user);
             applyRoleBasedAccess(user.role);
         } catch (e) {
             console.error("Error loading cached user:", e);
@@ -221,12 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             currentUser = data.user;
             localStorage.setItem('guyub_user', JSON.stringify(currentUser)); // Save user session to cache
-
-            document.getElementById('welcome-message').innerText = `Halo, ${currentUser.name} 👋`;
-            document.getElementById('profile-name').innerText = currentUser.name;
-            document.getElementById('profile-role').innerText = currentUser.role;
-            document.getElementById('profile-avatar').src = currentUser.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=2563EB&color=fff`;
-
+            window.updateUserProfileUI(currentUser);
             applyRoleBasedAccess(currentUser.role);
             
             // Set user name inside meta
@@ -1030,7 +1075,13 @@ window.simpanDataUmum = function(event, formId, pageToReload) {
         window.invalidatePageCache(pageToReload);
 
         if (pageToReload === 'pengaturan') {
-            window.location.reload();
+            if (data.user) {
+                currentUser = data.user;
+                localStorage.setItem('guyub_user', JSON.stringify(currentUser));
+                window.updateUserProfileUI(currentUser);
+            }
+            const linkElement = document.querySelector(`[data-page="pengaturan"]`);
+            switchPage('pengaturan', linkElement);
         } else {
             const linkElement = document.querySelector(`[data-page="${pageToReload}"]`);
             switchPage(pageToReload, linkElement);

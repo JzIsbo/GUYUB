@@ -1004,7 +1004,7 @@
                     <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Menu Halaman</span>
                 </button>
                 <div class="flex flex-col">
-                    <h2 class="text-sm md:text-xl font-bold text-gray-800 tracking-tight italic line-clamp-1">Halo, {{ Auth::user()->name }} 👋</h2>
+                    <h2 id="welcome-message" class="text-sm md:text-xl font-bold text-gray-800 tracking-tight italic line-clamp-1">Halo, {{ Auth::user()->name }} 👋</h2>
                     <div class="flex items-center gap-1.5 mt-0.5">
                         <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                         <p class="text-[8px] md:text-[10px] text-gray-400 font-bold uppercase tracking-[1px] md:tracking-[1.5px]">Status: Verified Online</p>
@@ -1045,10 +1045,10 @@
 
                 <div class="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-6 border-l border-gray-100">
                     <div onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']') || document.querySelector('.bottom-tab-link[onclick*=\'pengaturan\']'))" class="text-right cursor-pointer hover:opacity-80 transition" title="Ke Pengaturan Akun">
-                        <p class="text-xs md:text-sm font-black text-gray-800 leading-none lowercase tracking-tighter truncate max-w-[80px] sm:max-w-none">{{ Auth::user()->name }}</p>
-                        <p class="text-[8px] md:text-[9px] text-blue-600 font-black uppercase mt-0.5 sm:mt-1 italic tracking-widest leading-none">{{ Auth::user()->role }}</p>
+                        <p id="profile-name" class="text-xs md:text-sm font-black text-gray-800 leading-none lowercase tracking-tighter truncate max-w-[80px] sm:max-w-none">{{ Auth::user()->name }}</p>
+                        <p id="profile-role" class="text-[8px] md:text-[9px] text-blue-600 font-black uppercase mt-0.5 sm:mt-1 italic tracking-widest leading-none">{{ Auth::user()->role }}</p>
                     </div>
-                    <img src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" onclick="openAvatarModal(this.src, '{{ addslashes(Auth::user()->name) }}')" class="h-10 w-10 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover cursor-pointer hover:scale-105 active:scale-95 transition-transform" alt="Avatar" title="Lihat Foto Full">
+                    <img id="profile-avatar" src="{{ Auth::user()->photo ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563EB&color=fff' }}" onclick="openAvatarModal(this.src, '{{ addslashes(Auth::user()->name) }}')" class="h-10 w-10 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover cursor-pointer hover:scale-105 active:scale-95 transition-transform" alt="Avatar" title="Lihat Foto Full">
                 </div>
             </div>
         </header>
@@ -1478,6 +1478,16 @@
                 window.runGlobalCounterAnimation();
             }
 
+            // Render initials avatar if user photo is empty or using ui-avatars fallback
+            const avatar = document.getElementById('profile-avatar');
+            if (avatar) {
+                const src = avatar.getAttribute('src');
+                if (!src || src.includes('ui-avatars.com')) {
+                    const name = "{{ Auth::user()->name }}";
+                    avatar.src = getInitialsAvatar(name);
+                }
+            }
+
             // Prefetch all menu pages for instant navigation (zero delay)
             setTimeout(() => {
                 const links = document.querySelectorAll('[onclick*="switchPage"]');
@@ -1615,6 +1625,60 @@
                 oldScript.remove();
             });
         }
+
+        // Global page cache for fast navigation (SWR - Stale While Revalidate)
+        function getInitialsAvatar(name) {
+            const cleanName = (name || 'User').trim();
+            const parts = cleanName.split(/\s+/);
+            let initials = '';
+            if (parts.length > 0) {
+                initials += parts[0][0];
+                if (parts.length > 1) {
+                    initials += parts[parts.length - 1][0];
+                }
+            }
+            initials = initials.toUpperCase();
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><linearGradient id="avatar-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563eb" /><stop offset="100%" stop-color="#1d4ed8" /></linearGradient></defs><rect width="100" height="100" rx="40" fill="url(#avatar-grad)" /><text x="50%" y="54%" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="38" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${initials}</text></svg>`;
+            return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg.trim());
+        }
+
+        window.updateUserProfileUI = function(user) {
+            if (!user) return;
+            
+            // Update welcome message
+            const welcomeMsg = document.getElementById('welcome-message');
+            if (welcomeMsg) {
+                const expectedWelcome = `Halo, ${user.name} 👋`;
+                if (welcomeMsg.innerText !== expectedWelcome) {
+                    welcomeMsg.innerText = expectedWelcome;
+                }
+            }
+            
+            // Update profile name
+            const profileName = document.getElementById('profile-name');
+            if (profileName) {
+                if (profileName.innerText !== user.name) {
+                    profileName.innerText = user.name;
+                }
+            }
+            
+            // Update profile role
+            const profileRole = document.getElementById('profile-role');
+            if (profileRole) {
+                if (profileRole.innerText !== user.role) {
+                    profileRole.innerText = user.role;
+                }
+            }
+            
+            // Update profile avatar source without triggering a reload if unchanged
+            const profileAvatar = document.getElementById('profile-avatar');
+            if (profileAvatar) {
+                const targetSrc = user.photo || getInitialsAvatar(user.name);
+                if (profileAvatar.getAttribute('src') !== targetSrc) {
+                    profileAvatar.src = targetSrc;
+                }
+            }
+        };
 
         // Global page cache for fast navigation (SWR - Stale While Revalidate)
         window.pageCache = window.pageCache || {};
@@ -1824,11 +1888,15 @@
                 alert(data.message || 'Data berhasil disimpan!');
 
                 if (pageToReload === 'pengaturan') {
-                    window.location.reload();
+                    if (data.user) {
+                        window.updateUserProfileUI(data.user);
+                    }
+                    window.invalidatePageCache('pengaturan');
+                    switchPage('pengaturan', document.querySelector(`.menu-link[onclick*='pengaturan']`) || document.querySelector(`.bottom-tab-link[onclick*='pengaturan']`));
                 } else {
                     // Invalidate cache so switchPage forces a fresh fetch
                     window.invalidatePageCache(pageToReload);
-                    switchPage(pageToReload, document.querySelector(`.menu-link[onclick*='${pageToReload}']`));
+                    switchPage(pageToReload, document.querySelector(`.menu-link[onclick*='${pageToReload}']`) || document.querySelector(`.bottom-tab-link[onclick*='${pageToReload}']`));
                 }
             })
             .catch(error => {

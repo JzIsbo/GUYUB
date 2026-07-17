@@ -326,17 +326,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Render cached dashboard instantly (SWR) to eliminate initial loading screen
+    // Render cached dashboard instantly (SWR) ONLY if last active page is dashboard, otherwise show a clean spinner
     const mainContent = document.getElementById('main-content');
-    const cachedDashboard = localStorage.getItem('guyub_cache_dashboard');
-    if (mainContent && cachedDashboard) {
-        mainContent.innerHTML = cachedDashboard;
-        executeScripts(mainContent);
-        if (typeof window.renderDashboard === 'function') {
-            window.renderDashboard();
-        }
-        if (typeof window.runGlobalCounterAnimation === 'function') {
-            window.runGlobalCounterAnimation();
+    const lastActivePage = sessionStorage.getItem('guyub_active_page') || 'dashboard';
+    
+    if (mainContent) {
+        if (lastActivePage === 'dashboard') {
+            const cachedDashboard = localStorage.getItem('guyub_cache_dashboard');
+            if (cachedDashboard) {
+                mainContent.innerHTML = cachedDashboard;
+                executeScripts(mainContent);
+                if (typeof window.renderDashboard === 'function') {
+                    window.renderDashboard();
+                }
+                if (typeof window.runGlobalCounterAnimation === 'function') {
+                    window.runGlobalCounterAnimation();
+                }
+            }
+        } else {
+            mainContent.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-[400px] w-full text-slate-400 dark:text-slate-500">
+                    <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-500 mb-3"></i>
+                    <p class="text-xs font-bold uppercase tracking-widest">Memuat Halaman...</p>
+                </div>
+            `;
         }
     }
 

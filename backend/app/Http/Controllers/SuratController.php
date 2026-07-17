@@ -76,4 +76,33 @@ class SuratController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Remove the specified letter request from storage.
+     */
+    public function destroy(Request $request)
+    {
+        abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
+        $request->validate([
+            'id' => 'required|integer'
+        ]);
+
+        try {
+            $surat = DB::table('surat_online')->where('id', $request->id)->first();
+            if ($surat) {
+                DB::table('surat_online')->where('id', $request->id)->delete();
+                self::logActivity('HAPUS SURAT', "Menghapus pengajuan surat {$surat->jenis_surat} untuk {$surat->nama_warga}");
+            }
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Pengajuan surat berhasil dihapus!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Gagal menghapus pengajuan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -182,6 +182,7 @@ Route::middleware(['auth'])->group(function () {
     // --- K. SURAT ONLINE & PENGUMUMAN ---
     Route::post('/surat-online/store', [SuratController::class, 'store']);
     Route::post('/surat-online/update-status', [SuratController::class, 'updateStatus']);
+    Route::post('/surat-online/delete', [SuratController::class, 'destroy']);
     Route::post('/pengumuman/store', [AnnouncementController::class, 'store']);
     Route::post('/pengumuman/delete', [AnnouncementController::class, 'destroy']);
 

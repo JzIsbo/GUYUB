@@ -69,12 +69,13 @@
                             <span class="px-2 py-0.5 rounded-full text-[8px] font-bold bg-red-100 text-red-600">DITOLAK</span>
                         @endif
                         @if(in_array(Auth::user()->role, ['Super Admin', 'RT']))
-                            @if($surat->status == 'Menunggu')
                             <div class="flex gap-1">
-                                <button onclick="ubahStatusSurat({{ $surat->id }}, 'Disetujui')" class="w-7 h-7 rounded-lg bg-green-50 text-green-600 flex items-center justify-center"><i class="fa-solid fa-check text-[9px]"></i></button>
-                                <button onclick="ubahStatusSurat({{ $surat->id }}, 'Ditolak')" class="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-[9px]"></i></button>
+                                @if($surat->status == 'Menunggu')
+                                    <button onclick="ubahStatusSurat({{ $surat->id }}, 'Disetujui')" class="w-7 h-7 rounded-lg bg-green-50 text-green-600 flex items-center justify-center" title="Setujui"><i class="fa-solid fa-check text-[9px]"></i></button>
+                                    <button onclick="ubahStatusSurat({{ $surat->id }}, 'Ditolak')" class="w-7 h-7 rounded-lg bg-red-50 text-red-600 flex items-center justify-center" title="Tolak"><i class="fa-solid fa-xmark text-[9px]"></i></button>
+                                @endif
+                                <button onclick="hapusSurat({{ $surat->id }})" class="w-7 h-7 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center" title="Hapus"><i class="fa-solid fa-trash text-[9px]"></i></button>
                             </div>
-                            @endif
                         @endif
                     </div>
                 </div>
@@ -133,6 +134,22 @@ function ubahStatusSurat(id, status) {
         alert(data.message);
         if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
         switchPage('surat-online', document.querySelector('.menu-active'));
+    });
+}
+
+function hapusSurat(id) {
+    if(!confirm('Apakah Anda yakin ingin menghapus pengajuan surat ini secara permanen?')) return;
+
+    let formData = new FormData();
+    formData.append('id', id);
+    formData.append('_token', window.csrfToken || '{{ csrf_token() }}');
+
+    fetch('/surat-online/delete', {
+        method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(res => res.json()).then(data => {
+        alert(data.message);
+        if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
+        switchPage('surat-online', document.querySelector('.menu-active') || document.querySelector('[data-page="surat-online"]'));
     });
 }
 </script>

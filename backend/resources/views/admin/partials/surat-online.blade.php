@@ -115,6 +115,9 @@
                                     <i class="fa-solid fa-xmark text-[10px]"></i> Tolak
                                 </button>
                                 @endif
+                                <button onclick="hapusSurat({{ $surat->id }})" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition inline-flex items-center justify-center" title="Hapus Pengajuan">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
                             </div>
                         </td>
                         @endif
@@ -184,6 +187,22 @@ function ubahStatusSurat(id, status) {
         alert(data.message);
         if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
         switchPage('surat-online', document.querySelector('.menu-active'));
+    });
+}
+
+function hapusSurat(id) {
+    if(!confirm('Apakah Anda yakin ingin menghapus pengajuan surat ini secara permanen?')) return;
+
+    let formData = new FormData();
+    formData.append('id', id);
+    formData.append('_token', window.csrfToken || '{{ csrf_token() }}');
+
+    fetch('/surat-online/delete', {
+        method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(res => res.json()).then(data => {
+        alert(data.message);
+        if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
+        switchPage('surat-online', document.querySelector('.menu-active') || document.querySelector('[data-page="surat-online"]'));
     });
 }
 </script>

@@ -301,6 +301,9 @@ window.alert = function(msg) {
 // 2. SESSION CHECKER & RBAC FILTER
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
+    // Show top loading progress bar immediately to match backend dashboard loading
+    showLoadingBar();
+
     // Apply theme
     const isDark = localStorage.getItem('theme') === 'dark';
     applyTheme(isDark);
@@ -373,13 +376,18 @@ document.addEventListener("DOMContentLoaded", () => {
             window.fetchNotifications();
             setInterval(window.fetchNotifications, 20000);
 
-            // Load default page (dashboard)
-            switchPage('dashboard', document.querySelector('[data-page="dashboard"]'));
+            // Load default page or last active page from sessionStorage
+            const lastActivePage = sessionStorage.getItem('guyub_active_page') || 'dashboard';
+            const activeLink = document.querySelector(`[data-page="${lastActivePage}"]`) || document.querySelector('[data-page="dashboard"]');
+            switchPage(lastActivePage, activeLink);
+            hideLoadingBar();
         })
         .catch(err => {
+            hideLoadingBar();
             console.error("Session verification failed:", err);
             localStorage.removeItem('guyub_user');
             localStorage.removeItem('guyub_cache_dashboard');
+            sessionStorage.removeItem('guyub_active_page');
             window.location.href = 'login.html';
         });
 });
@@ -699,6 +707,9 @@ function switchPage(pageName, element) {
     const mainContent = document.getElementById('main-content');
     if (!mainContent) return;
 
+    // Save current active page to sessionStorage so refresh persists the view
+    sessionStorage.setItem('guyub_active_page', pageName);
+
     // Auto collapse/hide sidebar on page switch (both mobile and desktop)
     try {
         // Close all open flyout submenus
@@ -743,6 +754,20 @@ function switchPage(pageName, element) {
         } else {
             element.classList.add('text-blue-600');
             element.classList.remove('text-gray-400');
+        }
+
+        // Auto-expand parent dropdown if the element is inside a submenu
+        const parentSubmenu = element.closest('.submenu-container');
+        if (parentSubmenu) {
+            parentSubmenu.classList.remove('hidden');
+            const dropdownGroup = parentSubmenu.closest('.dropdown-group');
+            if (dropdownGroup) {
+                const btn = dropdownGroup.querySelector('button');
+                if (btn) {
+                    const arrow = btn.querySelector('.fa-chevron-down');
+                    if (arrow) arrow.classList.add('rotate-180');
+                }
+            }
         }
     }
 
@@ -1232,9 +1257,11 @@ function handleLogout() {
             logoutRequest(`${CONFIG.API_BASE_URL}/logout`)
             .catch(() => logoutRequest(`${CONFIG.API_FALLBACK_URL}/logout`))
             .then(() => {
+                sessionStorage.removeItem('guyub_active_page');
                 window.location.href = 'login.html';
             })
             .catch(() => {
+                sessionStorage.removeItem('guyub_active_page');
                 window.location.href = 'login.html';
             });
         }

@@ -174,35 +174,67 @@
 
 <script>
 function ubahStatusSurat(id, status) {
-    if(!confirm('Yakin ingin merubah status surat ini menjadi ' + status + '?')) return;
+    Swal.fire({
+        title: 'Ubah Status Surat?',
+        text: 'Yakin ingin merubah status surat ini menjadi ' + status + '?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#2563eb',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Ubah',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-3xl p-6 shadow-2xl font-sans',
+            confirmButton: 'rounded-xl font-bold px-5 py-2.5 text-xs',
+            cancelButton: 'rounded-xl font-bold px-5 py-2.5 text-xs'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let formData = new FormData();
+            formData.append('id', id);
+            formData.append('status', status);
+            formData.append('_token', '{{ csrf_token() }}');
 
-    let formData = new FormData();
-    formData.append('id', id);
-    formData.append('status', status);
-    formData.append('_token', '{{ csrf_token() }}');
-
-    fetch('/surat-online/update-status', {
-        method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    }).then(res => res.json()).then(data => {
-        alert(data.message);
-        if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
-        switchPage('surat-online', document.querySelector('.menu-active'));
+            fetch('/surat-online/update-status', {
+                method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).then(res => res.json()).then(data => {
+                alert(data.message);
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
+                switchPage('surat-online', document.querySelector('.menu-active'));
+            });
+        }
     });
 }
 
 function hapusSurat(id) {
-    if(!confirm('Apakah Anda yakin ingin menghapus pengajuan surat ini secara permanen?')) return;
+    Swal.fire({
+        title: 'Hapus Pengajuan Surat?',
+        text: 'Apakah Anda yakin ingin menghapus pengajuan surat ini secara permanen?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        customClass: {
+            popup: 'rounded-3xl p-6 shadow-2xl font-sans',
+            confirmButton: 'rounded-xl font-bold px-5 py-2.5 text-xs',
+            cancelButton: 'rounded-xl font-bold px-5 py-2.5 text-xs'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let formData = new FormData();
+            formData.append('id', id);
+            formData.append('_token', window.csrfToken || '{{ csrf_token() }}');
 
-    let formData = new FormData();
-    formData.append('id', id);
-    formData.append('_token', window.csrfToken || '{{ csrf_token() }}');
-
-    fetch('/surat-online/delete', {
-        method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    }).then(res => res.json()).then(data => {
-        alert(data.message);
-        if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
-        switchPage('surat-online', document.querySelector('.menu-active') || document.querySelector('[data-page="surat-online"]'));
+            fetch('/surat-online/delete', {
+                method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).then(res => res.json()).then(data => {
+                alert(data.message);
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('surat-online'); }
+                switchPage('surat-online', document.querySelector('.menu-active') || document.querySelector('[data-page="surat-online"]'));
+            });
+        }
     });
 }
 </script>

@@ -193,14 +193,18 @@ Platform GUYUB tidak menggunakan framework JS berat (seperti React/Vue) untuk me
 
 ## 🔑 Kredensial Akun Pengujian (Demo Accounts)
 
-Untuk mempermudah pengujian matriks hak akses dan peran user, silakan gunakan kredensial demo di bawah ini:
+Untuk mempermudah pengujian matriks hak akses dan peran user, silakan gunakan kredensial demo di bawah ini (seluruh akun menggunakan kata sandi default `password`):
 
-| Akun Peran | Alamat Email / Username | Kata Sandi |
-| :--- | :--- | :--- |
-| 👑 **Super Admin** | `superadmin@gmail.com` | `password` |
-| 👤 **Ketua RT** | `rt@gmail.com` | `password` |
-| 💵 **Bendahara** | `bendahara@gmail.com` | `password` |
-| 🏡 **Warga** | `warga@gmail.com` | `password` |
+| Tingkat / Peran | Nama Peran | Alamat Email / Username | Kata Sandi |
+| :--- | :--- | :--- | :--- |
+| 👑 **Super Admin** | Super Admin | `superadmin@gmail.com` | `password` |
+| 🏢 **Rukun Warga (RW)** | Ketua RW | `rw@gmail.com` | `password` |
+| | Sekretaris RW | `sekretarisrw@gmail.com` | `password` |
+| | Bendahara RW | `bendahararw@gmail.com` | `password` |
+| 🏡 **Rukun Tetangga (RT)** | Ketua RT | `rt@gmail.com` | `password` |
+| | Sekretaris RT | `sekretaris@gmail.com` | `password` |
+| | Bendahara RT | `bendahara@gmail.com` | `password` |
+| 👥 **Kependudukan** | Warga | `warga@gmail.com` | `password` |
 
 ---
 

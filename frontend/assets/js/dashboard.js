@@ -180,6 +180,84 @@ window.alert = function(msg) {
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
         `;
+
+        // SaaS Action title and message mappings
+        if (/kehadiran diperbarui|status.*kehadiran/i.test(cleanMsg)) {
+            titleText = 'Kehadiran Diperbarui';
+            cleanMsg = 'Status kehadiran peserta posyandu berhasil disimpan.';
+        } else if (/posyandu.*tambah|posyandu.*jadwal|jadwal.*posyandu/i.test(cleanMsg)) {
+            titleText = 'Jadwal Posyandu Dibuat';
+            cleanMsg = 'Jadwal pelaksanaan posyandu baru berhasil diterbitkan.';
+        } else if (/posyandu.*daftar|daftar.*posyandu/i.test(cleanMsg)) {
+            titleText = 'Peserta Terdaftar';
+            cleanMsg = 'Peserta baru berhasil didaftarkan ke kegiatan Posyandu.';
+        } else if (/posyandu.*hapus|hapus.*posyandu/i.test(cleanMsg)) {
+            titleText = 'Pendaftaran Dibatalkan';
+            cleanMsg = 'Pendaftaran peserta posyandu berhasil dibatalkan.';
+        } else if (/warga.*tambah|tambah.*warga/i.test(cleanMsg)) {
+            titleText = 'Warga Ditambahkan';
+            cleanMsg = 'Data profil warga baru berhasil disimpan ke database.';
+        } else if (/warga.*diperbarui|update.*warga/i.test(cleanMsg)) {
+            titleText = 'Data Warga Diperbarui';
+            cleanMsg = 'Perubahan profil warga berhasil disimpan.';
+        } else if (/warga.*hapus|hapus.*warga/i.test(cleanMsg)) {
+            titleText = 'Warga Dihapus';
+            cleanMsg = 'Data warga beserta seluruh rekam jejaknya telah dihapus.';
+        } else if (/tagihan.*tambah|generate.*tagihan|tagihan.*buat/i.test(cleanMsg)) {
+            titleText = 'Tagihan Diterbitkan';
+            cleanMsg = 'Tagihan iuran bulanan warga berhasil diterbitkan.';
+        } else if (/tagihan.*diperbarui|update.*tagihan/i.test(cleanMsg)) {
+            titleText = 'Tagihan Diperbarui';
+            cleanMsg = 'Perubahan rincian tagihan berhasil disimpan.';
+        } else if (/tagihan.*hapus|hapus.*tagihan/i.test(cleanMsg)) {
+            titleText = 'Tagihan Dihapus';
+            cleanMsg = 'Data tagihan iuran warga telah dihapus dari sistem.';
+        } else if (/verifikasi|pembayaran.*verifikasi/i.test(cleanMsg)) {
+            titleText = 'Pembayaran Diverifikasi';
+            cleanMsg = 'Pembayaran iuran warga berhasil diverifikasi.';
+        } else if (/surat.*tambah|surat.*buat/i.test(cleanMsg)) {
+            titleText = 'Surat Pengantar Diajukan';
+            cleanMsg = 'Pengajuan surat online berhasil dikirim ke pengurus RT.';
+        } else if (/status.*surat|surat.*status/i.test(cleanMsg)) {
+            titleText = 'Status Surat Diperbarui';
+            cleanMsg = 'Persetujuan status surat online berhasil disimpan.';
+        } else if (/aspirasi.*kirim|aspirasi.*tambah/i.test(cleanMsg)) {
+            titleText = 'Aspirasi Dikirim';
+            cleanMsg = 'Aspirasi & masukan Anda berhasil dikirim ke pengurus RT.';
+        } else if (/tanggapan.*aspirasi/i.test(cleanMsg)) {
+            titleText = 'Aspirasi Ditanggapi';
+            cleanMsg = 'Tanggapan pengurus RT terhadap aspirasi berhasil disimpan.';
+        } else if (/kategori.*tambah|kategori.*buat/i.test(cleanMsg)) {
+            titleText = 'Kategori Ditambahkan';
+            cleanMsg = 'Kategori transaksi keuangan baru berhasil disimpan.';
+        } else if (/kategori.*diperbarui|update.*kategori/i.test(cleanMsg)) {
+            titleText = 'Kategori Diperbarui';
+            cleanMsg = 'Perubahan kategori transaksi keuangan berhasil disimpan.';
+        } else if (/kategori.*hapus|hapus.*kategori/i.test(cleanMsg)) {
+            titleText = 'Kategori Dihapus';
+            cleanMsg = 'Kategori transaksi berhasil dihapus dari sistem.';
+        } else if (/sampah.*catat|sampah.*tambah/i.test(cleanMsg)) {
+            titleText = 'Setoran Sampah Dicatat';
+            cleanMsg = 'Setoran tabungan bank sampah warga berhasil dibukukan.';
+        } else if (/pengumuman.*tambah|pengumuman.*siar/i.test(cleanMsg)) {
+            titleText = 'Pengumuman Disiarkan';
+            cleanMsg = 'Pengumuman warga berhasil diterbitkan dan disiarkan.';
+        } else if (/perangkat.*simpan|perangkat.*tambah/i.test(cleanMsg)) {
+            titleText = 'Aset/Inventaris Ditambahkan';
+            cleanMsg = 'Inventaris aset baru berhasil disimpan.';
+        } else if (/perangkat.*ubah|perangkat.*update/i.test(cleanMsg)) {
+            titleText = 'Aset/Inventaris Diperbarui';
+            cleanMsg = 'Perubahan data inventaris aset berhasil disimpan.';
+        } else if (/perangkat.*hapus/i.test(cleanMsg)) {
+            titleText = 'Aset/Inventaris Dihapus';
+            cleanMsg = 'Data inventaris aset berhasil dihapus.';
+        } else if (/koperasi.*tambah|koperasi.*produk/i.test(cleanMsg)) {
+            titleText = 'Produk Koperasi Ditambahkan';
+            cleanMsg = 'Produk sembako koperasi berhasil ditambahkan.';
+        } else if (/umkm.*tambah|umkm.*buat/i.test(cleanMsg)) {
+            titleText = 'UMKM Warga Didaftarkan';
+            cleanMsg = 'Profil UMKM warga berhasil didaftarkan ke etalase.';
+        }
     }
 
     overlay.innerHTML = `
@@ -226,6 +304,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Apply theme
     const isDark = localStorage.getItem('theme') === 'dark';
     applyTheme(isDark);
+
+    // Initialize global CSRF token from meta tag if present
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    if (metaTag) {
+        window.csrfToken = metaTag.getAttribute('content');
+    }
 
     // Render cached user session instantly in the header to eliminate "..." and "Halo..." placeholders
     const cachedUser = localStorage.getItem('guyub_user');
@@ -274,10 +358,15 @@ document.addEventListener("DOMContentLoaded", () => {
             window.updateUserProfileUI(currentUser);
             applyRoleBasedAccess(currentUser.role);
             
-            // Set user name inside meta
+            // Set user name inside meta and set window.csrfToken globally
             const metaCsrf = document.querySelector('meta[name="csrf-token"]');
-            if (metaCsrf && data.csrf_token) {
-                metaCsrf.content = data.csrf_token;
+            if (data.csrf_token) {
+                window.csrfToken = data.csrf_token;
+                if (metaCsrf) {
+                    metaCsrf.content = data.csrf_token;
+                }
+            } else if (metaCsrf) {
+                window.csrfToken = metaCsrf.getAttribute('content');
             }
 
             // Start fetching notifications periodically

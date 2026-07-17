@@ -1,76 +1,193 @@
 /* landing.css - Styles for Landing/Public page */
 
+html {
+    scroll-behavior: smooth;
+}
+
+/* ================= LIGHT & DARK MODE SYSTEM STYLING ================= */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+    background: #f5f8ff;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Light Mode Defaults */
+html:not(.dark) body { background-color: #F8FAFC; color: #1E293B; }
+html:not(.dark) #fitur, html:not(.dark) #tentang, html:not(.dark) #kontak { background-color: #FFFFFF; }
+html:not(.dark) .public-tab-btn:not(.active) { background-color: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+
+/* Dark Mode Overrides */
+html.dark, html.dark body { background-color: #0F172A !important; color: #F8FAFC !important; }
+html.dark #fitur, html.dark #tentang, html.dark #kontak, html.dark section { background-color: #0F172A !important; background-image: none !important; color: #F8FAFC !important; border-color: rgba(255,255,255,0.06) !important; }
+html.dark .bg-gradient-to-br, html.dark .bg-gradient-to-r, html.dark .bg-gradient-to-l, html.dark .bg-gradient-to-t, html.dark .bg-gradient-to-b { background-image: none !important; background-color: #0F172A !important; }
+html.dark .hero-bg { background: linear-gradient(135deg, #090E17 0%, #0F172A 50%, #1E293B 100%) !important; }
+html.dark .bg-white { background-color: #1E293B !important; color: #F8FAFC !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+html.dark .bg-gray-50, html.dark .bg-gray-50\/50 { background-color: #111827 !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+html.dark .bg-blue-50, html.dark .bg-indigo-50, html.dark .bg-emerald-50, html.dark .bg-rose-50 { background-color: rgba(30, 41, 59, 0.8) !important; border-color: rgba(255,255,255,0.08) !important; }
+html.dark .text-gray-900, html.dark .text-gray-800, html.dark .text-gray-700 { color: #F8FAFC !important; }
+html.dark .text-gray-600, html.dark .text-gray-500 { color: #CBD5E1 !important; }
+html.dark .border-gray-100, html.dark .border-gray-200 { border-color: rgba(255, 255, 255, 0.08) !important; }
+html.dark .public-tab-btn:not(.active) { background-color: #1E293B !important; color: #94A3B8 !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+html.dark .public-tab-btn:not(.active):hover { background-color: #334155 !important; color: #FFFFFF !important; }
+html.dark footer { background-color: #0B0F19 !important; border-color: rgba(255,255,255,0.05) !important; }
+
 .hero-bg {
-    background: linear-gradient(to right, rgba(5, 25, 75, .94), rgba(30, 64, 175, .82)),
-        url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1974&auto=format&fit=crop');
+    background:
+    linear-gradient(to right,
+    rgba(5,25,75,.94),
+    rgba(30,64,175,.82)),
+    url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=1974&auto=format&fit=crop');
+
     background-size: cover;
     background-position: center;
 }
 
-.hero-title {
-    font-size: 46px;
-    line-height: 1.2;
+.glass {
+    background: rgba(255,255,255,.10);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.12);
 }
 
-.hero-desc {
-    font-size: 15px;
-    line-height: 30px;
+.btn-primary {
+    background: linear-gradient(90deg,#2563eb,#3b82f6);
 }
 
-.dashboard-card {
-    max-width: 350px;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(37,99,235,.30);
 }
 
-.section-title {
-    font-size: 34px;
+.feature-card {
+    transition: .3s;
 }
 
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 30px;
-        text-align: center;
-    }
-    .hero-desc {
-        text-align: center;
-    }
-    .mobile-center {
-        justify-content: center;
-    }
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    .section-title {
-        font-size: 28px;
-    }
+.feature-card:hover {
+    transform: translateY(-5px);
 }
 
-/* Premium Public Tab Buttons */
+/* =========================
+   PREMIUM PUBLIC TAB STYLING
+========================= */
 .public-tab-btn {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(226, 232, 240, 0.8);
 }
-
 .public-tab-btn:hover {
     transform: translateY(-2px);
     background-color: #f8fafc;
 }
-
 .public-tab-btn.active {
     background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
     color: white !important;
     border-color: transparent !important;
     box-shadow: 0 12px 24px -6px rgba(37, 99, 235, 0.35) !important;
 }
-
-/* Public Card Hover Effects */
 .public-card {
     background: #ffffff;
     border: 1px solid #f1f5f9;
     transition: all 0.3s ease;
 }
-
 .public-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
     border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* =========================
+   UKURAN DESKTOP FIX
+========================= */
+.container-custom {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.hero-title {
+    font-size: 44px;
+    line-height: 1.25;
+}
+
+.hero-desc {
+    font-size: 15px;
+    line-height: 28px;
+}
+
+.dashboard-card {
+    max-width: 330px;
+}
+
+.section-title {
+    font-size: 32px;
+}
+
+/* Tabs Scrollable styling on mobile */
+.tabs-scrollable::-webkit-scrollbar {
+    display: none;
+}
+.tabs-scrollable {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* =========================
+   LAPTOP
+========================= */
+@media (max-width:1366px) {
+    .hero-title {
+        font-size: 38px;
+    }
+    .dashboard-card {
+        max-width: 300px;
+    }
+}
+
+/* =========================
+   TABLET
+========================= */
+@media (max-width:1024px) {
+    .hero-title {
+        font-size: 34px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width:768px) {
+    .hero-title {
+        font-size: 26px;
+        text-align: center;
+    }
+
+    .hero-desc {
+        font-size: 13.5px;
+        line-height: 24px;
+        text-align: center;
+    }
+
+    .mobile-center {
+        justify-content: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+}
+
+@keyframes logoPulse {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.15); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); }
+    70% { transform: scale(1); }
+}
+.logo-beat {
+    animation: logoPulse 1.8s infinite ease-in-out;
+    display: inline-block;
 }

@@ -3,167 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin - KAS RT Digital System</title>
+    <title>Super Admin - GUYUB Dashboard</title>
+    
+    <script>
+        // Check and set device mode cookie based on window width before any content renders
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dashboard-body flex h-screen overflow-hidden">
 
+    <!-- Top Loading Progress Bar (controlled dynamically) -->
+    <div id="top-loading-bar"></div>
+
+    <!-- Sidebar Backdrop Overlay for Mobile -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"></div>
+
     <!-- SIDEBAR -->
-    <aside class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto">
-        <div class="p-8 flex items-center shrink-0">
-            <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center">
+    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static transition-all duration-300 ease-in-out sidebar-collapsed">
+        
+        <!-- Close button inside sidebar (Mobile) -->
+        <button onclick="toggleSidebar()" class="sidebar-close-btn md:hidden p-2 text-gray-400 hover:text-white rounded-lg absolute top-6 right-6 focus:outline-none transition-colors">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <a href="index.html" data-tooltip="Lihat Halaman Publik GUYUB" class="p-8 flex items-center shrink-0 hover:opacity-90 transition cursor-pointer group">
+            <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center group-hover:scale-105 transition-transform">
                 <i class="fa-solid fa-house-chimney-window text-[#0F172A] text-xl"></i>
             </div>
             <div>
-                <h1 class="text-white font-extrabold text-xl leading-none italic uppercase tracking-tighter">KAS RT</h1>
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[2px] mt-1.5 text-nowrap">Portal Warga SPA</p>
+                <h1 class="text-white font-extrabold text-xl leading-none italic uppercase tracking-tighter group-hover:text-blue-400 transition-colors">GUYUB</h1>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[2px] mt-1.5 text-nowrap">Dashboard Panel</p>
             </div>
-        </div>
+        </a>
 
         <nav class="flex-1 px-4 space-y-1 mt-2 pb-10">
-            <!-- Dashboard -->
-            <a href="javascript:void(0)" data-page="dashboard" onclick="switchPage('dashboard', this)" class="menu-link flex items-center px-4 py-3.5 rounded-2xl transition-all hover:bg-white/5 hover:text-white">
+            <!-- Dashboard link -->
+            <a href="javascript:void(0)" data-page="dashboard" onclick="switchPage('dashboard', this)" class="menu-link flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Dashboard">
                 <i class="fa-solid fa-th-large w-6 text-lg"></i> <span class="ml-3 text-sm font-bold">Dashboard</span>
             </a>
 
-            <!-- Category: Pembayaran -->
-            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="tagihan-warga,pembayaran-online,status-pembayaran,riwayat-gateway,qris-va">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pembayaran</p>
+            <!-- CATEGORY: Keuangan & Laporan -->
+            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="tagihan-warga,pembayaran-online,riwayat-gateway,qris-va,pemasukan,pengeluaran,transaksi,kategori,laporan-keuangan,laporan-iuran,laporan-kas,laporan-koperasi,export-laporan">
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Keuangan & Laporan</p>
             </div>
-            <div class="space-y-1 parent-menu" data-pages="tagihan-warga,pembayaran-online,status-pembayaran,riwayat-gateway,qris-va">
-                <button onclick="toggleDropdown('pembayaran-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group">
+
+            <!-- Dropdown: Pembayaran -->
+            <div class="space-y-1 dropdown-group parent-menu" data-pages="tagihan-warga,pembayaran-online,riwayat-gateway,qris-va">
+                <button onclick="toggleDropdown('pembayaran-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Pembayaran">
                     <i class="fa-solid fa-wallet w-6 opacity-50 group-hover:opacity-100"></i>
                     <span class="ml-3 font-semibold flex-1 text-left">Pembayaran</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="pembayaran-menu" class="hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
-                    <a href="javascript:void(0)" data-page="tagihan-warga" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Tagihan Warga</a>
-                    <a href="javascript:void(0)" data-page="pembayaran-online" onclick="switchPage('pembayaran-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pembayaran Online</a>
-                    <a href="javascript:void(0)" data-page="status-pembayaran" onclick="switchPage('status-pembayaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Status Pembayaran</a>
-                    <a href="javascript:void(0)" data-page="riwayat-gateway" onclick="switchPage('riwayat-gateway', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Riwayat Gateway</a>
-                    <a href="javascript:void(0)" data-page="qris-va" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">QRIS & Virtual Account</a>
+                <div id="pembayaran-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    <a href="javascript:void(0)" data-page="tagihan-warga" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kelola Tagihan</a>
+                    <a href="javascript:void(0)" data-page="qris-va" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Rekening & QRIS</a>
                 </div>
             </div>
 
-            <!-- Category: Transaksi -->
-            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="pemasukan,pengeluaran,transaksi,kategori">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Transaksi</p>
+            <!-- Dropdown: Transaksi -->
+            <div class="space-y-1 dropdown-group parent-menu" data-pages="pemasukan,pengeluaran,transaksi,kategori">
+                <button onclick="toggleDropdown('transaksi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Transaksi">
+                    <i class="fa-solid fa-shuffle w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Transaksi</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="transaksi-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    <a href="javascript:void(0)" data-page="pemasukan" onclick="switchPage('pemasukan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pemasukan</a>
+                    <a href="javascript:void(0)" data-page="pengeluaran" onclick="switchPage('pengeluaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengeluaran</a>
+                    <a href="javascript:void(0)" data-page="transaksi" onclick="switchPage('transaksi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Semua Transaksi</a>
+                    <a href="javascript:void(0)" data-page="kategori" onclick="switchPage('kategori', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kategori</a>
+                </div>
             </div>
-            <a href="javascript:void(0)" data-page="pemasukan" onclick="switchPage('pemasukan', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-circle-arrow-down w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pemasukan</span>
-            </a>
-            <a href="javascript:void(0)" data-page="pengeluaran" onclick="switchPage('pengeluaran', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-circle-arrow-up w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengeluaran</span>
-            </a>
-            <a href="javascript:void(0)" data-page="transaksi" onclick="switchPage('transaksi', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-shuffle w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Transaksi</span>
-            </a>
-            <a href="javascript:void(0)" data-page="kategori" onclick="switchPage('kategori', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-folder-tree w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Kategori</span>
-            </a>
 
-            <!-- Category: Interaksi Warga -->
-            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="surat-online,pengumuman">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Interaksi Warga</p>
+            <!-- Dropdown: Laporan -->
+            <div class="space-y-1 dropdown-group parent-menu" data-pages="laporan-keuangan,laporan-iuran,laporan-kas,laporan-koperasi,export-laporan">
+                <button onclick="toggleDropdown('laporan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Laporan">
+                    <i class="fa-solid fa-chart-line w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Laporan</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="laporan-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    <a href="javascript:void(0)" data-page="laporan-keuangan" onclick="switchPage('laporan-keuangan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Keuangan</a>
+                    <a href="javascript:void(0)" data-page="laporan-iuran" onclick="switchPage('laporan-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Iuran</a>
+                    <a href="javascript:void(0)" data-page="laporan-kas" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Kas</a>
+                    <a href="javascript:void(0)" data-page="laporan-koperasi" onclick="switchPage('laporan-koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Koperasi</a>
+                    <a href="javascript:void(0)" data-page="export-laporan" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Export Laporan</a>
+                </div>
             </div>
-            <a href="javascript:void(0)" data-page="surat-online" onclick="switchPage('surat-online', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-envelope w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Surat Online</span>
-            </a>
-            <a href="javascript:void(0)" data-page="pengumuman" onclick="switchPage('pengumuman', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-bullhorn w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengumuman</span>
-            </a>
 
-            <!-- Category: Layanan Warga -->
-            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="koperasi,bank-sampah,umkm,posyandu,keamanan,kegiatan,rukem,aspirasi">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Layanan Warga</p>
+            <!-- CATEGORY: Layanan & Interaksi -->
+            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="surat-online,pengumuman,koperasi,bank-sampah,umkm,posyandu,keamanan,kegiatan,rukem,peraturan-sk,kerja-bakti,aspirasi">
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Layanan & Interaksi</p>
             </div>
-            <a href="javascript:void(0)" data-page="koperasi" onclick="switchPage('koperasi', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-store w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Koperasi Warga</span>
-            </a>
-            <a href="javascript:void(0)" data-page="bank-sampah" onclick="switchPage('bank-sampah', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-recycle w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Bank Sampah</span>
-            </a>
-            <a href="javascript:void(0)" data-page="umkm" onclick="switchPage('umkm', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-shop w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">UMKM Warga</span>
-            </a>
-            <a href="javascript:void(0)" data-page="posyandu" onclick="switchPage('posyandu', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-heart-pulse w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Posyandu</span>
-            </a>
-            <a href="javascript:void(0)" data-page="keamanan" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-shield-halved w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Keamanan & Ronda</span>
-            </a>
-            <a href="javascript:void(0)" data-page="kegiatan" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-calendar-check w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Kegiatan RT</span>
-            </a>
-            <a href="javascript:void(0)" data-page="rukem" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-hands-holding-child w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Rukem (Duka Cita)</span>
-            </a>
-            <a href="javascript:void(0)" data-page="aspirasi" onclick="switchPage('aspirasi', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-comment-dots w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aspirasi & Keluhan</span>
-            </a>
 
-            <!-- Category: Master Data -->
-            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="data-warga,data-iuran,data-pengurus-rt,data-rt,pengguna,perangkat-sistem">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Master Data</p>
+            <!-- Dropdown: Interaksi Warga -->
+            <div class="space-y-1 dropdown-group parent-menu" data-pages="surat-online,pengumuman,aspirasi">
+                <button onclick="toggleDropdown('administrasi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Interaksi Warga">
+                    <i class="fa-solid fa-envelope-open-text w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Interaksi Warga</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="administrasi-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    <a href="javascript:void(0)" data-page="surat-online" onclick="switchPage('surat-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Surat Online</a>
+                    <a href="javascript:void(0)" data-page="pengumuman" onclick="switchPage('pengumuman', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengumuman</a>
+                    <a href="javascript:void(0)" data-page="aspirasi" onclick="switchPage('aspirasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aspirasi & Keluhan</a>
+                </div>
             </div>
-            <a href="javascript:void(0)" data-page="data-warga" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-users w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data Warga</span>
-            </a>
-            <a href="javascript:void(0)" data-page="data-iuran" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-wallet w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data Iuran</span>
-            </a>
-            <a href="javascript:void(0)" data-page="data-pengurus-rt" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-user-tie w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data Pengurus RT</span>
-            </a>
-            <a href="javascript:void(0)" data-page="data-rt" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-database w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Data RT</span>
-            </a>
-            <a href="javascript:void(0)" data-page="pengguna" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-user-gear w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengguna</span>
-            </a>
-            <a href="javascript:void(0)" data-page="perangkat-sistem" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-display w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Perangkat RT</span>
-            </a>
 
-            <!-- Category: Laporan -->
-            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="laporan-keuangan,laporan-iuran,laporan-kas,export-laporan">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Laporan</p>
+            <!-- Dropdown: Layanan Warga -->
+            <div class="space-y-1 dropdown-group parent-menu" data-pages="koperasi,bank-sampah,umkm,posyandu,keamanan,kegiatan,rukem,peraturan-sk,kerja-bakti">
+                <button onclick="toggleDropdown('layanan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Layanan Warga">
+                    <i class="fa-solid fa-hand-holding-heart w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Layanan Warga</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="layanan-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    <a href="javascript:void(0)" data-page="koperasi" onclick="switchPage('koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Koperasi Warga</a>
+                    <a href="javascript:void(0)" data-page="bank-sampah" onclick="switchPage('bank-sampah', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Bank Sampah</a>
+                    <a href="javascript:void(0)" data-page="umkm" onclick="switchPage('umkm', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">UMKM Warga</a>
+                    <a href="javascript:void(0)" data-page="posyandu" onclick="switchPage('posyandu', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Posyandu</a>
+                    <a href="javascript:void(0)" data-page="keamanan" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Keamanan & Ronda</a>
+                    <a href="javascript:void(0)" data-page="kegiatan" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kegiatan</a>
+                    <a href="javascript:void(0)" data-page="rukem" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Rukem (Duka Cita)</a>
+                    <a href="javascript:void(0)" data-page="peraturan-sk" onclick="switchPage('peraturan-sk', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Peraturan & SK RT/RW</a>
+                    <a href="javascript:void(0)" data-page="kerja-bakti" onclick="switchPage('kerja-bakti', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kerja Bakti</a>
+                </div>
             </div>
-            <a href="javascript:void(0)" data-page="laporan-keuangan" onclick="switchPage('laporan-keuangan', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-chart-line w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Laporan Keuangan</span>
-            </a>
-            <a href="javascript:void(0)" data-page="laporan-iuran" onclick="switchPage('laporan-iuran', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-file-invoice w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Laporan Iuran</span>
-            </a>
-            <a href="javascript:void(0)" data-page="laporan-kas" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-vault w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Laporan Kas</span>
-            </a>
-            <a href="javascript:void(0)" data-page="export-laporan" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-file-export w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Export Laporan</span>
-            </a>
 
-            <!-- Category: Pengaturan -->
+            <!-- CATEGORY: Data & Aset/Inventaris -->
+            <div class="pt-8 pb-2 px-4 parent-menu" data-pages="data-warga,data-keluarga,data-iuran,data-pengurus-rt,data-rt,pengguna,approval-warga,perangkat-sistem">
+                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Data & Aset/Inventaris</p>
+            </div>
+
+            <!-- Dropdown: Data Master -->
+            <div class="space-y-1 dropdown-group parent-menu" data-pages="data-warga,data-keluarga,data-iuran,data-pengurus-rt,data-rt,pengguna,approval-warga,perangkat-sistem">
+                <button onclick="toggleDropdown('data-master-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Data Master">
+                    <i class="fa-solid fa-database w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Data Master</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="data-master-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    <a href="javascript:void(0)" data-page="data-warga" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Warga</a>
+                    <a href="javascript:void(0)" data-page="data-keluarga" onclick="switchPage('data-keluarga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Keluarga</a>
+                    <a href="javascript:void(0)" data-page="data-iuran" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Iuran</a>
+                    <a href="javascript:void(0)" data-page="data-pengurus-rt" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Pengurus</a>
+                    <a href="javascript:void(0)" data-page="data-rt" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data RT RW</a>
+                    <a href="javascript:void(0)" data-page="pengguna" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengguna</a>
+                    <a href="javascript:void(0)" data-page="approval-warga" onclick="switchPage('approval-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Persetujuan Warga</a>
+                    <a href="javascript:void(0)" data-page="perangkat-sistem" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aset/Inventaris</a>
+                </div>
+            </div>
+
+            <!-- CATEGORY: Pengaturan -->
             <div class="pt-8 pb-2 px-4 parent-menu" data-pages="pengaturan,backup-restore,aktivitas-pengguna">
                 <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pengaturan</p>
             </div>
-            <a href="javascript:void(0)" data-page="pengaturan" onclick="switchPage('pengaturan', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-gears w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Pengaturan</span>
-            </a>
-            <a href="javascript:void(0)" data-page="backup-restore" onclick="switchPage('backup-restore', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-cloud-arrow-up w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Backup & Restore</span>
-            </a>
-            <a href="javascript:void(0)" data-page="aktivitas-pengguna" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link flex items-center px-4 py-3 text-sm rounded-2xl transition-all group hover:bg-white/5 hover:text-white">
-                <i class="fa-solid fa-clock-rotate-left w-6 opacity-50 group-hover:opacity-100"></i> <span class="ml-3 font-semibold">Aktivitas Pengguna</span>
-            </a>
+
+            <!-- Dropdown: Sistem -->
+            <div class="space-y-1 dropdown-group parent-menu" data-pages="pengaturan,backup-restore,aktivitas-pengguna">
+                <button onclick="toggleDropdown('sistem-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Sistem">
+                    <i class="fa-solid fa-gears w-6 opacity-50 group-hover:opacity-100"></i>
+                    <span class="ml-3 font-semibold flex-1 text-left">Sistem</span>
+                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+                </button>
+                <div id="sistem-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                    <a href="javascript:void(0)" data-page="pengaturan" onclick="switchPage('pengaturan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengaturan</a>
+                    <a href="javascript:void(0)" data-page="backup-restore" onclick="switchPage('backup-restore', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Backup & Restore</a>
+                    <a href="javascript:void(0)" data-page="aktivitas-pengguna" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aktivitas Pengguna</a>
+                </div>
+            </div>
         </nav>
 
         <!-- Log Out Form -->
         <div class="p-6 border-t border-white/5 bg-[#0F172A] sticky bottom-0 shrink-0">
-            <button onclick="handleLogout()" class="flex items-center w-full px-5 py-4 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group cursor-pointer">
+            <button onclick="handleLogout()" class="flex items-center w-full px-5 py-4 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group cursor-pointer" data-tooltip="Keluar Akun">
                 <i class="fa-solid fa-power-off mr-3 group-hover:rotate-90 transition-transform duration-300"></i>
                 <span>Keluar Akun</span>
             </button>
@@ -172,27 +204,63 @@
 
     <!-- CONTENT BODY -->
     <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 shrink-0">
-            <div class="flex flex-col">
-                <h2 id="welcome-message" class="text-xl font-bold text-gray-800 tracking-tight italic">Halo... 👋</h2>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[1.5px]">Status: Verified Online</p>
+        <header class="h-14 md:h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-10 shrink-0">
+            <div class="flex items-center gap-3">
+                <!-- Sidebar Toggle Button (Desktop Only) -->
+                <button onclick="toggleSidebar()" class="hidden md:flex items-center justify-center px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl mr-2 focus:outline-none transition-all border border-slate-200 shadow-sm gap-2">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Menu Halaman</span>
+                </button>
+                <div class="flex flex-col">
+                    <h2 id="welcome-message" class="text-sm md:text-xl font-bold text-gray-800 tracking-tight italic line-clamp-1">Halo... 👋</h2>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                        <p class="text-[8px] md:text-[10px] text-gray-400 font-bold uppercase tracking-[1px] md:tracking-[1.5px]">Status: Verified Online</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-6">
-                <div class="flex items-center gap-4 pl-6 border-l border-gray-100">
-                    <div class="text-right">
-                        <p id="profile-name" class="text-sm font-black text-gray-800 leading-none lowercase tracking-tighter">...</p>
-                        <p id="profile-role" class="text-[9px] text-blue-600 font-black uppercase mt-1 italic tracking-widest leading-none">...</p>
+            <div class="flex items-center gap-2 md:gap-4">
+                <!-- Theme Toggle Button (Dark / Light Mode) -->
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="bg-gray-50 p-2.5 rounded-xl text-gray-400 hover:text-amber-500 hover:bg-gray-100 transition focus:outline-none border border-gray-100 shadow-sm flex items-center justify-center cursor-pointer" title="Mode Gelap / Terang">
+                    <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
+                </button>
+
+                <!-- Notification Bell -->
+                <div class="relative hidden sm:block" id="notification-container">
+                    <button onclick="toggleNotificationDropdown(event)" class="bg-gray-50 p-2.5 rounded-xl text-gray-400 hover:text-blue-600 hover:bg-gray-100 transition relative focus:outline-none border border-gray-100 shadow-sm flex items-center justify-center">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-[8px] font-black flex items-center justify-center hidden">0</span>
+                    </button>
+
+                    <!-- Dropdown Panel -->
+                    <div id="notification-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5 z-50 hidden transition-all duration-200 transform scale-95 opacity-0 origin-top-right">
+                        <div class="px-4 py-2 border-b border-gray-50 flex justify-between items-center">
+                            <span class="text-[10px] font-black text-gray-800 uppercase tracking-widest">Notifikasi Aktivitas</span>
+                            <span onclick="markNotificationsAsRead(event)" class="text-[9px] text-blue-600 font-extrabold hover:underline cursor-pointer">Tandai Dibaca</span>
+                        </div>
+                        <div id="notification-list" class="divide-y divide-gray-50 max-h-60 overflow-y-auto">
+                            <div class="p-4 text-center text-gray-400 text-xs italic">
+                                Belum ada notifikasi.
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 border-t border-gray-50 text-center">
+                            <a href="javascript:void(0)" onclick="goToActivityLog(event)" class="text-[9px] text-blue-600 font-black uppercase tracking-wider hover:underline">Lihat Semua Aktivitas</a>
+                        </div>
                     </div>
-                    <img id="profile-avatar" src="https://ui-avatars.com/api/?name=User&background=2563EB&color=fff" class="h-11 w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover" alt="Avatar">
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-6 border-l border-gray-100">
+                    <div onclick="switchPage('pengaturan', document.querySelector('.menu-link[onclick*=\'pengaturan\']'))" class="text-right cursor-pointer hover:opacity-80 transition" title="Ke Pengaturan Akun">
+                        <p id="profile-name" class="text-xs md:text-sm font-black text-gray-800 leading-none lowercase tracking-tighter truncate max-w-[80px] sm:max-w-none">...</p>
+                        <p id="profile-role" class="text-[8px] md:text-[9px] text-blue-600 font-black uppercase mt-0.5 sm:mt-1 italic tracking-widest leading-none">...</p>
+                    </div>
+                    <img id="profile-avatar" src="https://ui-avatars.com/api/?name=User&background=2563EB&color=fff" class="h-9 w-9 md:h-11 md:w-11 rounded-2xl shadow-md border-2 border-white bg-gray-50 object-cover" alt="Avatar">
                 </div>
             </div>
         </header>
 
-        <main id="main-content" class="flex-1 overflow-y-auto p-10 bg-[#F8FAFC]">
+        <main id="main-content" class="flex-1 overflow-y-auto p-4 md:p-10 bg-[#F8FAFC]">
             <!-- Dynamic Content Mounted Here -->
             <div class="flex flex-col items-center justify-center h-full min-h-[400px] space-y-4">
                 <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -201,6 +269,67 @@
         </main>
     </div>
 
+    <!-- Floating Bottom Navigation Bar (Mobile Only) -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 p-3 md:hidden">
+        <div class="max-w-md mx-auto bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-[0_-8px_30px_rgba(0,0,0,0.08)] flex items-center justify-around py-1.5 px-1">
+            <!-- Tab 1: Dashboard -->
+            <button onclick="switchPage('dashboard', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-blue-600">
+                <i class="fa-solid fa-th-large text-base"></i>
+                <span class="text-[9px] font-bold">Beranda</span>
+            </button>
+            
+            <!-- Tab 2: Tagihan -->
+            <button id="mobile-tab-tagihan" onclick="switchPage('tagihan-warga', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
+                <i class="fa-solid fa-wallet text-base"></i>
+                <span class="text-[9px] font-bold">Tagihan</span>
+            </button>
+            
+            <!-- Tab 3: Semua Menu (Opens Sheet) -->
+            <button onclick="toggleMobileMenuSheet(true)" class="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
+                <i class="fa-solid fa-ellipsis text-base"></i>
+                <span class="text-[9px] font-bold">Menu</span>
+            </button>
+
+            <!-- Tab 4: Surat Online -->
+            <button id="mobile-tab-surat" onclick="switchPage('surat-online', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
+                <i class="fa-solid fa-envelope text-base"></i>
+                <span class="text-[9px] font-bold">Surat</span>
+            </button>
+            
+            <!-- Tab 5: Data Keluarga -->
+            <button id="mobile-tab-keluarga" onclick="switchPage('data-keluarga', this);" class="bottom-tab-link flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600">
+                <i class="fa-solid fa-people-roof text-base"></i>
+                <span class="text-[9px] font-bold">Keluarga</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Bottom Navigation Sheet (Mobile Only) -->
+    <div id="mobile-menu-sheet" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-end justify-center transition-all duration-300">
+        <div class="absolute inset-0" onclick="toggleMobileMenuSheet(false)"></div>
+        <div class="relative w-full max-w-md bg-white rounded-t-2xl p-4 shadow-2xl max-h-[80vh] overflow-y-auto transform translate-y-full transition-transform duration-300">
+            <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-3"></div>
+            <div id="mobile-sheet-content" class="space-y-4 pb-12">
+                <!-- Will be dynamically populated with accessible menu links -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inline setup for dynamic tooltips and flyouts
+        (function() {
+            if (!document.getElementById('flyout-popup')) {
+                const fp = document.createElement('div');
+                fp.id = 'flyout-popup';
+                document.body.appendChild(fp);
+            }
+            if (!document.getElementById('global-tooltip')) {
+                const gt = document.createElement('div');
+                gt.id = 'global-tooltip';
+                document.body.appendChild(gt);
+            }
+        })();
+    </script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/dashboard.js"></script>
 </body>

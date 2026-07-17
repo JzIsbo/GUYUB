@@ -174,6 +174,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const isDark = localStorage.getItem('theme') === 'dark';
     applyTheme(isDark);
 
+    // Render cached user session instantly in the header to eliminate "..." and "Halo..." placeholders
+    const cachedUser = localStorage.getItem('guyub_user');
+    if (cachedUser) {
+        try {
+            const user = JSON.parse(cachedUser);
+            document.getElementById('welcome-message').innerText = `Halo, ${user.name} 👋`;
+            document.getElementById('profile-name').innerText = user.name;
+            document.getElementById('profile-role').innerText = user.role;
+            document.getElementById('profile-avatar').src = user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2563EB&color=fff`;
+            applyRoleBasedAccess(user.role);
+        } catch (e) {
+            console.error("Error loading cached user:", e);
+        }
+    }
+
     // Render cached dashboard instantly (SWR) to eliminate initial loading screen
     const mainContent = document.getElementById('main-content');
     const cachedDashboard = localStorage.getItem('guyub_cache_dashboard');
@@ -205,6 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(() => checkSession(fallbackSessionApi))
         .then(data => {
             currentUser = data.user;
+            localStorage.setItem('guyub_user', JSON.stringify(currentUser)); // Save user session to cache
+
             document.getElementById('welcome-message').innerText = `Halo, ${currentUser.name} 👋`;
             document.getElementById('profile-name').innerText = currentUser.name;
             document.getElementById('profile-role').innerText = currentUser.role;
@@ -227,6 +244,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => {
             console.error("Session verification failed:", err);
+            localStorage.removeItem('guyub_user');
+            localStorage.removeItem('guyub_cache_dashboard');
             window.location.href = 'login.html';
         });
 });

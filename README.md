@@ -183,11 +183,26 @@ Platform GUYUB tidak menggunakan framework JS berat (seperti React/Vue) untuk me
    php artisan storage:link
    ```
 
-7. **Jalankan web server lokal**:
+7. **Jalankan Server Backend (Laravel)**:
    ```bash
-   php artisan serve
+   php artisan serve --port=8000
    ```
-   Aplikasi Anda kini berjalan dan siap diakses di browser melalui tautan: **`http://127.0.0.1:8000`**
+   *Backend Anda kini berjalan dan melayani request API di `http://127.0.0.1:8000`.*
+
+8. **Jalankan Server Frontend (Vite - Port 3000)**:
+   - Buka terminal baru dan masuk ke direktori `frontend`:
+     ```bash
+     cd ../frontend
+     ```
+   - Pasang dependensi frontend:
+     ```bash
+     npm install
+     ```
+   - Jalankan server development Vite:
+     ```bash
+     npm run dev
+     ```
+   Aplikasi Anda kini siap diakses secara penuh di browser melalui link: **`http://localhost:3000`** (terhubung otomatis ke backend port 8000 melalui proxy).
 
 ---
 

@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
             switchPage('dashboard', document.querySelector('[data-page="dashboard"]'));
             
             // Prefetch other menu pages in the background for zero-delay instant switching
-            setTimeout(initPrefetch, 1000);
+            initPrefetch();
         })
         .catch(err => {
             console.error("Session verification failed:", err);
@@ -566,20 +566,13 @@ function switchPage(pageName, element) {
         return;
     }
 
-    // Show loading spinner only if page is not cached
-    mainContent.innerHTML = `
-        <div class="flex flex-col items-center justify-center h-full min-h-[400px] space-y-4">
-            <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-gray-400 font-bold italic animate-pulse tracking-widest uppercase text-xs">MEMUAT MODUL ${pageName.replace(/-/g, ' ').toUpperCase()}...</p>
-        </div>
-    `;
+    // 2. If not cached, do NOT show the spinner! Just run the top loading progress bar
+    showLoadingBar();
 
     // Fetch dynamic partial view
     const fetchPage = (url) => {
-        showLoadingBar();
         return fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(async res => {
-            hideLoadingBar();
             if (res.status === 401) {
                 window.location.href = 'login.html';
                 return null;
@@ -587,10 +580,6 @@ function switchPage(pageName, element) {
             const text = await res.text();
             if (!res.ok) throw new Error(text || `HTTP Error ${res.status}`);
             return text;
-        })
-        .catch(err => {
-            hideLoadingBar();
-            throw err;
         });
     };
 
@@ -600,6 +589,7 @@ function switchPage(pageName, element) {
     fetchPage(mainUrl)
         .catch(() => fetchPage(fallbackUrl))
         .then(html => {
+            hideLoadingBar();
             if (!html) return;
             window.pageCache[pageName] = { html: html, mode: currentMode }; // Save cache with mode
             mainContent.innerHTML = html;

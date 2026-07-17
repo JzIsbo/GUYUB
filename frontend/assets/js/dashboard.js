@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
             switchPage('dashboard', document.querySelector('[data-page="dashboard"]'));
             
             // Prefetch other menu pages in the background for zero-delay instant switching
-            initPrefetch();
+            setTimeout(initPrefetch, 1500);
         })
         .catch(err => {
             console.error("Session verification failed:", err);
@@ -470,26 +470,30 @@ function initPrefetch() {
     
     const currentMode = window.innerWidth < 768 ? 'mobile' : 'desktop';
     
+    let delay = 500;
     uniqueUrls.forEach(pageName => {
         if (pageName !== 'dashboard') {
-            const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}`;
-            const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}`;
-            
-            const fetchPrefetch = (url) => {
-                return fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(res => {
-                    if (res.ok) return res.text();
-                });
-            };
-            
-            fetchPrefetch(mainUrl)
-            .catch(() => fetchPrefetch(fallbackUrl))
-            .then(html => {
-                if (html) {
-                    window.pageCache[pageName] = { html: html, mode: currentMode };
-                }
-            })
-            .catch(() => {});
+            setTimeout(() => {
+                const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}`;
+                const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}`;
+                
+                const fetchPrefetch = (url) => {
+                    return fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(res => {
+                        if (res.ok) return res.text();
+                    });
+                };
+                
+                fetchPrefetch(mainUrl)
+                .catch(() => fetchPrefetch(fallbackUrl))
+                .then(html => {
+                    if (html) {
+                        window.pageCache[pageName] = { html: html, mode: currentMode };
+                    }
+                })
+                .catch(() => {});
+            }, delay);
+            delay += 600; // Space out requests by 600ms to prevent bottlenecking single-threaded PHP server
         }
     });
 

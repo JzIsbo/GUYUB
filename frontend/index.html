@@ -28,16 +28,16 @@
 </head>
 
 <body>
-{{-- HERO --}}
+<!-- HERO -->
 <section id="beranda" class="hero-bg min-h-screen relative overflow-hidden">
 
     <div class="absolute top-[-100px] right-[-100px] w-[220px] h-[220px] rounded-full bg-blue-400/20"></div>
     <div class="absolute bottom-[-100px] left-[-100px] w-[220px] h-[220px] rounded-full bg-blue-300/20"></div>
 
-    {{-- NAVBAR --}}
+    <!-- NAVBAR -->
     <nav class="relative z-30 container-custom flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 px-5 lg:px-8 py-4 transition-all duration-300">
 
-        {{-- LOGO --}}
+        <!-- LOGO -->
         <div class="flex flex-col items-center text-center gap-1.5 sm:flex-row sm:text-left sm:gap-3 shrink-0">
             <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center">
                 <i class="fa-solid fa-people-roof logo-beat text-base sm:text-lg text-white"></i>
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        {{-- MENU --}}
+        <!-- MENU -->
         <div class="hidden lg:flex items-center gap-7 text-white text-sm font-medium">
             <a href="#beranda" class="hover:text-blue-300 transition nav-link" data-section="beranda">Beranda</a>
             <a href="#fitur" class="hover:text-blue-300 transition nav-link" data-section="fitur">Fitur & Layanan</a>
@@ -58,7 +58,7 @@
             <a href="#kontak" class="hover:text-blue-300 transition nav-link" data-section="kontak">Kontak</a>
         </div>
 
-        {{-- LOGIN / DASHBOARD & THEME TOGGLE (DIPOPULASIKAN SECARA DINAMIS) --}}
+        <!-- LOGIN / DASHBOARD & THEME TOGGLE (DIPOPULASIKAN SECARA DINAMIS) -->
         <div class="flex items-center justify-between mt-1 sm:mt-0 shrink-0 w-full sm:w-auto">
             <button onclick="toggleMobileNavbar()" class="lg:hidden w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white focus:outline-none transition hover:bg-white/20">
                 <i id="hamburger-icon" class="fa-solid fa-bars text-xs sm:text-base"></i>
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        {{-- MOBILE NAV DROPDOWN --}}
+        <!-- MOBILE NAV DROPDOWN -->
         <div id="mobile-nav" class="hidden absolute top-full left-5 right-5 mt-2 bg-[#0e2764]/95 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col gap-3 text-white text-xs sm:text-sm font-medium shadow-2xl z-40">
             <a href="#beranda" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Beranda</a>
             <a href="#fitur" onclick="toggleMobileNavbar()" class="hover:text-blue-300 transition py-1 border-b border-white/5">Fitur & Layanan</a>
@@ -88,11 +88,11 @@
 
     </nav>
 
-    {{-- CONTENT --}}
+    <!-- CONTENT -->
     <div class="relative z-10 container-custom px-5 lg:px-8 pt-2 lg:pt-8 pb-10 lg:pb-16">
         <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {{-- LEFT --}}
+            <!-- LEFT -->
             <div class="lg:col-span-7">
                  <h1 class="hero-title text-white font-extrabold">
                      Digitalisasi <span class="text-blue-300">Pelayanan RT/RW</span>
@@ -104,7 +104,7 @@
                      <!-- Dynamic hero buttons -->
                  </div>
 
-                 {{-- STATS --}}
+                 <!-- STATS -->
                  <div class="stats-grid grid grid-cols-3 gap-2.5 sm:gap-4 mt-6 sm:mt-8">
                      <div class="glass rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center">
                           <h2 class="text-white text-sm sm:text-xl font-bold">24/7</h2>
@@ -120,7 +120,7 @@
                      </div>
                  </div>
 
-                 {{-- BADGE --}}
+                 <!-- BADGE -->
                  <div class="flex sm:block justify-center mt-6 sm:mt-8">
                      <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full glass text-white">
                           <i class="fa-solid fa-shield-halved text-blue-300 text-xs"></i>
@@ -129,7 +129,7 @@
                  </div>
             </div>
 
-            {{-- RIGHT --}}
+            <!-- RIGHT -->
             <div class="hidden lg:flex lg:col-span-5 justify-center">
                 <div class="dashboard-card glass rounded-3xl p-5 w-full">
                     <div class="flex items-center justify-between">
@@ -177,7 +177,7 @@
     </div>
 </section>
 
-{{-- INTERACTIVE PUBLIC DIRECTORIES --}}
+<!-- INTERACTIVE PUBLIC DIRECTORIES -->
 <div id="informasi-publik"></div>
 <section id="fitur" class="py-10 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white border-t border-gray-100">
     <div class="container-custom">
@@ -215,7 +215,7 @@
     </div>
 </section>
 
-{{-- SECTION TENTANG --}}
+<!-- SECTION TENTANG -->
 <section id="tentang" class="py-10 sm:py-16 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
         <div class="text-center mb-8 sm:mb-12">
@@ -279,7 +279,7 @@
     </div>
 </section>
 
-{{-- SECTION KONTAK --}}
+<!-- SECTION KONTAK -->
 <section id="kontak" class="py-10 sm:py-16 bg-white dark:bg-[#0B0F19]">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
         <div class="text-center mb-8 sm:mb-12">
@@ -360,7 +360,7 @@
     </div>
 </section>
 
-{{-- FOOTER --}}
+<!-- FOOTER -->
 <footer class="bg-[#0f172a] py-10 text-center">
     <div class="max-w-4xl mx-auto px-6">
         <div class="flex items-center justify-center gap-3 mb-4">

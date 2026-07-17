@@ -1848,7 +1848,7 @@
         // ==========================================
         // 3. FUNGSI AJAX SIMPAN DATA UMUM
         // ==========================================
-        function simpanDataUmum(event, formId, pageToReload) {
+        window.simpanDataUmum = function(event, formId, pageToReload) {
             event.preventDefault();
 
             let form = document.getElementById(formId);

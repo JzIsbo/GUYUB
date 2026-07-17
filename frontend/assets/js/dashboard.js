@@ -1267,3 +1267,89 @@ function handleLogout() {
         }
     });
 }
+
+// Global AJAX Form Submission Helpers
+window.simpanDataUmum = function(event, formId, pageToReload) {
+    event.preventDefault();
+
+    let form = document.getElementById(formId);
+    if (!form) return;
+    if (!form.reportValidity()) {
+        return;
+    }
+
+    let formData = new FormData(form);
+    let submitBtn = form.querySelector('button[type="submit"]') || form.querySelector('button[onclick*="simpanDataUmum"]');
+    let originalBtnText = submitBtn ? submitBtn.innerHTML : 'Simpan';
+    
+    let formAction = form.getAttribute('action') || '';
+    let targetUrl = formAction.startsWith('http') ? formAction : `${CONFIG.API_BASE_URL}${formAction}`;
+
+    if (submitBtn) {
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menyimpan...';
+        submitBtn.disabled = true;
+    }
+
+    fetch(targetUrl, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        let modal = form.closest('[id^="modal-"]');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+
+        form.reset();
+        alert(data.message || 'Data berhasil disimpan!');
+
+        if (pageToReload === 'pengaturan') {
+            if (data.user) {
+                window.updateUserProfileUI(data.user);
+            }
+            window.invalidatePageCache('pengaturan');
+            switchPage('pengaturan', document.querySelector(`.menu-link[onclick*='pengaturan']`) || document.querySelector(`.bottom-tab-link[onclick*='pengaturan']`));
+        } else {
+            window.invalidatePageCache(pageToReload);
+            switchPage(pageToReload, document.querySelector(`.menu-link[onclick*='${pageToReload}']`) || document.querySelector(`.bottom-tab-link[onclick*='${pageToReload}']`));
+        }
+    })
+    .catch(error => {
+        if (error.errors) {
+            let messages = Object.values(error.errors).flat().join('\n');
+            alert("Gagal menyimpan:\n" + messages);
+        } else {
+            alert(error.message || "Gagal terhubung ke server / Terjadi kesalahan sistem.");
+        }
+        console.error(error);
+    })
+    .finally(() => {
+        if (submitBtn) {
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+        }
+    });
+};
+
+window.togglePasswordPengaturan = function() {
+    let inputPass = document.getElementById('input-password');
+    let iconMata = document.getElementById('icon-mata');
+    if(inputPass && iconMata) {
+        if (inputPass.type === "password") {
+            inputPass.type = "text";
+            iconMata.classList.remove('fa-eye');
+            iconMata.classList.add('fa-eye-slash');
+        } else {
+            inputPass.type = "password";
+            iconMata.classList.remove('fa-eye-slash');
+            iconMata.classList.add('fa-eye');
+        }
+    }
+};

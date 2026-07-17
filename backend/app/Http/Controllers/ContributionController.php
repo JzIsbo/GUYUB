@@ -124,17 +124,35 @@ class ContributionController extends Controller
                 'tanggal_bayar' => 'required|date'
             ]);
 
-            DB::table('contributions_payment')->insert([
+            $wargaName = DB::table('wargas')->where('id', $request->warga_id)->value('nama_lengkap') ?? 'Warga';
+            $iuranName = DB::table('contributions')->where('id', $request->iuran_id)->value('nama_iuran') ?? 'Iuran';
+
+            if (\Illuminate\Support\Facades\Schema::hasTable('contributions_payment')) {
+                DB::table('contributions_payment')->insert([
+                    'warga_id'      => $request->warga_id,
+                    'iuran_id'      => $request->iuran_id,
+                    'nominal_bayar' => $request->nominal_bayar,
+                    'tanggal_bayar' => $request->tanggal_bayar,
+                    'created_at'    => now(),
+                    'updated_at'    => now()
+                ]);
+            }
+
+            // Record as lunas tagihan
+            $periode = date('Y-m', strtotime($request->tanggal_bayar));
+            DB::table('tagihans')->insert([
                 'warga_id'      => $request->warga_id,
-                'iuran_id'      => $request->iuran_id,
-                'nominal_bayar' => $request->nominal_bayar,
-                'tanggal_bayar' => $request->tanggal_bayar,
+                'nama_warga'    => $wargaName,
+                'jenis_tagihan' => $iuranName,
+                'periode'       => $periode,
+                'jumlah'        => $request->nominal_bayar,
+                'metode_bayar'  => 'Manual',
+                'status'        => 'lunas',
+                'tanggal_lunas' => $request->tanggal_bayar,
+                'batas_bayar'   => $request->tanggal_bayar,
                 'created_at'    => now(),
                 'updated_at'    => now()
             ]);
-
-            $wargaName = DB::table('wargas')->where('id', $request->warga_id)->value('nama_lengkap') ?? 'Warga';
-            $iuranName = DB::table('contributions')->where('id', $request->iuran_id)->value('nama_iuran') ?? 'Iuran';
             
             self::logActivity('BAYAR IURAN', "Mencatat pembayaran iuran {$iuranName} untuk {$wargaName} sebesar Rp " . number_format($request->nominal_bayar, 0, ',', '.'));
 

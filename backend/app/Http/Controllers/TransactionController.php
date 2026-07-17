@@ -40,11 +40,32 @@ class TransactionController extends Controller
                     $wargaId = $request->warga_id ?? DB::table('wargas')->value('id');
 
                     if ($wargaId) {
-                        DB::table('contributions_payment')->insert([
+                        $warga = DB::table('wargas')->where('id', $wargaId)->first();
+                        $wargaName = $warga ? $warga->nama_lengkap : 'Warga';
+
+                        if (\Illuminate\Support\Facades\Schema::hasTable('contributions_payment')) {
+                            DB::table('contributions_payment')->insert([
+                                'warga_id'      => $wargaId,
+                                'iuran_id'      => 1, // Default ID Iuran
+                                'nominal_bayar' => $nominal,
+                                'tanggal_bayar' => $request->tanggal,
+                                'created_at'    => now(),
+                                'updated_at'    => now()
+                            ]);
+                        }
+
+                        // Record as lunas tagihan
+                        $periode = date('Y-m', strtotime($request->tanggal));
+                        DB::table('tagihans')->insert([
                             'warga_id'      => $wargaId,
-                            'iuran_id'      => 1, // Default ID Iuran
-                            'nominal_bayar' => $nominal,
-                            'tanggal_bayar' => $request->tanggal,
+                            'nama_warga'    => $wargaName,
+                            'jenis_tagihan' => 'Iuran Kas',
+                            'periode'       => $periode,
+                            'jumlah'        => $nominal,
+                            'metode_bayar'  => 'Cash/Cashier',
+                            'status'        => 'lunas',
+                            'tanggal_lunas' => $request->tanggal,
+                            'batas_bayar'   => $request->tanggal,
                             'created_at'    => now(),
                             'updated_at'    => now()
                         ]);

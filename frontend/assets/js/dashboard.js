@@ -174,6 +174,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const isDark = localStorage.getItem('theme') === 'dark';
     applyTheme(isDark);
 
+    // Render cached dashboard instantly (SWR) to eliminate initial loading screen
+    const mainContent = document.getElementById('main-content');
+    const cachedDashboard = localStorage.getItem('guyub_cache_dashboard');
+    if (mainContent && cachedDashboard) {
+        mainContent.innerHTML = cachedDashboard;
+        executeScripts(mainContent);
+        if (typeof window.renderDashboard === 'function') {
+            window.renderDashboard();
+        }
+        if (typeof window.runGlobalCounterAnimation === 'function') {
+            window.runGlobalCounterAnimation();
+        }
+    }
+
     const checkSession = (url) => {
         return fetch(url, {
             headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
@@ -210,9 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Load default page (dashboard)
             switchPage('dashboard', document.querySelector('[data-page="dashboard"]'));
-            
-            // Prefetch other menu pages in the background for zero-delay instant switching
-            setTimeout(initPrefetch, 1500);
         })
         .catch(err => {
             console.error("Session verification failed:", err);
@@ -623,6 +634,9 @@ function switchPage(pageName, element) {
             hideLoadingBar();
             if (!html) return;
             window.pageCache[pageName] = { html: html, mode: currentMode }; // Save cache with mode
+            if (pageName === 'dashboard') {
+                localStorage.setItem('guyub_cache_dashboard', html);
+            }
             mainContent.innerHTML = html;
             executeScripts(mainContent);
 
@@ -631,6 +645,12 @@ function switchPage(pageName, element) {
             }
             if (typeof window.runGlobalCounterAnimation === 'function') {
                 window.runGlobalCounterAnimation();
+            }
+
+            // Start prefetching safely in the background after the main content is rendered
+            if (!window.prefetchInitialized) {
+                window.prefetchInitialized = true;
+                setTimeout(initPrefetch, 1000);
             }
         })
         .catch(error => {

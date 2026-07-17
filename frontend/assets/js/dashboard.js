@@ -404,6 +404,52 @@ function hideLoadingBar() {
     }
 }
 
+window.runGlobalCounterAnimation = function() {
+    const counters = document.querySelectorAll('.stat-counter');
+    counters.forEach(counter => {
+        if (counter.dataset.animationId) {
+            cancelAnimationFrame(parseInt(counter.dataset.animationId));
+        }
+
+        const rawValue = counter.getAttribute('data-value') || '';
+        const target = parseFloat(rawValue.replace(/[^0-9.-]+/g, '')) || 0;
+        const type = counter.getAttribute('data-type') || 'currency';
+        
+        if (type !== 'currency' && type !== 'warga') return;
+        
+        let current = 0;
+        const duration = 1200; // 1.2 seconds animation
+        const frameRate = 60;
+        const totalFrames = Math.round(duration / (1000 / frameRate));
+        let frame = 0;
+        
+        const animate = () => {
+            frame++;
+            const progress = 1 - Math.pow(1 - (frame / totalFrames), 3); // easeOutCubic
+            current = target * progress;
+            
+            if (type === 'currency') {
+                counter.textContent = 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Math.round(current));
+            } else if (type === 'warga') {
+                counter.textContent = Math.round(current) + ' Jiwa';
+            }
+            
+            if (frame < totalFrames) {
+                counter.dataset.animationId = requestAnimationFrame(animate);
+            } else {
+                if (type === 'currency') {
+                    counter.textContent = 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(target);
+                } else if (type === 'warga') {
+                    counter.textContent = target + ' Jiwa';
+                }
+                delete counter.dataset.animationId;
+            }
+        };
+        
+        counter.dataset.animationId = requestAnimationFrame(animate);
+    });
+};
+
 // ==========================================
 // 5. PAGE ROUTING & PREFETCHING
 // ==========================================
@@ -468,6 +514,9 @@ function switchPage(pageName, element) {
         if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
             window.renderDashboard();
         }
+        if (typeof window.runGlobalCounterAnimation === 'function') {
+            window.runGlobalCounterAnimation();
+        }
         return;
     }
 
@@ -481,6 +530,9 @@ function switchPage(pageName, element) {
 
             if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
                 window.renderDashboard();
+            }
+            if (typeof window.runGlobalCounterAnimation === 'function') {
+                window.runGlobalCounterAnimation();
             }
         })
         .catch(error => {

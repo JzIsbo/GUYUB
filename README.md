@@ -11,6 +11,33 @@ GUYUB (*Gerbang Urusan dan Layanan Warga Bersama*) adalah platform tata kelola l
 
 Platform ini menjadi jembatan digital antara pengurus wilayah (Ketua RT, Ketua RW, Bendahara) dengan warga sekitar untuk mewujudkan pengelolaan administrasi yang transparan, keuangan yang akuntabel, serta pelayanan mandiri yang praktis.
 
+## 🛠️ Spesifikasi Teknologi & Dependensi (Tech Stack)
+
+Aplikasi **GUYUB** dibangun menggunakan kombinasi framework backend modern, pustaka client-side super ringan, dan lingkungan pengembangan terstandarisasi berikut:
+
+### ⚙️ 1. Backend (Sisi Server)
+* **Framework Utama**: [Laravel 11.x / 13.x](https://laravel.com) — Menyediakan fondasi MVC yang tangguh, routing aman, Eloquent ORM, dan penanganan database terenkripsi.
+* **Payment Gateway**: `midtrans/midtrans-php` (^2.6) — Terintegrasi dengan Midtrans API untuk pembuatan kode QRIS dinamis dan Virtual Account pembayaran iuran secara nontunai.
+* **Ekspor Data Excel**: `maatwebsite/excel` (^3.1) — Digunakan untuk menyusun dan mengekspor laporan kependudukan serta transaksi keuangan warga langsung ke file `.xlsx`.
+* **Autentikasi & Otorisasi**: `laravel/breeze` (^2.4) — Kerangka kerja autentikasi bawaan Laravel yang dimodifikasi secara mendalam untuk mendukung matriks otorisasi berbasis peran (Role-Based Access Control) multi-peran (Super Admin, RT, Bendahara, Warga).
+* **Interpreter**: PHP >= 8.3 dengan ekstensi wajib `PDO`, `OpenSSL`, `Mbstring`, `Tokenizer`, `XML`, dan `GD`.
+
+### 🎨 2. Frontend (Sisi Klien)
+* **Single Page Application Engine**: Vanilla JavaScript — Custom DOM-swapping router dengan History API, prefetch otomatis berbasis event (`mouseenter` & `touchstart`), serta penanganan cache SPA.
+* **Kerangka Desain CSS**: [Tailwind CSS v3 / v4](https://tailwindcss.com) — Memberikan kebebasan penyusunan antarmuka premium, responsif penuh, dan tersinkronisasi dengan tema gelap (*dark mode*) bawaan.
+* **Reaktivitas UI**: [Alpine.js](https://alpinejs.dev) (^3.15) — Pustaka javascript ringan untuk menangani interaksi mikro UI seperti dropdown menu, transisi animasi sheet, dan modal interaktif.
+* **Klien AJAX HTTP**: `axios` (^1.16) — Library promise-based HTTP client untuk melakukan request asinkron ke server backend secara aman.
+
+### 📊 3. Visual & Library Pihak Ketiga
+* **Visualisasi Grafik**: [Chart.js](https://www.chartjs.org) (v4.x via CDN) — Digunakan untuk merender grafik batang (Buku Kas Bulanan) dan diagram lingkaran (Doughnut Demografi Penduduk) secara interaktif.
+* **Pustaka Ikon**: [FontAwesome](https://fontawesome.com) (v6.4.0 & v6.5.2 via CDN) — Menyediakan set ikon representatif dan modern untuk seluruh tombol menu.
+* **Tipografi**: Google Fonts (Plus Jakarta Sans & Poppins) — Font modern dengan keterbacaan tinggi yang disematkan langsung untuk memberikan visualisasi UI yang premium.
+
+### 💻 4. Lingkungan Pengembangan (Development Environment)
+* **Asset Bundler**: [Vite](https://vitejs.dev) (v8.x) — Compiler aset modern yang super cepat untuk mengompilasi CSS dan JS.
+* **Dependency Manager**: Composer v2.x (Backend) & npm v10.x (Frontend).
+* **Local Web Server**: [XAMPP](https://www.apachefriends.org) / [Laragon](https://laragon.org) (Apache 2.4, MySQL 8.0, PHP 8.3).
+
 ---
 
 ## 🗺️ Fitur Utama Ekosistem GUYUB

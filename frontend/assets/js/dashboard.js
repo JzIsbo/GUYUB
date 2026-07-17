@@ -555,21 +555,26 @@ window.invalidatePageCache = function(pageName) {
     }
 };
 
-// Execute script elements in partial HTML content
 function executeScripts(parent) {
     const scripts = Array.from(parent.querySelectorAll('script'));
     scripts.forEach(oldScript => {
-        const newScript = document.createElement('script');
-        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-        if (oldScript.src) {
-            newScript.src = oldScript.src;
-            document.head.appendChild(newScript);
-        } else {
-            newScript.text = oldScript.innerHTML;
-            document.body.appendChild(newScript);
-            document.body.removeChild(newScript);
+        try {
+            if (oldScript.src) {
+                if (!document.querySelector(`script[src="${oldScript.src}"]`)) {
+                    const newScript = document.createElement('script');
+                    newScript.src = oldScript.src;
+                    newScript.async = false;
+                    document.head.appendChild(newScript);
+                }
+            } else {
+                const newScript = document.createElement('script');
+                newScript.text = oldScript.innerHTML;
+                document.body.appendChild(newScript).parentNode.removeChild(newScript);
+            }
+            oldScript.parentNode?.removeChild(oldScript);
+        } catch (e) {
+            console.error("Gagal mengeksekusi script dynamic:", e);
         }
-        oldScript.remove();
     });
 }
 

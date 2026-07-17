@@ -467,7 +467,7 @@
                         <div>
 
                             <h2 class="text-white text-base font-bold">
-                                Dashboard RT
+                                Dashboard RT/RW
                             </h2>
 
                             <p class="text-blue-100 text-[10px] mt-0.5">

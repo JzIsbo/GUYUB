@@ -1,28 +1,9 @@
 /* dashboard.css - Styles for SPA Dashboard Admin Panel */
 
-body.dashboard-body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #F8FAFC;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Sidebar Custom Scrollbar */
-.sidebar-scroll::-webkit-scrollbar {
-    width: 3px;
-}
-
-.sidebar-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
-/* Active Sidebar Menu Class */
-.menu-active {
-    background-color: #2563EB !important;
-    color: white !important;
-    box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
-    font-weight: 700;
-}
+body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; transition: background-color 0.3s ease, color 0.3s ease; }
+.sidebar-scroll::-webkit-scrollbar { width: 3px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
+.menu-active { background-color: #2563EB !important; color: white !important; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4); font-weight: 700; }
 
 /* Top Loading Progress Bar */
 #top-loading-bar {
@@ -156,7 +137,6 @@ html.dark #theme-toggle-btn { background-color: #1E293B !important; border-color
         position: relative;
     }
 }
-
 /* Flyout popup - rendered outside sidebar on body */
 #flyout-popup {
     position: fixed;
@@ -194,5 +174,76 @@ html.dark #theme-toggle-btn { background-color: #1E293B !important; border-color
     .sidebar-collapsed .p-8 {
         padding: 1.5rem 0.75rem !important;
         justify-content: center !important;
+    }
+    .sidebar-collapsed .p-8 div:first-child {
+        margin-right: 0 !important;
+    }
+    .sidebar-collapsed nav.px-4 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    .sidebar-collapsed .menu-link {
+        justify-content: center !important;
+        padding: 0.75rem 0 !important;
+        border-radius: 1rem !important;
+        position: relative;
+    }
+    .sidebar-collapsed .menu-link i {
+        margin-right: 0 !important;
+        font-size: 1.15rem !important;
+        width: auto !important;
+    }
+    /* Global Tooltip container (rendered at body level to bypass overflow clipping) */
+    #global-tooltip {
+        position: fixed;
+        background: #0F172A;
+        color: #F1F5F9;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+        z-index: 999999;
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.08);
+        transition: opacity 0.15s ease;
+        opacity: 0;
+        display: none;
+        transform: translateY(-50%);
+    }
+    #global-tooltip::before {
+        content: '';
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 5px solid transparent;
+        border-right-color: #0F172A;
+    }
+    .sidebar-collapsed .sticky.bottom-0 {
+        padding: 1rem 0.5rem !important;
+    }
+    .sidebar-collapsed .sticky.bottom-0 a,
+    .sidebar-collapsed .sticky.bottom-0 button {
+        justify-content: center !important;
+        padding: 0.75rem 0 !important;
+        border-radius: 1rem !important;
+        position: relative;
+    }
+    .sidebar-collapsed .sticky.bottom-0 i {
+        margin-right: 0 !important;
+        font-size: 1.1rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #mobile-menu-sheet button,
+    #mobile-menu-sheet a {
+        padding: 0.5rem !important;
+        gap: 0.25rem !important;
+    }
+    #mobile-menu-sheet h4 {
+        margin-bottom: 0.5rem !important;
     }
 }

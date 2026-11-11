@@ -3,6 +3,28 @@
 let currentUser = null;
 window.pageCache = {};
 
+// Safe localStorage helper to prevent QuotaExceededError
+function safeSetPageCache(pageName, html) {
+    if (!pageName || !html) return;
+    try {
+        localStorage.setItem('guyub_cache_' + pageName, html);
+    } catch (e) {
+        console.warn("Storage quota exceeded, pruning old page caches...");
+        try {
+            const activePage = sessionStorage.getItem('guyub_active_page') || 'dashboard';
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('guyub_cache_') && key !== 'guyub_cache_' + activePage && key !== 'guyub_cache_' + pageName) {
+                    localStorage.removeItem(key);
+                }
+            }
+            localStorage.setItem('guyub_cache_' + pageName, html);
+        } catch (err) {
+            console.warn("Unable to cache to localStorage, continuing with RAM cache only.");
+        }
+    }
+}
+
 function getInitialsAvatar(name) {
     const cleanName = (name || 'User').trim();
     const parts = cleanName.split(/\s+/);
@@ -325,6 +347,17 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error loading cached user:", e);
         }
     }
+
+    // Prune excessive cached pages from localStorage to prevent QuotaExceededError
+    try {
+        const lastActivePage = sessionStorage.getItem('guyub_active_page') || 'dashboard';
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('guyub_cache_') && key !== 'guyub_cache_' + lastActivePage && key !== 'guyub_cache_dashboard') {
+                localStorage.removeItem(key);
+            }
+        }
+    } catch (e) {}
 
     // Render cached last active page instantly (SWR) from localStorage to eliminate all loading screens on boot
     const mainContent = document.getElementById('main-content');
@@ -677,7 +710,6 @@ function initPrefetch() {
                 .then(html => {
                     if (html) {
                         window.pageCache[pageName] = { html: html, mode: currentMode };
-                        localStorage.setItem('guyub_cache_' + pageName, html);
                     }
                 })
                 .catch(() => {});
@@ -709,7 +741,6 @@ function initPrefetch() {
                     .then(html => {
                         if (html) {
                             window.pageCache[pageName] = { html: html, mode: currentMode };
-                            localStorage.setItem('guyub_cache_' + pageName, html);
                         }
                     })
                     .catch(() => {});
@@ -808,9 +839,24 @@ function switchPage(pageName, element) {
     const mainUrl = `${CONFIG.API_BASE_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
     const fallbackUrl = `${CONFIG.API_FALLBACK_URL}/${pageName}?mode=${currentMode}&_t=${Date.now()}`;
 
-    // 1. Read localStorage cache first to load without loading spinner (instantly 0ms)
+    // 1. Check RAM memory cache first (instant 0ms, no storage limit)
+    if (window.pageCache[pageName] && window.pageCache[pageName].mode === currentMode) {
+        mainContent.innerHTML = window.pageCache[pageName].html;
+        executeScripts(mainContent);
+        if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
+            window.renderDashboard();
+        }
+        if (typeof window.runGlobalCounterAnimation === 'function') {
+            window.runGlobalCounterAnimation();
+        }
+        safeSetPageCache(pageName, window.pageCache[pageName].html);
+        return;
+    }
+
+    // 2. Read localStorage cache (persisted for refresh)
     const cachedHTML = localStorage.getItem('guyub_cache_' + pageName);
     if (cachedHTML) {
+        window.pageCache[pageName] = { html: cachedHTML, mode: currentMode };
         mainContent.innerHTML = cachedHTML;
         executeScripts(mainContent);
         if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
@@ -825,10 +871,10 @@ function switchPage(pageName, element) {
             .catch(() => fetchPage(fallbackUrl))
             .then(html => {
                 if (html && html !== cachedHTML) {
-                    localStorage.setItem('guyub_cache_' + pageName, html);
                     window.pageCache[pageName] = { html: html, mode: currentMode };
                     mainContent.innerHTML = html;
                     executeScripts(mainContent);
+                    safeSetPageCache(pageName, html);
                     if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
                         window.renderDashboard();
                     }
@@ -842,7 +888,7 @@ function switchPage(pageName, element) {
         return;
     }
 
-    // 2. If not cached, do NOT show the spinner! Just run the top loading progress bar
+    // 3. If not cached, do NOT show the spinner! Just run the top loading progress bar
     showLoadingBar();
 
     fetchPage(mainUrl)
@@ -850,13 +896,13 @@ function switchPage(pageName, element) {
         .then(html => {
             hideLoadingBar();
             if (!html) return;
-            window.pageCache[pageName] = { html: html, mode: currentMode }; // Save cache with mode
-            localStorage.setItem('guyub_cache_' + pageName, html);
-            if (pageName === 'dashboard') {
-                localStorage.setItem('guyub_cache_dashboard', html);
-            }
+            window.pageCache[pageName] = { html: html, mode: currentMode }; // Save cache in RAM
             mainContent.innerHTML = html;
             executeScripts(mainContent);
+            safeSetPageCache(pageName, html);
+            if (pageName === 'dashboard') {
+                safeSetPageCache('dashboard', html);
+            }
 
             if (pageName === 'dashboard' && typeof window.renderDashboard === 'function') {
                 window.renderDashboard();

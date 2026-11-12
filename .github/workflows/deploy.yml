@@ -87,9 +87,11 @@ jobs:
           request_pty: true
           script_stop: true
           script: |
+            cat << 'EOSCRIPT' > /tmp/deploy_guyub.sh
+            #!/usr/bin/env bash
             set -ex
 
-            APP_DIR="${{ secrets.VPS_APP_DIR }}"
+            APP_DIR="$1"
 
             echo "=== MEMULAI DEPLOYMENT ==="
             if [ ! -d "$APP_DIR" ]; then
@@ -158,3 +160,7 @@ jobs:
             run_as_owner php "$LARAVEL_DIR/artisan" view:cache
 
             echo "=== DEPLOYMENT SELESAI DENGAN SUKSES ==="
+            EOSCRIPT
+            chmod +x /tmp/deploy_guyub.sh
+            /tmp/deploy_guyub.sh "${{ secrets.VPS_APP_DIR }}"
+            rm -f /tmp/deploy_guyub.sh

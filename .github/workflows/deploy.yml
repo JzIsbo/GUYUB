@@ -84,9 +84,10 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          request_pty: true
           script_stop: true
           script: |
-            set -e
+            set -ex
 
             APP_DIR="${{ secrets.VPS_APP_DIR }}"
 
@@ -103,15 +104,15 @@ jobs:
             echo "Folder Owner     : $APP_OWNER"
             echo "SSH Login User   : $CURRENT_SSH_USER"
 
+            export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH"
+
             run_as_owner() {
               if [ "$CURRENT_SSH_USER" = "$APP_OWNER" ]; then
                 "$@"
               else
-                sudo -n -H -u "$APP_OWNER" "$@"
+                sudo -n -u "$APP_OWNER" -H env "PATH=$PATH" "$@"
               fi
             }
-
-            export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
 
             # Deteksi lokasi Laravel (apakah di folder backend/ atau root repo)
             if [ -f "$APP_DIR/backend/artisan" ]; then
@@ -127,14 +128,14 @@ jobs:
 
             # 1. Update kode Git
             echo "--> Configuring safe.directory..."
-            sudo git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
-            run_as_owner git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
+            sudo git config --system --add safe.directory "*" || true
+            sudo -u "$APP_OWNER" -H git config --global --add safe.directory "*" || true
 
             echo "--> Pulling latest changes from GitHub (main)..."
             run_as_owner git -C "$APP_DIR" config core.fileMode false
             run_as_owner git -C "$APP_DIR" fetch origin main
             run_as_owner git -C "$APP_DIR" checkout main
-            run_as_owner git -C "$APP_DIR" pull --ff-only origin main
+            run_as_owner git -C "$APP_DIR" reset --hard origin/main
 
             # 2. Update dependensi Composer (Production mode, no dev)
             echo "--> Installing Composer dependencies..."

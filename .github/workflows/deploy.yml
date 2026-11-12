@@ -85,82 +85,59 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           request_pty: true
-          script_stop: true
           script: |
-            cat << 'EOSCRIPT' > /tmp/deploy_guyub.sh
-            #!/usr/bin/env bash
-            set -ex
+            set -e
 
-            APP_DIR="$1"
+            APP_DIR="${{ secrets.VPS_APP_DIR }}"
+            export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH"
 
             echo "=== MEMULAI DEPLOYMENT ==="
             if [ ! -d "$APP_DIR" ]; then
-              echo "ERROR: Folder target VPS_APP_DIR tidak ditemukan: $APP_DIR"
+              echo "ERROR: Folder target tidak ditemukan: $APP_DIR"
               exit 1
             fi
 
             APP_OWNER=$(stat -c '%U' "$APP_DIR")
-            CURRENT_SSH_USER=$(whoami)
+            LARAVEL_DIR="$APP_DIR/backend"
+            if [ ! -f "$LARAVEL_DIR/artisan" ]; then
+              LARAVEL_DIR="$APP_DIR"
+            fi
 
             echo "Target Directory : $APP_DIR"
             echo "Folder Owner     : $APP_OWNER"
-            echo "SSH Login User   : $CURRENT_SSH_USER"
-
-            export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH"
-
-            run_as_owner() {
-              if [ "$CURRENT_SSH_USER" = "$APP_OWNER" ]; then
-                "$@"
-              else
-                sudo -n -u "$APP_OWNER" -H env "PATH=$PATH" "$@"
-              fi
-            }
-
-            # Deteksi lokasi Laravel (apakah di folder backend/ atau root repo)
-            if [ -f "$APP_DIR/backend/artisan" ]; then
-              LARAVEL_DIR="$APP_DIR/backend"
-            elif [ -f "$APP_DIR/artisan" ]; then
-              LARAVEL_DIR="$APP_DIR"
-            else
-              echo "ERROR: File artisan tidak ditemukan di $APP_DIR maupun $APP_DIR/backend"
-              exit 1
-            fi
-
             echo "Laravel Directory: $LARAVEL_DIR"
 
             # 1. Update kode Git
             echo "--> Configuring safe.directory..."
             sudo git config --system --add safe.directory "*" || true
-            sudo -u "$APP_OWNER" -H git config --global --add safe.directory "*" || true
+            sudo -n -u "$APP_OWNER" -H git config --global --add safe.directory "*" || true
 
             echo "--> Pulling latest changes from GitHub (main)..."
-            run_as_owner git -C "$APP_DIR" config core.fileMode false
-            run_as_owner git -C "$APP_DIR" fetch origin main
-            run_as_owner git -C "$APP_DIR" checkout main
-            run_as_owner git -C "$APP_DIR" reset --hard origin/main
+            sudo -n -u "$APP_OWNER" -H git -C "$APP_DIR" config core.fileMode false
+            sudo -n -u "$APP_OWNER" -H git -C "$APP_DIR" fetch origin main
+            sudo -n -u "$APP_OWNER" -H git -C "$APP_DIR" checkout main
+            sudo -n -u "$APP_OWNER" -H git -C "$APP_DIR" reset --hard origin/main
 
             # 2. Update dependensi Composer (Production mode, no dev)
             echo "--> Installing Composer dependencies..."
-            run_as_owner composer install --working-dir="$LARAVEL_DIR" --no-dev --optimize-autoloader --no-interaction
+            sudo -n -u "$APP_OWNER" -H composer install --working-dir="$LARAVEL_DIR" --no-dev --optimize-autoloader --no-interaction
 
             # 3. Jalankan migrasi database
             echo "--> Running database migrations..."
-            run_as_owner php "$LARAVEL_DIR/artisan" migrate --force
+            sudo -n -u "$APP_OWNER" -H php "$LARAVEL_DIR/artisan" migrate --force
 
             # 4. Install npm & compile Vite assets (jika ada package.json)
             if [ -f "$LARAVEL_DIR/package.json" ]; then
               echo "--> Building frontend assets with Vite..."
-              (cd "$LARAVEL_DIR" && run_as_owner npm install --no-audit --no-fund && run_as_owner npm run build)
+              cd "$LARAVEL_DIR"
+              sudo -n -u "$APP_OWNER" -H npm install --no-audit --no-fund
+              sudo -n -u "$APP_OWNER" -H npm run build
             fi
 
             # 5. Clear & cache config/views/routes untuk optimasi CloudPanel
             echo "--> Optimizing Laravel caches..."
-            run_as_owner php "$LARAVEL_DIR/artisan" optimize:clear
-            run_as_owner php "$LARAVEL_DIR/artisan" config:cache
-            run_as_owner php "$LARAVEL_DIR/artisan" view:cache
+            sudo -n -u "$APP_OWNER" -H php "$LARAVEL_DIR/artisan" optimize:clear
+            sudo -n -u "$APP_OWNER" -H php "$LARAVEL_DIR/artisan" config:cache
+            sudo -n -u "$APP_OWNER" -H php "$LARAVEL_DIR/artisan" view:cache
 
             echo "=== DEPLOYMENT SELESAI DENGAN SUKSES ==="
-            EOSCRIPT
-            chmod +x /tmp/deploy_guyub.sh
-            /tmp/deploy_guyub.sh "${{ secrets.VPS_APP_DIR }}"
-            rm -f /tmp/deploy_guyub.sh

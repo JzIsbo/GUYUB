@@ -60,7 +60,7 @@ jobs:
       - name: Install NPM Dependencies
         working-directory: ${{ steps.locate.outputs.dir }}
         run: |
-          npm ci
+          npm install
 
       - name: Build Frontend Assets
         working-directory: ${{ steps.locate.outputs.dir }}
@@ -143,7 +143,7 @@ jobs:
             # 4. Install npm & compile Vite assets (jika ada package.json)
             if [ -f "$LARAVEL_DIR/package.json" ]; then
               echo "--> Building frontend assets with Vite..."
-              (cd "$LARAVEL_DIR" && run_as_owner npm ci --no-audit --no-fund && run_as_owner npm run build)
+              (cd "$LARAVEL_DIR" && run_as_owner npm install --no-audit --no-fund && run_as_owner npm run build)
             fi
 
             # 5. Clear & cache config/views/routes untuk optimasi CloudPanel

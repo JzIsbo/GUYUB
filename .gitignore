@@ -7,3 +7,25 @@
 # OS files
 .DS_Store
 Thumbs.db
+
+# Dependencies & Build Outputs
+node_modules/
+dist/
+/frontend/node_modules/
+/frontend/dist/
+package-lock.json
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Temporary & Scratch scripts
+backend/scratch_*.php
+backend/check_*.php
+backend/alter_*.php
+backend/fix_*.php
+backend/seed_*.php
+backend/setup_*.php
+backend/test_*.php
+backend/generate_sample_image.php

@@ -1,0 +1,155 @@
+name: CI / CD Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps-main
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3, gd, pdo_mysql, bcmath
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Determine Project Directory
+        id: locate
+        run: |
+          if [ -f "backend/composer.json" ]; then
+            echo "dir=backend" >> "$GITHUB_OUTPUT"
+          else
+            echo "dir=." >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Environment File
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          cp .env.example .env
+
+      - name: Install Composer Dependencies
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Generate Application Key
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          php artisan key:generate
+
+      - name: Install NPM Dependencies
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          npm ci
+
+      - name: Build Frontend Assets
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          npm run build
+
+      - name: Run Backend Tests
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: |
+          php artisan test --compact
+
+  deploy:
+    name: Deploy to VPS
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -e
+
+            APP_DIR="${{ secrets.VPS_APP_DIR }}"
+
+            echo "=== MEMULAI DEPLOYMENT ==="
+            if [ ! -d "$APP_DIR" ]; then
+              echo "ERROR: Folder target VPS_APP_DIR tidak ditemukan: $APP_DIR"
+              exit 1
+            fi
+
+            APP_OWNER=$(stat -c '%U' "$APP_DIR")
+            CURRENT_SSH_USER=$(whoami)
+
+            echo "Target Directory : $APP_DIR"
+            echo "Folder Owner     : $APP_OWNER"
+            echo "SSH Login User   : $CURRENT_SSH_USER"
+
+            run_as_owner() {
+              if [ "$CURRENT_SSH_USER" = "$APP_OWNER" ]; then
+                "$@"
+              else
+                sudo -n -u "$APP_OWNER" "$@"
+              fi
+            }
+
+            # Deteksi lokasi Laravel (apakah di folder backend/ atau root repo)
+            if [ -f "$APP_DIR/backend/artisan" ]; then
+              LARAVEL_DIR="$APP_DIR/backend"
+            elif [ -f "$APP_DIR/artisan" ]; then
+              LARAVEL_DIR="$APP_DIR"
+            else
+              echo "ERROR: File artisan tidak ditemukan di $APP_DIR maupun $APP_DIR/backend"
+              exit 1
+            fi
+
+            echo "Laravel Directory: $LARAVEL_DIR"
+
+            # 1. Update kode Git
+            echo "--> Pulling latest changes from GitHub (main)..."
+            run_as_owner git -C "$APP_DIR" config core.fileMode false
+            run_as_owner git -C "$APP_DIR" fetch origin main
+            run_as_owner git -C "$APP_DIR" checkout main
+            run_as_owner git -C "$APP_DIR" pull --ff-only origin main
+
+            # 2. Update dependensi Composer (Production mode, no dev)
+            echo "--> Installing Composer dependencies..."
+            run_as_owner composer install --working-dir="$LARAVEL_DIR" --no-dev --optimize-autoloader --no-interaction
+
+            # 3. Jalankan migrasi database
+            echo "--> Running database migrations..."
+            run_as_owner php "$LARAVEL_DIR/artisan" migrate --force
+
+            # 4. Install npm & compile Vite assets (jika ada package.json)
+            if [ -f "$LARAVEL_DIR/package.json" ]; then
+              echo "--> Building frontend assets with Vite..."
+              (cd "$LARAVEL_DIR" && run_as_owner npm ci --no-audit --no-fund && run_as_owner npm run build)
+            fi
+
+            # 5. Clear & cache config/views/routes untuk optimasi CloudPanel
+            echo "--> Optimizing Laravel caches..."
+            run_as_owner php "$LARAVEL_DIR/artisan" optimize:clear
+            run_as_owner php "$LARAVEL_DIR/artisan" config:cache
+            run_as_owner php "$LARAVEL_DIR/artisan" view:cache
+
+            echo "=== DEPLOYMENT SELESAI DENGAN SUKSES ==="

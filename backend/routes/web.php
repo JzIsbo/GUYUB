@@ -29,6 +29,7 @@ use App\Http\Controllers\PublicHomeController;
 use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\PeraturanController;
 use App\Http\Controllers\KerjaBaktiController;
+use App\Http\Controllers\ProfileController;
 
 // ========================================================
 // 1. RUTE PUBLIK (Tidak Butuh Login)
@@ -81,10 +82,17 @@ Route::post('/login', function (Request $request) {
 // Callback Payment Gateway (Bisa dipanggil dari luar tanpa auth jika callback Midtrans)
 Route::post('/payment/callback', [PaymentController::class, 'paymentCallback'])->name('payment.callback');
 
+require __DIR__.'/auth.php';
+
 // ========================================================
 // 2. RUTE TERPROTEKSI (Wajib Login)
 // ========================================================
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', [AdminController::class, 'loadPage'])->defaults('page', 'dashboard')->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // --- A. DATA WARGA ---
     Route::get('/data-warga', [AdminController::class, 'loadPage'])->defaults('page', 'data-warga')->name('admin.data-warga');

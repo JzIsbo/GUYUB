@@ -535,51 +535,51 @@
                 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'surat-online', 'pengumuman',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'RW'            => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Sekretaris RW' => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt',
-                'kegiatan', 'aspirasi', 'approval-warga', 'peraturan-sk', 'kerja-bakti'
+                'kegiatan', 'aspirasi', 'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Bendahara RW'  => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan',
-                'koperasi'
+                'koperasi', 'rfid-ktp'
             ],
             'RT'            => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Sekretaris RT' => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Bendahara RT'  => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'surat-online', 'pengumuman', 'data-keluarga', 'data-iuran',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Warga'         => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online',
                 'surat-online', 'pengumuman', 'data-keluarga', 'data-pengurus-rt', 'pengaturan', 'perangkat-sistem',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ]
         ];
 
@@ -615,6 +615,12 @@
             @if($can('dashboard'))
             <a href="javascript:void(0)" onclick="switchPage('dashboard', this)" class="menu-link {{ isset($page) && $page == 'dashboard' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Dashboard">
                 <i class="fa-solid fa-th-large w-6 text-lg"></i> <span class="ml-3 text-sm font-bold">Dashboard</span>
+            </a>
+            @endif
+
+            @if($can('rfid-ktp'))
+            <a href="javascript:void(0)" onclick="switchPage('rfid-ktp', this)" class="menu-link {{ isset($page) && $page == 'rfid-ktp' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Kartu KTP (RFID)">
+                <i class="fa-solid fa-id-card w-6 text-lg text-emerald-400"></i> <span class="ml-3 text-sm font-bold">Kartu KTP (RFID)</span>
             </a>
             @endif
 
@@ -1306,6 +1312,12 @@
                         <button onclick="switchPage('kerja-bakti'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-emerald-50 rounded-xl transition gap-1.5 min-w-0">
                             <i class="fa-solid fa-person-digging text-emerald-600 text-base"></i>
                             <span class="text-[9px] font-bold text-gray-700 truncate w-full">Kerja Bakti</span>
+                        </button>
+                        @endif
+                        @if($can('rfid-ktp'))
+                        <button onclick="switchPage('rfid-ktp'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-emerald-50 rounded-xl transition gap-1.5 min-w-0">
+                            <i class="fa-solid fa-id-card text-emerald-600 text-base"></i>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Kartu KTP</span>
                         </button>
                         @endif
                         @if($can('perangkat-sistem'))

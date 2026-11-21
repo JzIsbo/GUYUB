@@ -55,7 +55,7 @@ const char* WIFI_PASSWORD = "PASSWORD_WIFI_ANDA";
 const char* SERVER_URL    = "https://guyub.unique-monsters.my.id/api/rfid/gate-check";
 
 // API key — HARUS sama dengan RFID_DEVICE_KEY di file .env server
-const char* DEVICE_KEY    = "GANTI_DENGAN_RFID_DEVICE_KEY_DI_ENV";
+const char* DEVICE_KEY    = "GuyubRfid2026_SecretKey_ChangeMe";
 
 // ID unik perangkat ini (untuk log di server)
 const char* DEVICE_ID     = "gate-01";

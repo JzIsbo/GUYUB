@@ -15,21 +15,49 @@ class UserSeeder extends Seeder
                 'name' => 'Super Admin',
                 'email' => 'superadmin@gmail.com',
                 'password' => Hash::make('password'),
-                'role' => 'Super Admin', // Harus persis dengan Enum
-                'status' => 'Aktif',     // Harus persis dengan Enum
+                'role' => 'Super Admin',
+                'status' => 'Aktif',
             ],
             [
-                'name' => 'RT',
+                'name' => 'Ketua RW',
+                'email' => 'rw@gmail.com',
+                'password' => Hash::make('password'),
+                'role' => 'RW',
+                'status' => 'Aktif',
+            ],
+            [
+                'name' => 'Sekretaris RW',
+                'email' => 'sekretarisrw@gmail.com',
+                'password' => Hash::make('password'),
+                'role' => 'Sekretaris RW',
+                'status' => 'Aktif',
+            ],
+            [
+                'name' => 'Bendahara RW',
+                'email' => 'bendahararw@gmail.com',
+                'password' => Hash::make('password'),
+                'role' => 'Bendahara RW',
+                'status' => 'Aktif',
+            ],
+            [
+                'name' => 'Ketua RT',
                 'email' => 'rt@gmail.com',
                 'password' => Hash::make('password'),
                 'role' => 'RT',
                 'status' => 'Aktif',
             ],
             [
-                'name' => 'Bendahara',
+                'name' => 'Sekretaris RT',
+                'email' => 'sekretaris@gmail.com',
+                'password' => Hash::make('password'),
+                'role' => 'Sekretaris RT',
+                'status' => 'Aktif',
+            ],
+            [
+                'name' => 'Bendahara RT',
                 'email' => 'bendahara@gmail.com',
                 'password' => Hash::make('password'),
-                'role' => 'Bendahara',
+                'role' => 'Bendahara RT',
                 'status' => 'Aktif',
             ],
             [
@@ -42,7 +70,10 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            User::create($user);
+            User::updateOrCreate(
+                ['email' => $user['email']],
+                $user
+            );
         }
     }
 }

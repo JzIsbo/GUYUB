@@ -13,24 +13,6 @@ use Illuminate\Support\Str;
 class RfidController extends Controller
 {
     // =========================================================================
-    // HELPER: Log aktivitas ke tabel activity_logs (sama seperti controller lain)
-    // =========================================================================
-    private static function logActivity(string $action, string $description): void
-    {
-        try {
-            DB::table('activity_logs')->insert([
-                'user_id'     => Auth::id(),
-                'action'      => $action,
-                'description' => $description,
-                'created_at'  => now(),
-                'updated_at'  => now(),
-            ]);
-        } catch (\Exception $e) {
-            // Jangan sampai error log membatalkan operasi utama
-        }
-    }
-
-    // =========================================================================
     // A. startRegistration — Web (auth)
     //    User klik "Daftarkan KTP" → server buat sesi → polling dimulai
     // =========================================================================

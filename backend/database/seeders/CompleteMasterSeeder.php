@@ -655,7 +655,7 @@ class CompleteMasterSeeder extends Seeder
                 'user_id'           => $userId,
                 'nama_warga'        => 'Steve Marvin Politon',
                 'item_id'           => $kopItem ? $kopItem->id : 1,
-                'nama_produk'       => $kopItem ? $kopItem->nama_barang : 'Beras Premium Ramos 5 Kg',
+                'nama_produk'       => $kopItem ? ($kopItem->nama_produk ?? 'Beras Premium Ramos 5 Kg') : 'Beras Premium Ramos 5 Kg',
                 'jumlah'            => 2,
                 'total_harga'       => 150000,
                 'metode_pembayaran' => 'QRIS Kas RT',

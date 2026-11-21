@@ -54,9 +54,45 @@ Route::post('/login', function (Request $request) {
         'password' => ['required'],
     ]);
 
-    if (Auth::attempt($credentials)) {
+    $user = \App\Models\User::where('email', $request->email)->first();
+
+    if ($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+        // Cek status approval akun warga
+        if ($user->status === 'Pending') {
+            $msg = 'Akun Anda sedang menunggu persetujuan (approval) dari Ketua RT. Anda baru bisa login setelah pengurus RT menyetujui pendaftaran Anda.';
+            if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'status'   => 'pending',
+                    'message'  => $msg
+                ], 403);
+            }
+            return back()->with('warning_message', $msg)->withErrors(['email' => $msg])->onlyInput('email');
+        }
+
+        if ($user->status === 'Ditolak') {
+            $msg = 'Pendaftaran akun Anda ditolak oleh pengurus RT. Silakan hubungi pengurus RT setempat untuk informasi lebih lanjut.';
+            if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'status'   => 'rejected',
+                    'message'  => $msg
+                ], 403);
+            }
+            return back()->withErrors(['email' => $msg])->onlyInput('email');
+        }
+
+        if ($user->status !== 'Aktif') {
+            $msg = 'Akun Anda berstatus nonaktif. Silakan hubungi pengurus RT untuk mengaktifkan kembali akun Anda.';
+            if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'status'   => 'inactive',
+                    'message'  => $msg
+                ], 403);
+            }
+            return back()->withErrors(['email' => $msg])->onlyInput('email');
+        }
+
+        Auth::login($user);
         $request->session()->regenerate();
-        // Hanya kembalikan JSON jika memang AJAX request (dari frontend SPA login.html)
         if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([
                 'status'   => 'success',

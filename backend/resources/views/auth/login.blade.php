@@ -443,8 +443,21 @@
                     </div>
                 @endif
 
+                {{-- WARNING / PENDING APPROVAL MESSAGE --}}
+                @if (session('warning_message'))
+                    <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-900/40 px-3.5 py-3 text-xs font-medium text-amber-800 dark:text-amber-300 shadow-sm animate-pulse">
+                        <div class="flex gap-2.5 items-start">
+                            <i class="fa-solid fa-hourglass-half mt-0.5 text-amber-600 dark:text-amber-400 text-sm"></i>
+                            <div>
+                                <span class="font-bold block text-[13px] text-amber-900 dark:text-amber-200 mb-0.5">Menunggu Persetujuan RT</span>
+                                {{ session('warning_message') }}
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- ERROR MESSAGE --}}
-                @if ($errors->any())
+                @if ($errors->any() && !session('warning_message'))
                     <div class="mt-4 rounded-xl border border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900/30 px-3.5 py-2.5 text-xs font-medium text-red-600 dark:text-red-400">
                         <div class="flex gap-2.5">
                             <i class="fa-solid fa-circle-exclamation mt-0.5"></i>

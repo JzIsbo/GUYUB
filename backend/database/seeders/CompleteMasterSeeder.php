@@ -897,6 +897,56 @@ class CompleteMasterSeeder extends Seeder
             ]);
         }
 
+        // =====================================================================
+        // 17. SINKRONISASI AKUN PENGGUNA (GMAIL & PASSWORD 'password') UNTUK SEMUA WARGA
+        // =====================================================================
+        $defaultHashedPassword = Hash::make('password');
+        DB::table('users')->update([
+            'password'   => $defaultHashedPassword,
+            'status'     => 'Aktif',
+            'updated_at' => $now,
+        ]);
+
+        $allWargasList = DB::table('wargas')->get();
+        foreach ($allWargasList as $w) {
+            $userExists = DB::table('users')->where('name', $w->nama_lengkap)->first();
+            if (!$userExists) {
+                $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $w->nama_lengkap));
+                if (empty($cleanName)) {
+                    $cleanName = 'warga' . $w->id;
+                }
+                $email = $cleanName . '@gmail.com';
+                if (DB::table('users')->where('email', $email)->exists()) {
+                    $email = $cleanName . $w->id . '@gmail.com';
+                }
+                if (DB::table('users')->where('email', $email)->exists()) {
+                    $email = $cleanName . rand(100, 999) . '@gmail.com';
+                }
+
+                $officer = DB::table('officers')->where('warga_id', $w->id)->first();
+                $role = 'Warga';
+                if ($officer) {
+                    $jabatan = strtolower($officer->jabatan ?? '');
+                    if (str_contains($jabatan, 'ketua rw')) $role = 'RW';
+                    elseif (str_contains($jabatan, 'sekretaris rw')) $role = 'Sekretaris RW';
+                    elseif (str_contains($jabatan, 'bendahara rw')) $role = 'Bendahara RW';
+                    elseif (str_contains($jabatan, 'ketua rt')) $role = 'RT';
+                    elseif (str_contains($jabatan, 'sekretaris rt') || str_contains($jabatan, 'sekretaris')) $role = 'Sekretaris RT';
+                    elseif (str_contains($jabatan, 'bendahara rt') || str_contains($jabatan, 'bendahara')) $role = 'Bendahara RT';
+                }
+
+                DB::table('users')->insert([
+                    'name'       => $w->nama_lengkap,
+                    'email'      => $email,
+                    'password'   => $defaultHashedPassword,
+                    'role'       => $role,
+                    'status'     => 'Aktif',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+        }
+
         echo "\n🎉 SEEDING MASTER DATA SELESAI DENGAN SUKSES!\n";
     }
 }

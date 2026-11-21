@@ -205,11 +205,16 @@ class AdminController extends Controller
         }
 
         $family_members = collect();
-        if ($userWarga && $userWarga->nomor_kk) {
-            $family_members = DB::table('wargas')
-                ->where('nomor_kk', $userWarga->nomor_kk)
-                ->orderByRaw("FIELD(status_keluarga, 'Kepala Keluarga', 'Istri', 'Anak', 'Lainnya') ASC")
-                ->get();
+        if ($userWarga) {
+            if (!empty($userWarga->nomor_kk)) {
+                $family_members = DB::table('wargas')
+                    ->where('nomor_kk', $userWarga->nomor_kk)
+                    ->orderByRaw("FIELD(status_keluarga, 'Kepala Keluarga', 'Istri', 'Anak', 'Lainnya') ASC")
+                    ->get();
+            }
+            if ($family_members->isEmpty()) {
+                $family_members = collect([$userWarga]);
+            }
         }
 
         $allWargas = DB::table('wargas')->orderBy('nama_lengkap', 'asc')->get();

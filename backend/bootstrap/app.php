@@ -12,10 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
 
    ->withMiddleware(function (Middleware $middleware) {
-    $middleware->alias([
-        'role'        => \App\Http\Middleware\CheckRole::class,
-        'rfid.device' => \App\Http\Middleware\RfidDeviceMiddleware::class,
-    ]);
+        $middleware->validateCsrfTokens(except: [
+            'api/rfid/*',
+        ]);
+
+        $middleware->alias([
+            'role'        => \App\Http\Middleware\CheckRole::class,
+            'rfid.device' => \App\Http\Middleware\RfidDeviceMiddleware::class,
+        ]);
     })
 
     ->withExceptions(function (Exceptions $exceptions): void {

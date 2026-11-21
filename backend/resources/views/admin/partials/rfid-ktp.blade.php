@@ -288,6 +288,12 @@
             }
         } catch (e) {
             console.warn('Error checking device status:', e);
+            if (dot) dot.className = 'w-3.5 h-3.5 rounded-full bg-red-500 animate-pulse';
+            if (text) {
+                text.className = 'text-red-500 font-bold';
+                text.textContent = 'OFFLINE (Gagal Kontak)';
+            }
+            if (desc) desc.textContent = 'Tidak dapat menghubungi server status.';
         }
     };
 
@@ -575,8 +581,9 @@
         loadPortalLogs();
     }
 
-    // Auto cek status ESP32 saat halaman terbuka & polling tiap 5 detik
-    checkEsp32DeviceStatus();
-    setInterval(checkEsp32DeviceStatus, 5000);
+    // Auto cek status ESP32 saat halaman terbuka & polling tiap 3 detik
+    setTimeout(checkEsp32DeviceStatus, 100);
+    setTimeout(checkEsp32DeviceStatus, 1000);
+    setInterval(checkEsp32DeviceStatus, 3000);
 })();
 </script>

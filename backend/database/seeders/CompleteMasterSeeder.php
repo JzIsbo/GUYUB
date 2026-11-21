@@ -447,9 +447,9 @@ class CompleteMasterSeeder extends Seeder
             $namaWarga = $w ? $w->nama_lengkap : 'Steve Marvin Politon';
 
             $bankSampah = [
-                ['nama_warga' => $namaWarga, 'jenis_sampah' => 'Kardus & Kertas Bekas', 'berat_kg' => 15.5, 'harga_per_kg' => 2000, 'total_rupiah' => 31000, 'tanggal' => '2026-11-10', 'created_at' => $now, 'updated_at' => $now],
-                ['nama_warga' => 'Hj. Siti Aminah', 'jenis_sampah' => 'Botol Plastik Bersih (PET)', 'berat_kg' => 8.0, 'harga_per_kg' => 4000, 'total_rupiah' => 32000, 'tanggal' => '2026-11-14', 'created_at' => $now, 'updated_at' => $now],
-                ['nama_warga' => 'Bambang Soekarno', 'jenis_sampah' => 'Minyak Jelantah', 'berat_kg' => 6.0, 'harga_per_kg' => 6000, 'total_rupiah' => 36000, 'tanggal' => '2026-11-18', 'created_at' => $now, 'updated_at' => $now],
+                ['nama_warga' => $namaWarga, 'jenis_sampah' => 'Kardus & Kertas Bekas', 'berat_kg' => 15.5, 'total_rupiah' => 31000, 'tanggal' => '2026-11-10', 'created_at' => $now, 'updated_at' => $now],
+                ['nama_warga' => 'Hj. Siti Aminah', 'jenis_sampah' => 'Botol Plastik Bersih (PET)', 'berat_kg' => 8.0, 'total_rupiah' => 32000, 'tanggal' => '2026-11-14', 'created_at' => $now, 'updated_at' => $now],
+                ['nama_warga' => 'Bambang Soekarno', 'jenis_sampah' => 'Minyak Jelantah', 'berat_kg' => 6.0, 'total_rupiah' => 36000, 'tanggal' => '2026-11-18', 'created_at' => $now, 'updated_at' => $now],
             ];
 
             foreach ($bankSampah as $bs) {
@@ -591,6 +591,144 @@ class CompleteMasterSeeder extends Seeder
             foreach ($aspirasis as $asp) {
                 DB::table('aspirasis')->insert($asp);
             }
+        }
+
+        // ========================================================
+        // 15. SEED PEMINJAMAN ASET (ASSET LOANS)
+        // ========================================================
+        echo "1️⃣5️⃣ Mengisi Peminjaman Aset Fasum...\n";
+        if (DB::table('asset_loans')->count() == 0) {
+            $userSteve = DB::table('users')->where('email', 'steve@gmail.com')->first();
+            $userId = $userSteve ? $userSteve->id : null;
+            $assetLoans = [
+                [
+                    'user_id'                     => $userId,
+                    'nama_warga'                  => 'Steve Marvin Politon',
+                    'nama_aset'                   => 'Tenda Pesta Lipat Ukuran 3x6 Meter',
+                    'jumlah_unit'                 => 1,
+                    'tanggal_pinjam'              => '2026-11-20',
+                    'tanggal_kembali'             => '2026-11-23',
+                    'keperluan'                   => 'Acara syukuran keluarga di rumah',
+                    'status'                      => 'Disetujui',
+                    'catatan_admin'               => 'Tenda diambil di gudang RT, jaga kebersihan terpal.',
+                    'tanggal_dikembalikan_aktual' => null,
+                    'kondisi_pengembalian'        => null,
+                    'catatan_pengembalian'        => null,
+                    'denda_kerusakan'             => 0,
+                    'created_at'                  => $now,
+                    'updated_at'                  => $now,
+                ],
+                [
+                    'user_id'                     => null,
+                    'nama_warga'                  => 'Hj. Siti Aminah',
+                    'nama_aset'                   => 'Kursi Lipat Chitose Besi (Set 50 Pcs)',
+                    'jumlah_unit'                 => 20,
+                    'tanggal_pinjam'              => '2026-11-25',
+                    'tanggal_kembali'             => '2026-11-26',
+                    'keperluan'                   => 'Arisan bulanan PKK RT 05',
+                    'status'                      => 'Menunggu Approval',
+                    'catatan_admin'               => null,
+                    'tanggal_dikembalikan_aktual' => null,
+                    'kondisi_pengembalian'        => null,
+                    'catatan_pengembalian'        => null,
+                    'denda_kerusakan'             => 0,
+                    'created_at'                  => $now,
+                    'updated_at'                  => $now,
+                ]
+            ];
+
+            foreach ($assetLoans as $al) {
+                DB::table('asset_loans')->insert($al);
+            }
+        }
+
+        // ========================================================
+        // 16. SEED KOPERASI (PESANAN, SIMPANAN, PINJAMAN, MODAL)
+        // ========================================================
+        echo "1️⃣6️⃣ Mengisi Data Koperasi Warga...\n";
+        if (DB::table('koperasi_orders')->count() == 0) {
+            $userSteve = DB::table('users')->where('email', 'steve@gmail.com')->first();
+            $userId = $userSteve ? $userSteve->id : null;
+            $kopItem = DB::table('koperasi_items')->first();
+
+            DB::table('koperasi_orders')->insert([
+                'user_id'           => $userId,
+                'nama_warga'        => 'Steve Marvin Politon',
+                'item_id'           => $kopItem ? $kopItem->id : 1,
+                'nama_produk'       => $kopItem ? $kopItem->nama_barang : 'Beras Premium Ramos 5 Kg',
+                'jumlah'            => 2,
+                'total_harga'       => 150000,
+                'metode_pembayaran' => 'QRIS Kas RT',
+                'status'            => 'Selesai',
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ]);
+        }
+
+        if (DB::table('koperasi_simpanans')->count() == 0) {
+            $userSteve = DB::table('users')->where('email', 'steve@gmail.com')->first();
+            $userId = $userSteve ? $userSteve->id : null;
+
+            DB::table('koperasi_simpanans')->insert([
+                [
+                    'user_id'           => $userId,
+                    'nama_warga'        => 'Steve Marvin Politon',
+                    'jenis_simpanan'    => 'Simpanan Pokok',
+                    'jumlah'            => 100000,
+                    'metode_pembayaran' => 'Transfer Kas RT',
+                    'keterangan'        => 'Simpanan pokok pendaftaran anggota koperasi',
+                    'status'            => 'Terverifikasi',
+                    'created_at'        => $now,
+                    'updated_at'        => $now,
+                ],
+                [
+                    'user_id'           => $userId,
+                    'nama_warga'        => 'Steve Marvin Politon',
+                    'jenis_simpanan'    => 'Simpanan Wajib',
+                    'jumlah'            => 25000,
+                    'metode_pembayaran' => 'Tunai',
+                    'keterangan'        => 'Simpanan wajib bulan November 2026',
+                    'status'            => 'Terverifikasi',
+                    'created_at'        => $now,
+                    'updated_at'        => $now,
+                ]
+            ]);
+        }
+
+        if (DB::table('koperasi_pinjamans')->count() == 0) {
+            $userSteve = DB::table('users')->where('email', 'steve@gmail.com')->first();
+            $userId = $userSteve ? $userSteve->id : null;
+
+            DB::table('koperasi_pinjamans')->insert([
+                'user_id'            => $userId,
+                'nama_warga'         => 'Steve Marvin Politon',
+                'jumlah_pinjaman'    => 1500000,
+                'tenor_bulan'        => 6,
+                'angsuran_per_bulan' => 250000,
+                'keperluan'          => 'Tambahan modal etalase warung sembako',
+                'status'             => 'Disetujui',
+                'catatan_pengurus'   => 'Pencairan dana tanggal 1 Desember 2026 via transfer rekening.',
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ]);
+        }
+
+        if (DB::table('koperasi_permodalans')->count() == 0) {
+            $userSteve = DB::table('users')->where('email', 'steve@gmail.com')->first();
+            $userId = $userSteve ? $userSteve->id : null;
+
+            DB::table('koperasi_permodalans')->insert([
+                'user_id'           => $userId,
+                'nama_warga'        => 'Steve Marvin Politon',
+                'nama_usaha'        => 'Warung Kopi & Snack Steve',
+                'kategori_umkm'     => 'Kuliner',
+                'nominal_pengajuan' => 2000000,
+                'deskripsi_usaha'   => 'Pengembangan usaha warung kopi dan gorengan di teras rumah.',
+                'status'            => 'Disetujui',
+                'catatan_pengurus'  => 'Disetujui dalam rapat pengurus RT/Koperasi.',
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ]);
         }
 
         echo "\n🎉 SEEDING MASTER DATA SELESAI DENGAN SUKSES!\n";

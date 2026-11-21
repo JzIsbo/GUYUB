@@ -331,6 +331,74 @@ class CompleteMasterSeeder extends Seeder
         }
 
         // ========================================================
+        // KARTU KELUARGA LENGKAP UNTUK SEMUA ROLE (KECUALI SUPER ADMIN)
+        // ========================================================
+        // 1. Keluarga Ketua RW
+        $kkKetuaRW = '3275020011220001';
+        if (!DB::table('wargas')->where('nama_lengkap', 'Ketua RW')->exists()) {
+            DB::table('wargas')->insert([
+                ['nomor_kk' => $kkKetuaRW, 'nik' => '3275020101700001', 'nama_lengkap' => 'Ketua RW', 'jenis_kelamin' => 'Laki-laki', 'umur' => 55, 'agama' => 'Islam', 'no_telepon' => '081122334401', 'blok_rumah' => 'Blok D1 No. 01', 'status_keluarga' => 'Kepala Keluarga', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkKetuaRW, 'nik' => '3275020202740002', 'nama_lengkap' => 'Hj. Endang Suryaningsih', 'jenis_kelamin' => 'Perempuan', 'umur' => 51, 'agama' => 'Islam', 'no_telepon' => '081122334402', 'blok_rumah' => 'Blok D1 No. 01', 'status_keluarga' => 'Istri', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkKetuaRW, 'nik' => '3275020303990003', 'nama_lengkap' => 'Aditya Purnomo, ST', 'jenis_kelamin' => 'Laki-laki', 'umur' => 26, 'agama' => 'Islam', 'no_telepon' => '081122334403', 'blok_rumah' => 'Blok D1 No. 01', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkKetuaRW, 'nik' => '3275020404060004', 'nama_lengkap' => 'Annisa Purnomo', 'jenis_kelamin' => 'Perempuan', 'umur' => 19, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok D1 No. 01', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+            ]);
+        }
+
+        // 2. Keluarga Sekretaris RW
+        $kkSekretarisRW = '3275020011220002';
+        if (!DB::table('wargas')->where('nama_lengkap', 'Sekretaris RW')->exists()) {
+            DB::table('wargas')->insert([
+                ['nomor_kk' => $kkSekretarisRW, 'nik' => '3275020101770001', 'nama_lengkap' => 'Sekretaris RW', 'jenis_kelamin' => 'Laki-laki', 'umur' => 48, 'agama' => 'Islam', 'no_telepon' => '081122334411', 'blok_rumah' => 'Blok D2 No. 05', 'status_keluarga' => 'Kepala Keluarga', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkSekretarisRW, 'nik' => '3275020202800002', 'nama_lengkap' => 'Tri Wahyuni, S.Pd', 'jenis_kelamin' => 'Perempuan', 'umur' => 45, 'agama' => 'Islam', 'no_telepon' => '081122334412', 'blok_rumah' => 'Blok D2 No. 05', 'status_keluarga' => 'Istri', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkSekretarisRW, 'nik' => '3275020303070003', 'nama_lengkap' => 'Bagus Dwi Susanto', 'jenis_kelamin' => 'Laki-laki', 'umur' => 18, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok D2 No. 05', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkSekretarisRW, 'nik' => '3275020404130004', 'nama_lengkap' => 'Citra Lestari Susanto', 'jenis_kelamin' => 'Perempuan', 'umur' => 12, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok D2 No. 05', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+            ]);
+        }
+
+        // 3. Keluarga Bendahara RW
+        $kkBendaharaRW = '3275020011220003';
+        if (!DB::table('wargas')->where('nama_lengkap', 'Bendahara RW')->exists()) {
+            DB::table('wargas')->insert([
+                ['nomor_kk' => $kkBendaharaRW, 'nik' => '3275020101750001', 'nama_lengkap' => 'Bendahara RW', 'jenis_kelamin' => 'Laki-laki', 'umur' => 50, 'agama' => 'Islam', 'no_telepon' => '081122334421', 'blok_rumah' => 'Blok D1 No. 08', 'status_keluarga' => 'Kepala Keluarga', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkBendaharaRW, 'nik' => '3275020202780002', 'nama_lengkap' => 'Ratna Kusuma Dewi, SE', 'jenis_kelamin' => 'Perempuan', 'umur' => 47, 'agama' => 'Islam', 'no_telepon' => '081122334422', 'blok_rumah' => 'Blok D1 No. 08', 'status_keluarga' => 'Istri', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkBendaharaRW, 'nik' => '3275020303040003', 'nama_lengkap' => 'Gilang Ramadhan Wibisono', 'jenis_kelamin' => 'Laki-laki', 'umur' => 21, 'agama' => 'Islam', 'no_telepon' => '081122334423', 'blok_rumah' => 'Blok D1 No. 08', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+            ]);
+        }
+
+        // 4. Keluarga Ketua RT
+        $kkKetuaRT = '3275050011220001';
+        if (!DB::table('wargas')->where('nama_lengkap', 'Ketua RT')->exists()) {
+            DB::table('wargas')->insert([
+                ['nomor_kk' => $kkKetuaRT, 'nik' => '3275050101780001', 'nama_lengkap' => 'Ketua RT', 'jenis_kelamin' => 'Laki-laki', 'umur' => 47, 'agama' => 'Islam', 'no_telepon' => '081122334431', 'blok_rumah' => 'Blok A2 No. 10', 'status_keluarga' => 'Kepala Keluarga', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkKetuaRT, 'nik' => '3275050202820002', 'nama_lengkap' => 'Indah Permatasari', 'jenis_kelamin' => 'Perempuan', 'umur' => 43, 'agama' => 'Islam', 'no_telepon' => '081122334432', 'blok_rumah' => 'Blok A2 No. 10', 'status_keluarga' => 'Istri', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkKetuaRT, 'nik' => '3275050303080003', 'nama_lengkap' => 'Rifki Pratama Prasetyo', 'jenis_kelamin' => 'Laki-laki', 'umur' => 17, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok A2 No. 10', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkKetuaRT, 'nik' => '3275050404140004', 'nama_lengkap' => 'Naura Putri Prasetyo', 'jenis_kelamin' => 'Perempuan', 'umur' => 11, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok A2 No. 10', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+            ]);
+        }
+
+        // 5. Keluarga Sekretaris RT
+        $kkSekretarisRT = '3275050011220002';
+        if (!DB::table('wargas')->where('nama_lengkap', 'Sekretaris RT')->exists()) {
+            DB::table('wargas')->insert([
+                ['nomor_kk' => $kkSekretarisRT, 'nik' => '3275050101850001', 'nama_lengkap' => 'Sekretaris RT', 'jenis_kelamin' => 'Laki-laki', 'umur' => 40, 'agama' => 'Islam', 'no_telepon' => '081122334441', 'blok_rumah' => 'Blok B1 No. 15', 'status_keluarga' => 'Kepala Keluarga', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkSekretarisRT, 'nik' => '3275050202880002', 'nama_lengkap' => 'Maya Sari Wijaya', 'jenis_kelamin' => 'Perempuan', 'umur' => 37, 'agama' => 'Islam', 'no_telepon' => '081122334442', 'blok_rumah' => 'Blok B1 No. 15', 'status_keluarga' => 'Istri', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkSekretarisRT, 'nik' => '3275050303120003', 'nama_lengkap' => 'Fajar Wijaya', 'jenis_kelamin' => 'Laki-laki', 'umur' => 13, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok B1 No. 15', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkSekretarisRT, 'nik' => '3275050404180004', 'nama_lengkap' => 'Kirana Wijaya', 'jenis_kelamin' => 'Perempuan', 'umur' => 7, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok B1 No. 15', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+            ]);
+        }
+
+        // 6. Keluarga Bendahara RT
+        $kkBendaharaRT = '3275050011220003';
+        if (!DB::table('wargas')->where('nama_lengkap', 'Bendahara RT')->exists()) {
+            DB::table('wargas')->insert([
+                ['nomor_kk' => $kkBendaharaRT, 'nik' => '3275050101810001', 'nama_lengkap' => 'Bendahara RT', 'jenis_kelamin' => 'Laki-laki', 'umur' => 44, 'agama' => 'Islam', 'no_telepon' => '081122334451', 'blok_rumah' => 'Blok B2 No. 04', 'status_keluarga' => 'Kepala Keluarga', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkBendaharaRT, 'nik' => '3275050202840002', 'nama_lengkap' => 'Dewi Sartika Fauzi', 'jenis_kelamin' => 'Perempuan', 'umur' => 41, 'agama' => 'Islam', 'no_telepon' => '081122334452', 'blok_rumah' => 'Blok B2 No. 04', 'status_keluarga' => 'Istri', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkBendaharaRT, 'nik' => '3275050303090003', 'nama_lengkap' => 'Farhan Fauzi', 'jenis_kelamin' => 'Laki-laki', 'umur' => 16, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok B2 No. 04', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+                ['nomor_kk' => $kkBendaharaRT, 'nik' => '3275050404150004', 'nama_lengkap' => 'Zaskia Fauzi', 'jenis_kelamin' => 'Perempuan', 'umur' => 10, 'agama' => 'Islam', 'no_telepon' => null, 'blok_rumah' => 'Blok B2 No. 04', 'status_keluarga' => 'Anak', 'status_domisili' => 'Tetap', 'created_at' => $now, 'updated_at' => $now],
+            ]);
+        }
+
+        // ========================================================
         // 3. SEED TRANSAKSI KAS RT (PEMASUKAN & PENGELUARAN REALISTIS)
         // ========================================================
         echo "3️⃣  Mengisi Transaksi Kas RT (Pemasukan & Pengeluaran)...\n";

@@ -178,16 +178,27 @@ class AdminController extends Controller
 
         $user = Auth::user();
         $userWarga = null;
-        if ($user) {
+        if ($user && $user->role !== 'Super Admin') {
             $userWarga = DB::table('wargas')->where('nama_lengkap', $user->name ?? '')->first();
             if (!$userWarga) {
-                if ($user->email === 'warga@gmail.com' || strtolower($user->name) === 'warga') {
-                    $userWarga = DB::table('wargas')->where('nama_lengkap', 'Warga')->orWhere('nama_lengkap', 'like', 'Warga%')->first();
-                } elseif ($user->email === 'steve@gmail.com') {
-                    $userWarga = DB::table('wargas')->where('nama_lengkap', 'like', '%Steve%')->first();
+                $emailMap = [
+                    'rw@gmail.com'            => 'Ketua RW',
+                    'sekretarisrw@gmail.com'  => 'Sekretaris RW',
+                    'bendahararw@gmail.com'   => 'Bendahara RW',
+                    'rt@gmail.com'            => 'Ketua RT',
+                    'sekretaris@gmail.com'    => 'Sekretaris RT',
+                    'bendahara@gmail.com'     => 'Bendahara RT',
+                    'warga@gmail.com'         => 'Warga',
+                    'steve@gmail.com'         => 'Steve Marvin Politon',
+                ];
+                if (isset($emailMap[$user->email])) {
+                    $userWarga = DB::table('wargas')->where('nama_lengkap', $emailMap[$user->email])->first();
                 }
             }
-            if (!$userWarga && in_array($user->role, ['Warga', 'Bendahara RT', 'RT', 'Sekretaris RT'])) {
+            if (!$userWarga && !empty($user->name)) {
+                $userWarga = DB::table('wargas')->where('nama_lengkap', 'like', '%' . trim($user->name) . '%')->first();
+            }
+            if (!$userWarga && in_array($user->role, ['Warga', 'Bendahara RT', 'RT', 'Sekretaris RT', 'RW', 'Sekretaris RW', 'Bendahara RW'])) {
                 $userWarga = DB::table('wargas')->where('status_keluarga', 'Kepala Keluarga')->first()
                           ?? DB::table('wargas')->first();
             }

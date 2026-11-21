@@ -137,6 +137,28 @@ class UserController extends Controller
         abort_if(!in_array(auth()->user()->role, ['Super Admin', 'RT']), 403, 'Akses Ditolak');
         
         try {
+            $user = User::findOrFail($request->id);
+
+            // Mode Quick Update (hanya ubah status persetujuan tanpa form edit lengkap)
+            if ($request->has('status') && !$request->has('nomor_kk')) {
+                $request->validate([
+                    'id' => 'required|integer',
+                    'status' => 'required|in:Aktif,Pending,Ditolak',
+                ]);
+
+                $user->update([
+                    'status' => $request->status,
+                ]);
+
+                self::logActivity('STATUS REGISTRASI', "Mengubah status pendaftaran warga: {$user->name} -> {$request->status}");
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => "Pendaftaran warga '{$user->name}' berhasil diubah menjadi {$request->status}!"
+                ]);
+            }
+
+            // Mode Form Edit Lengkap
             $request->validate([
                 'id' => 'required|integer', // user_id
                 'name' => 'required|string|max:255',
@@ -149,7 +171,6 @@ class UserController extends Controller
                 'status' => 'required|in:Aktif,Pending,Ditolak',
             ]);
 
-            $user = User::findOrFail($request->id);
             $oldName = $user->name;
 
             // Update User

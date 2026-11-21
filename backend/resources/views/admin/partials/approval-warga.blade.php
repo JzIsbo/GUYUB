@@ -199,6 +199,7 @@
         
         const fd = new FormData();
         fd.append('id', id);
+        fd.append('name', name);
         fd.append('status', status);
         fd.append('_token', window.csrfToken);
         
@@ -209,9 +210,13 @@
         })
         .then(r => r.json())
         .then(d => { 
-            alert(d.message || 'Status pendaftaran diperbarui'); 
-            if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('approval-warga'); }
-            switchPage('approval-warga'); 
+            if (d.status === 'success') {
+                alert(d.message || 'Status pendaftaran berhasil diperbarui'); 
+                if (typeof window.invalidatePageCache === 'function') { window.invalidatePageCache('approval-warga'); }
+                switchPage('approval-warga'); 
+            } else {
+                alert(d.message || 'Gagal memperbarui status pendaftaran.');
+            }
         })
         .catch(() => alert('Gagal memperbarui status pendaftaran.'));
     }

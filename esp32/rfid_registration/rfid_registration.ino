@@ -40,7 +40,7 @@
 // ============================================================
 // KONFIGURASI WIFI & SERVER
 // ============================================================
-const char* WIFI_SSID     = "POCO X3 NFC";
+const char* WIFI_SSID     = "POCOX3NFC";
 const char* WIFI_PASSWORD = "12345678";
 
 // Endpoint Server GUYUB

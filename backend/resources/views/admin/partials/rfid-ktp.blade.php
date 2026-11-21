@@ -15,6 +15,23 @@
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Daftarkan kartu KTP Anda untuk membuka portal perumahan secara otomatis.</p>
     </div>
 
+    {{-- ===== STATUS KONEKSI ESP32 SCANNER ===== --}}
+    <div id="esp32-status-card" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 mb-6 flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+            <div id="esp32-status-dot" class="w-3.5 h-3.5 rounded-full bg-amber-400 animate-pulse"></div>
+            <div>
+                <p class="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-blue-500"></i>
+                    Status Scanner ESP32: <span id="esp32-status-text" class="text-amber-500">Memeriksa...</span>
+                </p>
+                <p id="esp32-status-desc" class="text-[11px] text-gray-400 mt-0.5">Memeriksa apakah alat ESP32 menyala dan terhubung ke server...</p>
+            </div>
+        </div>
+        <button onclick="checkEsp32DeviceStatus(true)" class="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1 cursor-pointer">
+            <i class="fa-solid fa-rotate-right"></i> Cek Koneksi
+        </button>
+    </div>
+
     {{-- ===== KARTU STATUS KTP ===== --}}
     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6 mb-6">
         <div class="flex items-start justify-between flex-wrap gap-4">
@@ -225,6 +242,9 @@
         } else if (type === 'error') {
             box.className = 'flex items-center gap-2 border rounded-xl px-4 py-3 text-sm font-medium bg-red-50 border-red-200 text-red-700';
             icon.className = 'fa-solid fa-circle-exclamation text-red-500';
+        } else if (type === 'warning') {
+            box.className = 'flex items-center gap-2 border rounded-xl px-4 py-3 text-sm font-medium bg-amber-50 border-amber-200 text-amber-700';
+            icon.className = 'fa-solid fa-triangle-exclamation text-amber-500';
         } else {
             box.className = 'flex items-center gap-2 border rounded-xl px-4 py-3 text-sm font-medium bg-blue-50 border-blue-200 text-blue-700';
             icon.className = 'fa-solid fa-circle-info text-blue-500';
@@ -233,14 +253,57 @@
         container.classList.remove('hidden');
         setTimeout(() => {
             if (container) container.classList.add('hidden');
-        }, 6000);
+        }, 7000);
     }
+
+    // 0. CEK STATUS KONEKSI ESP32
+    let isEsp32Online = false;
+    window.checkEsp32DeviceStatus = async function(manual = false) {
+        const dot = document.getElementById('esp32-status-dot');
+        const text = document.getElementById('esp32-status-text');
+        const desc = document.getElementById('esp32-status-desc');
+
+        if (!dot || !text) return;
+
+        try {
+            const res = await fetch('/rfid/device-status');
+            const data = await res.json();
+
+            isEsp32Online = data.online === true;
+
+            if (isEsp32Online) {
+                dot.className = 'w-3.5 h-3.5 rounded-full bg-green-500 shadow-sm shadow-green-500/50';
+                text.className = 'text-green-600 font-bold';
+                text.textContent = 'ONLINE (Terhubung)';
+                desc.textContent = `Alat ESP32 aktif & siap membaca kartu. (Terakhir merespons ${data.seconds_ago} detik lalu)`;
+                if (manual) showRfidAlert('success', 'ESP32 Scanner terhubung dan aktif!');
+            } else {
+                dot.className = 'w-3.5 h-3.5 rounded-full bg-red-500 animate-pulse';
+                text.className = 'text-red-500 font-bold';
+                text.textContent = 'OFFLINE (Belum Terhubung)';
+                desc.textContent = data.seconds_ago !== null
+                    ? `ESP32 tidak merespons (terakhir terlihat ${data.seconds_ago} detik lalu). Pastikan Hotspot & ESP32 menyala.`
+                    : 'ESP32 belum pernah terhubung ke server. Pastikan Hotspot menyala dan sketch ter-upload.';
+                if (manual) showRfidAlert('warning', 'ESP32 belum terdeteksi online di server.');
+            }
+        } catch (e) {
+            console.warn('Error checking device status:', e);
+        }
+    };
 
     // 1. MULAI REGISTRASI
     window.startRfidRegistration = async function() {
         const btn = document.getElementById('btn-start-scan');
         const btnText = document.getElementById('btn-start-scan-text');
         const panelScanning = document.getElementById('panel-scanning');
+        const panelDetected = document.getElementById('panel-detected');
+
+        // Beri tahu status ESP32 ke user
+        if (!isEsp32Online) {
+            showRfidAlert('warning', '⚠️ Perhatian: Scanner ESP32 terdeteksi OFFLINE. Pastikan ESP32 sudah menyala dan tersambung ke Hotspot Anda!');
+        }
+
+        if (btn) btn.disabled = true;
         const panelDetected = document.getElementById('panel-detected');
 
         if (btn) btn.disabled = true;
@@ -511,5 +574,9 @@
     if (document.getElementById('logs-table-body')) {
         loadPortalLogs();
     }
+
+    // Auto cek status ESP32 saat halaman terbuka & polling tiap 5 detik
+    checkEsp32DeviceStatus();
+    setInterval(checkEsp32DeviceStatus, 5000);
 })();
 </script>

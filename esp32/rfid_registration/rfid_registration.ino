@@ -2,33 +2,32 @@
  * ============================================================
  * GUYUB RFID Registration Terminal — ESP32 + MFRC522
  * ============================================================
- * Fungsi : Membaca UID kartu KTP dan mengirimkan ke server GUYUB
- *          saat ada sesi registrasi aktif dari web app.
+ * Fitur:
+ *   - Membaca UID e-KTP / kartu RFID (13.56 MHz)
+ *   - Mengirim status Heartbeat ONLINE ke server setiap 5 detik
+ *   - Mengirim UID hasil scan ke web app saat user klik "Daftarkan KTP"
+ *   - Diagnosis otomatis koneksi kabel modul RC522 di Serial Monitor
  *
- * Hardware yang dibutuhkan:
- *   - ESP32 (DevKit atau sejenisnya)
- *   - MFRC522 RFID Reader (komunikasi SPI)
- *   - LED hijau (opsional)
- *   - LED merah (opsional)
- *   - Buzzer aktif 5V (opsional)
- *   - OLED 0.96" SSD1306 128x64 (opsional, untuk info UID)
+ * Wiring RC522 ke Arduino Nano ESP32:
+ *   RC522   | Pin Arduino Nano ESP32
+ *   --------|-----------------------
+ *   SDA(SS) | Pin D10 (atau GPIO 21)
+ *   SCK     | Pin D13 (atau GPIO 48)
+ *   MOSI    | Pin D11 (atau GPIO 38)
+ *   MISO    | Pin D12 (atau GPIO 47)
+ *   RST     | Pin D9  (atau GPIO 18)
+ *   GND     | GND
+ *   3.3V    | 3V3    ⚠️ (PERINGATAN: Jangan ke 5V / VBUS!)
  *
- * Library Arduino yang perlu diinstall:
- *   - MFRC522 by GithubCommunity (via Library Manager)
- *   - ArduinoJson by Benoit Blanchon (v6.x)
- *   - WiFi (built-in ESP32)
- *   - HTTPClient (built-in ESP32)
- *
- * Wiring MFRC522 ke ESP32:
- *   MFRC522 | ESP32
- *   --------|-------
+ * Wiring RC522 ke ESP32 Standar (DevKit 30/38 pin):
+ *   RC522   | Pin ESP32 DevKit
+ *   --------|-----------------
  *   SDA(SS) | GPIO 5
  *   SCK     | GPIO 18
  *   MOSI    | GPIO 23
  *   MISO    | GPIO 19
- *   IRQ     | -
- *   GND     | GND
  *   RST     | GPIO 22
+ *   GND     | GND
  *   3.3V    | 3.3V
  * ============================================================
  */
@@ -37,126 +36,176 @@
 #include <HTTPClient.h>
 #include <SPI.h>
 #include <MFRC522.h>
-#include <ArduinoJson.h>
 
 // ============================================================
-// KONFIGURASI — SESUAIKAN DENGAN LINGKUNGAN ANDA
+// KONFIGURASI WIFI & SERVER
 // ============================================================
-const char* WIFI_SSID     = "NAMA_WIFI_ANDA";
-const char* WIFI_PASSWORD = "PASSWORD_WIFI_ANDA";
+const char* WIFI_SSID     = "POCO X3 NFC";
+const char* WIFI_PASSWORD = "12345678";
 
-// URL server GUYUB (produksi atau lokal)
-// Produksi : "https://guyub.unique-monsters.my.id/api/rfid/scan"
-// Lokal    : "http://192.168.x.x:8000/api/rfid/scan"  (ganti IP laptop)
-const char* SERVER_URL    = "https://guyub.unique-monsters.my.id/api/rfid/scan";
+// Endpoint Server GUYUB
+const char* SCAN_URL      = "https://guyub.unique-monsters.my.id/api/rfid/scan";
+const char* HEARTBEAT_URL = "https://guyub.unique-monsters.my.id/api/rfid/heartbeat";
 
-// API key — HARUS sama dengan RFID_DEVICE_KEY di file .env server
+// API key — Harus cocok dengan RFID_DEVICE_KEY di server
 const char* DEVICE_KEY    = "GuyubRfid2026_SecretKey_ChangeMe";
-
-// ID perangkat ini (bebas, untuk log di server)
-const char* DEVICE_ID     = "registration-01";
+const char* DEVICE_ID     = "esp32-scanner-01";
 const char* DEVICE_TYPE   = "registration";
 
-// Pin MFRC522
-#define SS_PIN    5
-#define RST_PIN   22
+// ============================================================
+// KONFIGURASI PIN SPI RC522 (Otomatis deteksi Nano ESP32 vs Standar)
+// ============================================================
+#if defined(ARDUINO_NANO_ESP32)
+  #define SS_PIN   D10
+  #define RST_PIN  D9
+#else
+  #define SS_PIN   5
+  #define RST_PIN  22
+#endif
 
-// Pin indikator (opsional, bisa diabaikan jika tidak dipasang)
+// Pin indikator LED opsional
 #define LED_GREEN   32
 #define LED_RED     33
-#define BUZZER_PIN  25
 
 // ============================================================
-// Variabel global
+// Variabel Global
 // ============================================================
 MFRC522 rfid(SS_PIN, RST_PIN);
-String lastUID    = "";
+String lastUID = "";
 unsigned long lastScanTime = 0;
-const unsigned long SCAN_COOLDOWN_MS = 3000; // 3 detik debounce
+unsigned long lastHeartbeatTime = 0;
+const unsigned long SCAN_COOLDOWN_MS = 2500; // 2.5 detik jeda scan kartu yang sama
+const unsigned long HEARTBEAT_INTERVAL_MS = 5000; // Kirim status tiap 5 detik
 
+// Prototype
+String readUID();
+void sendScanToServer(String uid);
+void sendHeartbeat();
+void testRc522Connection();
+
+// ============================================================
+// SETUP
 // ============================================================
 void setup() {
     Serial.begin(115200);
-    delay(500);
+    delay(1000);
 
-    // Init pin indikator
-    pinMode(LED_GREEN, OUTPUT);
-    pinMode(LED_RED,   OUTPUT);
-    pinMode(BUZZER_PIN, OUTPUT);
-    digitalWrite(LED_GREEN, LOW);
-    digitalWrite(LED_RED,   LOW);
+    Serial.println();
+    Serial.println("==================================================");
+    Serial.println("  GUYUB - ESP32 RFID/NFC Registration Scanner");
+    Serial.println("==================================================");
 
-    // Init SPI & RFID reader
+    // Inisialisasi SPI & Modul RFID
     SPI.begin();
     rfid.PCD_Init();
-    rfid.PCD_SetAntennaGain(rfid.RxGain_max);
+    delay(50);
+    rfid.PCD_SetAntennaGain(rfid.RxGain_max); // Sensitivitas maksimal untuk e-KTP
 
-    Serial.println("=================================");
-    Serial.println("  GUYUB - RFID Registration ESP32");
-    Serial.println("=================================");
+    // Cek apakah RC522 terhubung dengan benar
+    testRc522Connection();
 
-    // Koneksi WiFi
-    Serial.printf("Connecting to WiFi: %s\n", WIFI_SSID);
+    // Koneksi ke WiFi Hotspot
+    Serial.printf("\n[WIFI] Menghubungkan ke: %s ...\n", WIFI_SSID);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
     int retries = 0;
-    while (WiFi.status() != WL_CONNECTED && retries < 30) {
+    while (WiFi.status() != WL_CONNECTED && retries < 25) {
         delay(500);
         Serial.print(".");
         retries++;
     }
 
     if (WiFi.status() == WL_CONNECTED) {
-        Serial.printf("\nWiFi OK! IP: %s\n", WiFi.localIP().toString().c_str());
-        indicatorSuccess();
+        Serial.println("\n[WIFI] Berhasil terhubung!");
+        Serial.printf("[WIFI] IP Address ESP32: %s\n", WiFi.localIP().toString().c_str());
+
+        // Kirim heartbeat pertama kali saat baru menyala
+        sendHeartbeat();
     } else {
-        Serial.println("\nWiFi GAGAL! Pastikan SSID & password benar.");
-        indicatorError();
+        Serial.println("\n[WIFI] GAGAL! Pastikan Hotspot HP aktif dan password benar.");
     }
 
-    Serial.println("\nSiap membaca kartu KTP...");
-    Serial.println("Tempelkan kartu RFID/NFC ke reader.");
+    Serial.println("\n[STATUS] Scanner siap membaca kartu.");
+    Serial.println(">>> Buka web: guyub.unique-monsters.my.id/rfid-ktp");
+    Serial.println(">>> Klik tombol 'Daftarkan KTP' di web, lalu tempelkan kartu e-KTP ke sensor.\n");
 }
 
 // ============================================================
+// LOOP
+// ============================================================
 void loop() {
-    // Reconnect WiFi jika terputus
+    // 1. Cek Koneksi WiFi
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("WiFi terputus, reconnecting...");
+        Serial.println("[WIFI] Terputus! Mencoba menghubungkan kembali...");
         WiFi.reconnect();
-        delay(5000);
+        delay(4000);
         return;
     }
 
-    // Cek kartu baru
-    if (!rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial()) {
+    // 2. Heartbeat berkala setiap 5 detik ke server (agar web tahu ESP32 ONLINE)
+    if (millis() - lastHeartbeatTime >= HEARTBEAT_INTERVAL_MS) {
+        lastHeartbeatTime = millis();
+        sendHeartbeat();
+    }
+
+    // 3. Cek apakah ada kartu e-KTP / RFID di reader
+    if (!rfid.PICC_IsNewCardPresent()) {
+        return;
+    }
+    if (!rfid.PICC_ReadCardSerial()) {
         return;
     }
 
-    // Baca UID
+    // 4. Baca UID Kartu
     String uid = readUID();
 
-    // Debounce — hindari scan ganda
+    // Jeda anti-spam jika kartu yang sama ditempel terus
     if (uid == lastUID && (millis() - lastScanTime) < SCAN_COOLDOWN_MS) {
         rfid.PICC_HaltA();
         rfid.PCD_StopCrypto1();
         return;
     }
 
-    lastUID      = uid;
+    lastUID = uid;
     lastScanTime = millis();
 
-    Serial.printf("\n[SCAN] UID terbaca: %s\n", uid.c_str());
+    Serial.printf("\n=====================================\n");
+    Serial.printf("[SCAN] KARTU TERBACA! UID: %s\n", uid.c_str());
+    Serial.printf("=====================================\n");
 
-    // Kirim ke server
-    sendToServer(uid);
+    // 5. Kirim UID ke server GUYUB
+    sendScanToServer(uid);
 
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
 }
 
 // ============================================================
-// Baca UID dari kartu dan format sebagai string HEX uppercase
+// DIAGNOSIS KONEKSI HARDWARE RC522
+// ============================================================
+void testRc522Connection() {
+    byte v = rfid.PCD_ReadRegister(rfid.VersionReg);
+    Serial.print("[RC522] Versi Chip Firmware: 0x");
+    Serial.println(v, HEX);
+
+    if (v == 0x00 || v == 0xFF) {
+        Serial.println();
+        Serial.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Serial.println("❌ PERINGATAN KERAS: Modul RC522 TIDAK TERBACA OLEH ESP32!");
+        Serial.println("   Penyebab kartu tidak terbaca adalah sambungan kabel:");
+        Serial.println("   1. Pastikan VCC modul ke pin 3.3V (JANGAN KE 5V!)");
+        Serial.println("   2. Pastikan SDA terpasang ke pin D10 (Nano ESP32)");
+        Serial.println("   3. Pastikan SCK ke D13, MOSI ke D11, MISO ke D12");
+        Serial.println("   4. Pastikan RST ke D9 dan GND ke GND");
+        Serial.println("   5. Periksa jika ada kabel jumper yang kendor!");
+        Serial.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    } else {
+        Serial.println("✅ Modul RC522 BERHASIL TERHUBUNG DENGAN BAIK!\n");
+    }
+}
+
+// ============================================================
+// FORMAT UID DARI BYTE KE STRING HEX
 // ============================================================
 String readUID() {
     String uid = "";
@@ -169,103 +218,65 @@ String readUID() {
 }
 
 // ============================================================
-// Kirim UID ke server GUYUB
+// KIRIM HEARTBEAT KE SERVER
 // ============================================================
-void sendToServer(String uid) {
-    if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("[ERROR] WiFi tidak terhubung!");
-        indicatorError();
-        return;
-    }
+void sendHeartbeat() {
+    if (WiFi.status() != WL_CONNECTED) return;
 
     HTTPClient http;
-    http.begin(SERVER_URL);
+    http.begin(HEARTBEAT_URL);
     http.addHeader("Content-Type", "application/json");
     http.addHeader("X-Device-Key", DEVICE_KEY);
-    http.setTimeout(8000); // 8 detik timeout
+    http.setTimeout(4000);
 
-    // Build JSON payload
-    StaticJsonDocument<256> doc;
-    doc["uid"]         = uid;
-    doc["device_id"]   = DEVICE_ID;
-    doc["device_type"] = DEVICE_TYPE;
+    String payload = "{\"device_id\":\"" + String(DEVICE_ID) + "\",\"ip\":\"" + WiFi.localIP().toString() + "\"}";
+    int code = http.POST(payload);
 
-    String payload;
-    serializeJson(doc, payload);
-
-    Serial.printf("[HTTP] POST ke: %s\n", SERVER_URL);
-    Serial.printf("[HTTP] Payload: %s\n", payload.c_str());
-
-    int httpCode = http.POST(payload);
-
-    Serial.printf("[HTTP] Response code: %d\n", httpCode);
-
-    if (httpCode == 200) {
-        String response = http.getString();
-        Serial.printf("[HTTP] Response: %s\n", response.c_str());
-
-        StaticJsonDocument<512> respDoc;
-        DeserializationError err = deserializeJson(respDoc, response);
-
-        if (!err) {
-            const char* status = respDoc["status"] | "unknown";
-
-            if (strcmp(status, "success") == 0) {
-                Serial.println("[OK] UID berhasil dikirim ke sesi registrasi!");
-                indicatorSuccess();
-            } else if (strcmp(status, "no_session") == 0) {
-                Serial.println("[INFO] Tidak ada sesi aktif. User belum klik 'Daftarkan KTP' di web.");
-                indicatorWarning();
-            } else {
-                Serial.printf("[INFO] Status: %s\n", status);
-                indicatorWarning();
-            }
-        }
-    } else if (httpCode == 401) {
-        Serial.println("[ERROR] API key salah! Periksa DEVICE_KEY di sketch.");
-        indicatorError();
-    } else if (httpCode < 0) {
-        Serial.printf("[ERROR] HTTP gagal: %s\n", http.errorToString(httpCode).c_str());
-        indicatorError();
+    if (code == 200) {
+        Serial.print("."); // Titik heartbeat tanda normal
     } else {
-        Serial.printf("[WARN] HTTP code tidak terduga: %d\n", httpCode);
-        indicatorWarning();
+        Serial.printf("\n[HEARTBEAT] Gagal (HTTP %d)\n", code);
     }
-
     http.end();
 }
 
 // ============================================================
-// Indikator LED & Buzzer
+// KIRIM HASIL SCAN UID KE SERVER
 // ============================================================
-void indicatorSuccess() {
-    digitalWrite(LED_GREEN, HIGH);
-    tone(BUZZER_PIN, 1500, 150);
-    delay(150);
-    noTone(BUZZER_PIN);
-    delay(150);
-    tone(BUZZER_PIN, 2000, 200);
-    delay(200);
-    noTone(BUZZER_PIN);
-    delay(500);
-    digitalWrite(LED_GREEN, LOW);
-}
-
-void indicatorError() {
-    for (int i = 0; i < 3; i++) {
-        digitalWrite(LED_RED, HIGH);
-        tone(BUZZER_PIN, 400, 300);
-        delay(300);
-        noTone(BUZZER_PIN);
-        digitalWrite(LED_RED, LOW);
-        delay(200);
+void sendScanToServer(String uid) {
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("[ERROR] Tidak bisa kirim ke server: WiFi offline!");
+        return;
     }
-}
 
-void indicatorWarning() {
-    digitalWrite(LED_RED, HIGH);
-    tone(BUZZER_PIN, 800, 500);
-    delay(500);
-    noTone(BUZZER_PIN);
-    digitalWrite(LED_RED, LOW);
+    HTTPClient http;
+    http.begin(SCAN_URL);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("X-Device-Key", DEVICE_KEY);
+    http.setTimeout(8000);
+
+    String payload = "{\"uid\":\"" + uid + "\",\"device_id\":\"" + String(DEVICE_ID) + "\",\"device_type\":\"" + String(DEVICE_TYPE) + "\"}";
+
+    Serial.printf("[HTTP] Mengirim UID %s ke server...\n", uid.c_str());
+    int httpCode = http.POST(payload);
+
+    Serial.printf("[HTTP] Status Response: %d\n", httpCode);
+
+    if (httpCode == 200) {
+        String response = http.getString();
+        Serial.printf("[HTTP] Respons Server: %s\n", response.c_str());
+
+        if (response.indexOf("success") >= 0) {
+            Serial.println("\n🎉 [SUKSES BESAR] UID berhasil terkirim ke sesi registrasi web!");
+            Serial.println("🎉 Silakan klik tombol 'Ya, Daftarkan Sekarang' di browser Anda!\n");
+        } else if (response.indexOf("no_session") >= 0) {
+            Serial.println("\n⚠️ [BELUM KLIK DAFTAR DI WEB]");
+            Serial.println("⚠️ Kartu terbaca, TETAPI Anda belum menekan tombol 'Daftarkan KTP' di web.");
+            Serial.println("⚠️ Silakan buka web, klik 'Daftarkan KTP' dulu, lalu tempelkan kartu lagi.\n");
+        }
+    } else {
+        Serial.printf("[HTTP ERROR] Kode: %d\n", httpCode);
+    }
+
+    http.end();
 }

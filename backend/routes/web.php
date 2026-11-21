@@ -37,6 +37,7 @@ use App\Http\Controllers\RfidController;
 // ========================================================
 Route::post('/api/rfid/scan', [RfidController::class, 'handleScan'])->middleware('rfid.device');
 Route::post('/api/rfid/gate-check', [RfidController::class, 'gateCheck'])->middleware('rfid.device');
+Route::post('/api/rfid/heartbeat', [RfidController::class, 'heartbeat'])->middleware('rfid.device');
 
 // ========================================================
 // 1. RUTE PUBLIK (Tidak Butuh Login)
@@ -310,6 +311,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/rfid/assign',             [RfidController::class, 'assignUid']);
     Route::post('/rfid/unregister',         [RfidController::class, 'unregisterUid']);
     Route::get('/rfid/logs',                [RfidController::class, 'getLogs']);
+    Route::get('/rfid/device-status',       [RfidController::class, 'getDeviceStatus']);
 
     // --- M. RUTE DINAMIS SPA (Wajib diletakkan paling bawah dalam grup ini) ---
     Route::get('/api/auth/user', function() {

@@ -7,6 +7,7 @@ use App\Models\RfidScanSession;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -304,5 +305,56 @@ class RfidController extends Controller
             'access'  => false,
             'message' => $message,
         ], 403);
+    }
+
+    // =========================================================================
+    // H. heartbeat — API (rfid.device middleware)
+    //    ESP32 mengirim ping setiap 5 detik agar web tahu statusnya ONLINE
+    // =========================================================================
+    public function heartbeat(Request $request)
+    {
+        $deviceId = $request->input('device_id', 'esp32-scanner');
+        $ip       = $request->input('ip', $request->ip());
+
+        Cache::put('rfid_scanner_last_seen', now()->timestamp, 30);
+        Cache::put('rfid_scanner_info', [
+            'device_id' => $deviceId,
+            'ip'        => $ip,
+            'timestamp' => now()->toDateTimeString(),
+        ], 30);
+
+        return response()->json([
+            'status' => 'ok',
+            'time'   => now()->toDateTimeString()
+        ]);
+    }
+
+    // =========================================================================
+    // I. getDeviceStatus — Web (auth)
+    //    Cek apakah ESP32 sedang online (aktif dalam 15 detik terakhir)
+    // =========================================================================
+    public function getDeviceStatus(Request $request)
+    {
+        $lastSeen = Cache::get('rfid_scanner_last_seen');
+        $info     = Cache::get('rfid_scanner_info');
+
+        if (!$lastSeen) {
+            return response()->json([
+                'online'             => false,
+                'seconds_ago'        => null,
+                'message'            => 'ESP32 belum terhubung atau sedang mati.',
+                'info'               => null,
+            ]);
+        }
+
+        $diff = now()->timestamp - $lastSeen;
+        $isOnline = $diff <= 15; // Aktif jika ping <= 15 detik lalu
+
+        return response()->json([
+            'online'      => $isOnline,
+            'seconds_ago' => $diff,
+            'message'     => $isOnline ? 'ESP32 Scanner Online & Siap Digunakan' : "ESP32 Offline (terakhir terlihat {$diff} detik lalu)",
+            'info'        => $info,
+        ]);
     }
 }

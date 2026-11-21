@@ -39,7 +39,10 @@
 
         html, body {
             height: 100vh;
-            overflow: hidden;
+            width: 100vw;
+            overflow: hidden !important;
+            margin: 0;
+            padding: 0;
             background-color: #F1F5F9;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -47,6 +50,7 @@
         .right-section {
             height: 100vh;
             overflow-y: auto;
+            overflow-x: hidden !important;
         }
 
         .right-section::-webkit-scrollbar {
@@ -367,10 +371,10 @@
 
 <body>
 
-<div class="flex min-h-screen w-full">
+<div class="flex h-screen w-full overflow-hidden">
 
     {{-- LEFT --}}
-    <div class="hidden xl:flex w-[36%] left-section relative overflow-hidden border-r border-white/5">
+    <div class="hidden xl:flex w-[36%] h-full left-section relative overflow-hidden border-r border-white/5">
 
         <div class="absolute inset-0 bg-gradient-to-b from-blue-950/40 to-blue-800/20"></div>
 
@@ -415,17 +419,19 @@
     </div>
 
     {{-- RIGHT --}}
-    <div class="right-section relative flex min-h-screen w-full items-center justify-center overflow-y-auto bg-[#F1F5F9] dark:bg-[#0B0F19] px-4 py-6 xl:w-[64%]">
+    <div class="right-section relative flex h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-[#F1F5F9] dark:bg-[#0B0F19] px-4 py-4 xl:w-[64%]">
 
         <!-- Top navigation links (theme toggle) -->
         <button onclick="toggleTheme()" id="theme-toggle-btn" class="absolute right-6 sm:right-8 top-6 sm:top-8 z-50 text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400 transition flex items-center justify-center w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer" title="Ubah Tema">
             <i class="fa-solid fa-moon text-sm" id="theme-toggle-icon"></i>
         </button>
 
-        <!-- Decorative blurred gradient blobs for rich modern glassmorphism -->
-        <div class="absolute -left-20 -top-20 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-blue-300/40 to-indigo-300/40 blur-3xl dark:from-blue-900/30 dark:to-indigo-900/30 opacity-70 pointer-events-none"></div>
-        <div class="absolute -bottom-20 -right-20 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-purple-300/30 to-blue-300/30 blur-3xl dark:from-purple-900/20 dark:to-blue-900/20 opacity-70 pointer-events-none"></div>
-        <div class="absolute left-[20%] top-[30%] hidden h-32 w-32 rounded-full bg-blue-400/20 blur-3xl dark:bg-blue-800/10 md:block pointer-events-none"></div>
+        <!-- Decorative blurred gradient blobs for rich modern glassmorphism (enclosed in overflow-hidden) -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -left-20 -top-20 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-blue-300/40 to-indigo-300/40 blur-3xl dark:from-blue-900/30 dark:to-indigo-900/30 opacity-70"></div>
+            <div class="absolute -bottom-20 -right-20 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-purple-300/30 to-blue-300/30 blur-3xl dark:from-purple-900/20 dark:to-blue-900/20 opacity-70"></div>
+            <div class="absolute left-[20%] top-[30%] hidden h-32 w-32 rounded-full bg-blue-400/20 blur-3xl dark:bg-blue-800/10 md:block"></div>
+        </div>
 
         {{-- LOGIN CARD --}}
         <div class="relative z-10 flex w-full justify-center">

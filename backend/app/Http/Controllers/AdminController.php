@@ -45,7 +45,7 @@ class AdminController extends Controller
             'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
             'surat-online', 'pengumuman',
             'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-            'peraturan-sk', 'kerja-bakti'
+            'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
         ];
 
         $aksesHalaman = [
@@ -53,28 +53,28 @@ class AdminController extends Controller
             'RW'            => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'peraturan-sk', 'kerja-bakti',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'pengumuman', 'aspirasi', 'keamanan', 'kegiatan',
-                'posyandu', 'umkm', 'bank-sampah', 'koperasi', 'rukem', 'approval-warga'
+                'posyandu', 'umkm', 'bank-sampah', 'koperasi', 'rukem', 'approval-warga', 'rfid-ktp'
             ],
             'Sekretaris RW' => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'peraturan-sk', 'kerja-bakti',
-                'surat-online', 'pengumuman', 'aspirasi', 'approval-warga', 'kegiatan', 'laporan-koperasi'
+                'surat-online', 'pengumuman', 'aspirasi', 'approval-warga', 'kegiatan', 'laporan-koperasi', 'rfid-ktp'
             ],
             'Bendahara RW'  => [
                 'dashboard', 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'laporan-keuangan', 'laporan-iuran',
-                'laporan-kas', 'export-laporan', 'laporan-koperasi', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va', 'koperasi'
+                'laporan-kas', 'export-laporan', 'laporan-koperasi', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va', 'koperasi', 'rfid-ktp'
             ],
             'RT'            => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'surat-online', 'pengumuman', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'approval-warga', 'peraturan-sk', 'kerja-bakti'
+                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Sekretaris RT' => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'perangkat-sistem',
                 'surat-online', 'pengumuman', 'tagihan-warga', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'approval-warga', 'peraturan-sk', 'kerja-bakti'
+                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Bendahara RT'  => [
                 'dashboard', 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'data-keluarga', 'data-iuran',
@@ -82,13 +82,13 @@ class AdminController extends Controller
                 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'surat-online', 'pengumuman', 'pengaturan',
                 'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
             ],
             'Warga'         => [
                 'dashboard', 'data-keluarga', 'data-pengurus-rt', 'surat-online', 'pengumuman',
                 'tagihan-warga', 'pembayaran-online', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti', 'laporan-koperasi'
+                'peraturan-sk', 'kerja-bakti', 'laporan-koperasi', 'rfid-ktp'
             ]
         ];
 

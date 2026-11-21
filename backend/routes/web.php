@@ -30,6 +30,13 @@ use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\PeraturanController;
 use App\Http\Controllers\KerjaBaktiController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RfidController;
+
+// ========================================================
+// ESP32 IoT API — RFID/NFC Portal (No Auth, Device Key)
+// ========================================================
+Route::post('/api/rfid/scan', [RfidController::class, 'handleScan'])->middleware('rfid.device');
+Route::post('/api/rfid/gate-check', [RfidController::class, 'gateCheck'])->middleware('rfid.device');
 
 // ========================================================
 // 1. RUTE PUBLIK (Tidak Butuh Login)
@@ -296,6 +303,13 @@ Route::middleware(['auth'])->group(function () {
         }
         return redirect('/login');
     })->name('logout');
+
+    // --- N. RFID / PORTAL KTP ---
+    Route::post('/rfid/start-registration', [RfidController::class, 'startRegistration']);
+    Route::get('/rfid/session/{token}',     [RfidController::class, 'sessionStatus']);
+    Route::post('/rfid/assign',             [RfidController::class, 'assignUid']);
+    Route::post('/rfid/unregister',         [RfidController::class, 'unregisterUid']);
+    Route::get('/rfid/logs',                [RfidController::class, 'getLogs']);
 
     // --- M. RUTE DINAMIS SPA (Wajib diletakkan paling bawah dalam grup ini) ---
     Route::get('/api/auth/user', function() {

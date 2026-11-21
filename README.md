@@ -88,18 +88,18 @@ Aplikasi ini mendigitalisasi seluruh aspek kehidupan warga lingkungan: kependudu
 
 ## 👥 Matriks Hak Akses Peran (Role-Based Access Control)
 
-| Modul / Fitur Sistem | 👑 Super Admin | 👤 Ketua RT | 💵 Bendahara | 🏡 Warga |
+| Modul / Fitur Sistem | 👑 Super Admin | 🏢 Tingkat RW (Ketua/Sekr/Bend) | 🏡 Tingkat RT (Ketua/Sekr/Bend) | 👥 Warga |
 | :--- | :---: | :---: | :---: | :---: |
 | **Dashboard & Grafik Lingkungan** | ✅ Penuh | ✅ Penuh | ✅ Penuh | 👁️ Ringkasan |
-| **Persetujuan Akun Warga Baru** | ✅ Kelola | ✅ Setujui / Tolak | ❌ Dibatasi | ❌ Dibatasi |
-| **Registrasi Kartu e-KTP / RFID** | ✅ Kelola | ✅ Kelola | ❌ Dibatasi | 💳 Kartu Sendiri |
-| **Buku Kas & Transaksi Kas RT** | ✅ Penuh | 👁️ Monitoring | ✅ Input & Edit | ❌ Dibatasi |
-| **Penerbitan Tagihan Iuran** | ✅ Penuh | 👁️ Monitoring | ✅ Buat & Tagih | 💳 Bayar Mandiri |
-| **Inventaris & Peminjaman Aset** | ✅ Penuh | ✅ Setujui Pinjam | 👁️ Monitoring | 📝 Ajukan Pinjam |
-| **Koperasi Sembako & Simpan Pinjam** | ✅ Penuh | 👁️ Monitoring | ✅ Verifikasi Dana | 🛒 Belanja & Menabung |
-| **Posyandu, UMKM, Bank Sampah** | ✅ Penuh | ✅ Kelola | ✅ Kelola | 👁️ Partisipasi |
-| **Surat Pengantar Online** | ✅ Penuh | ✅ Terbitkan Surat | 👁️ Monitoring | 📝 Buat Pengajuan |
-| **Aspirasi & Masukan Warga** | ✅ Penuh | 💬 Tanggapi | 👁️ Monitoring | 📝 Kirim Aspirasi |
+| **Persetujuan Akun Warga Baru** | ✅ Kelola | 👁️ Monitoring | ✅ Setujui / Tolak | ❌ Dibatasi |
+| **Registrasi Kartu e-KTP / RFID** | ✅ Kelola | 👁️ Monitoring | ✅ Kelola & Scan | 💳 Kartu Sendiri |
+| **Buku Kas & Transaksi Kas RT** | ✅ Penuh | 👁️ Monitoring | ✅ Kelola (Bendahara RT) | ❌ Dibatasi |
+| **Penerbitan Tagihan Iuran** | ✅ Penuh | 👁️ Monitoring | ✅ Buat & Tagih (Bendahara) | 💳 Bayar Mandiri |
+| **Inventaris & Peminjaman Aset** | ✅ Penuh | 👁️ Monitoring | ✅ Setujui Pinjam (RT) | 📝 Ajukan Pinjam |
+| **Koperasi Sembako & Simpan Pinjam** | ✅ Penuh | 👁️ Monitoring | ✅ Verifikasi & Transaksi | 🛒 Belanja & Menabung |
+| **Posyandu, UMKM, Bank Sampah** | ✅ Penuh | ✅ Monitoring & Kelola | ✅ Kelola Kegiatan | 👁️ Partisipasi |
+| **Surat Pengantar Online** | ✅ Penuh | ✅ Terbitkan (Sekr RW) | ✅ Terbitkan (Sekr/Ketua RT) | 📝 Buat Pengajuan |
+| **Aspirasi & Masukan Warga** | ✅ Penuh | 👁️ Monitoring | 💬 Tanggapi Aduan | 📝 Kirim Aspirasi |
 | **Backup Database & Audit Trail** | 🛠️ Backup/Restore | ❌ Dibatasi | ❌ Dibatasi | ❌ Dibatasi |
 
 ---
@@ -184,11 +184,14 @@ Semua akun demo di bawah ini menggunakan kata sandi default: **`password`**
 | Peran Akun | Nama Pengguna | Alamat Email | Hak Akses Utama |
 | :--- | :--- | :--- | :--- |
 | 👑 **Super Admin** | Super Admin | `superadmin@gmail.com` | Akses Penuh Sistem (38 Modul) |
-| 🏢 **Ketua RW** | Ketua RW | `rw@gmail.com` | Monitoring Wilayah RW 02 |
-| 🏡 **Ketua RT** | Ketua RT | `rt@gmail.com` | Kelola Warga, Approval & Kas RT 05 |
-| 💵 **Bendahara RT** | Bendahara RT | `bendahara@gmail.com` | Pembukuan Kas & Tagihan Iuran |
-| 📜 **Sekretaris RT**| Sekretaris RT | `sekretaris@gmail.com` | Surat Menyurat & Pengumuman |
-| 👥 **Warga Terdaftar** | Steve Marvin Politon | `steve@gmail.com` | Layanan Mandiri & Kartu RFID |
+| 🏢 **Ketua RW** | Ketua RW | `rw@gmail.com` | Monitoring Wilayah RW 02 & Rekap Lingkungan |
+| 🏢 **Sekretaris RW** | Sekretaris RW | `sekretarisrw@gmail.com` | Administrasi, Persuratan & Pengumuman RW 02 |
+| 🏢 **Bendahara RW** | Bendahara RW | `bendahararw@gmail.com` | Pembukuan & Laporan Kas Keuangan RW 02 |
+| 🏡 **Ketua RT** | Ketua RT | `rt@gmail.com` | Kelola Warga, Approval Registrasi, Aset & Kas RT 05 |
+| 📜 **Sekretaris RT**| Sekretaris RT | `sekretaris@gmail.com` | Administrasi Warga, Surat Pengantar & Notulensi RT |
+| 💵 **Bendahara RT** | Bendahara RT | `bendahara@gmail.com` | Pembukuan Kas RT, Tagihan Iuran & Koperasi |
+| 👥 **Warga Terdaftar** | Steve Marvin Politon | `steve@gmail.com` | Layanan Mandiri, Simpan Pinjam & Akses e-KTP RFID |
+| 👥 **Warga Demo** | Warga | `warga@gmail.com` | Layanan Mandiri Warga Umum |
 
 ---
 

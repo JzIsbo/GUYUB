@@ -907,6 +907,41 @@ class CompleteMasterSeeder extends Seeder
             'updated_at' => $now,
         ]);
 
+        $demoAccounts = [
+            ['name' => 'Super Admin',           'email' => 'superadmin@gmail.com',    'role' => 'Super Admin'],
+            ['name' => 'Ketua RW',              'email' => 'rw@gmail.com',            'role' => 'RW'],
+            ['name' => 'Sekretaris RW',         'email' => 'sekretarisrw@gmail.com',  'role' => 'Sekretaris RW'],
+            ['name' => 'Bendahara RW',          'email' => 'bendahararw@gmail.com',   'role' => 'Bendahara RW'],
+            ['name' => 'Ketua RT',              'email' => 'rt@gmail.com',            'role' => 'RT'],
+            ['name' => 'Sekretaris RT',         'email' => 'sekretaris@gmail.com',    'role' => 'Sekretaris RT'],
+            ['name' => 'Bendahara RT',          'email' => 'bendahara@gmail.com',     'role' => 'Bendahara RT'],
+            ['name' => 'Warga',                 'email' => 'warga@gmail.com',         'role' => 'Warga'],
+            ['name' => 'Steve Marvin Politon',  'email' => 'steve@gmail.com',         'role' => 'Warga'],
+        ];
+
+        foreach ($demoAccounts as $demo) {
+            $existing = DB::table('users')->where('email', $demo['email'])->first();
+            if ($existing) {
+                DB::table('users')->where('email', $demo['email'])->update([
+                    'name'       => $demo['name'],
+                    'role'       => $demo['role'],
+                    'password'   => $defaultHashedPassword,
+                    'status'     => 'Aktif',
+                    'updated_at' => $now,
+                ]);
+            } else {
+                DB::table('users')->insert([
+                    'name'       => $demo['name'],
+                    'email'      => $demo['email'],
+                    'password'   => $defaultHashedPassword,
+                    'role'       => $demo['role'],
+                    'status'     => 'Aktif',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+        }
+
         $allWargasList = DB::table('wargas')->get();
         foreach ($allWargasList as $w) {
             $userExists = DB::table('users')->where('name', $w->nama_lengkap)->first();

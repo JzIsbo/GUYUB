@@ -39,7 +39,7 @@
 
         body {
             min-height: 100vh;
-            overflow: hidden;
+            overflow-y: auto;
             background-color: #F1F5F9;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -111,38 +111,38 @@
             -webkit-backdrop-filter: blur(40px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 24px;
-            padding: 20px 26px;
+            padding: 16px 22px;
             box-shadow: 0 40px 80px -20px rgba(15, 23, 42, 0.08);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .login-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             letter-spacing: -0.5px;
             color: #0F172A;
         }
 
         .login-subtitle {
-            font-size: 13px;
+            font-size: 12px;
             color: #475569;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .login-label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 12px;
+            margin-bottom: 4px;
+            font-size: 11.5px;
             font-weight: 700;
             color: #334155;
         }
 
         .input-custom {
-            height: 44px;
-            border-radius: 12px;
+            height: 40px;
+            border-radius: 11px;
             border: 1px solid rgba(226, 232, 240, 0.8);
             background-color: rgba(241, 245, 249, 0.5);
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 500;
             color: #0F172A;
             transition: all 0.2s ease;
@@ -165,10 +165,10 @@
         }
 
         .btn-login {
-            height: 44px;
-            border-radius: 12px;
+            height: 40px;
+            border-radius: 11px;
             background: linear-gradient(135deg, #2563eb, #3b82f6);
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
@@ -206,11 +206,11 @@
         }
 
         .form-spacing {
-            margin-top: 16px;
+            margin-top: 10px;
         }
 
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         @keyframes pulseBeat {
@@ -413,13 +413,13 @@
                 {{-- HEADING & ANIMATED WELCOME ICON --}}
                 <div class="text-center mt-0.5 flex flex-col items-center">
                     {{-- TOMBOL KEMBALI KE HALAMAN PUBLIK (DI ATAS ICON SELAMAT DATANG) --}}
-                    <a href="{{ route('welcome') }}" class="mb-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-[11px] shadow-sm hover:shadow-md transition-all group cursor-pointer">
-                        <i class="fa-solid fa-arrow-left text-blue-600 dark:text-blue-400 group-hover:-translate-x-1 transition-transform text-[11px]"></i>
+                    <a href="{{ route('welcome') }}" class="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100/90 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-[10.5px] shadow-sm hover:shadow-md transition-all group cursor-pointer">
+                        <i class="fa-solid fa-arrow-left text-blue-600 dark:text-blue-400 group-hover:-translate-x-1 transition-transform text-[10px]"></i>
                         <span>Kembali ke Halaman Publik</span>
                     </a>
 
                     {{-- ICON SELAMAT DATANG BERGERAK (ANIMATED FLOATING ICON) --}}
-                    <div class="animated-welcome-icon inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-100 to-indigo-50 dark:from-blue-950/60 dark:to-indigo-900/40 text-blue-600 dark:text-blue-400 text-xl mb-2.5 shadow-md border border-blue-200/60 dark:border-blue-800/40">
+                    <div class="animated-welcome-icon inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-100 to-indigo-50 dark:from-blue-950/60 dark:to-indigo-900/40 text-blue-600 dark:text-blue-400 text-lg mb-2 shadow-sm border border-blue-200/60 dark:border-blue-800/40">
                         <i class="fa-solid fa-people-roof"></i>
                     </div>
 
@@ -445,11 +445,11 @@
 
                 {{-- WARNING / PENDING APPROVAL MESSAGE --}}
                 @if (session('warning_message'))
-                    <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-900/40 px-3.5 py-3 text-xs font-medium text-amber-800 dark:text-amber-300 shadow-sm animate-pulse">
-                        <div class="flex gap-2.5 items-start">
-                            <i class="fa-solid fa-hourglass-half mt-0.5 text-amber-600 dark:text-amber-400 text-sm"></i>
+                    <div class="mt-2.5 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-900/40 px-3 py-2 text-[11.5px] font-medium text-amber-800 dark:text-amber-300 shadow-sm animate-pulse">
+                        <div class="flex gap-2 items-start">
+                            <i class="fa-solid fa-hourglass-half mt-0.5 text-amber-600 dark:text-amber-400 text-xs"></i>
                             <div>
-                                <span class="font-bold block text-[13px] text-amber-900 dark:text-amber-200 mb-0.5">Menunggu Persetujuan RT</span>
+                                <span class="font-bold block text-[12px] text-amber-900 dark:text-amber-200">Menunggu Persetujuan RT</span>
                                 {{ session('warning_message') }}
                             </div>
                         </div>
@@ -497,11 +497,11 @@
                                 required
                             >
                         </div>
-                        @error('email')
+                        @if ($errors->has('email') && !session('warning_message'))
                             <p class="mt-1 text-xs font-medium text-red-500">
-                                {{ $message }}
+                                {{ $errors->first('email') }}
                             </p>
-                        @enderror
+                        @endif
                     </div>
 
                     {{-- PASSWORD --}}
@@ -546,14 +546,14 @@
                     </div>
 
                     {{-- LOGIN BUTTON --}}
-                    <button type="submit" class="btn-login mt-4 w-full font-bold text-white flex items-center justify-center gap-2 cursor-pointer">
+                    <button type="submit" class="btn-login mt-2.5 w-full font-bold text-white flex items-center justify-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-right-to-bracket text-sm"></i>
                         Masuk
                     </button>
 
                     {{-- INFO REGISTER --}}
-                    <div class="mt-3 text-center">
-                        <p class="text-[12px] text-gray-500 dark:text-slate-400">
+                    <div class="mt-2 text-center">
+                        <p class="text-[11.5px] text-gray-500 dark:text-slate-400">
                             Belum punya akun?
                             <a href="{{ route('register') }}" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline transition">
                                 Daftar Akun Baru
@@ -563,11 +563,11 @@
                 </form>
 
                 {{-- QUICK LOGIN SHORTCUTS --}}
-                <div class="mt-3 border-t border-gray-150 dark:border-slate-800/80 pt-3">
-                    <p class="text-center text-[9px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
+                <div class="mt-2.5 border-t border-gray-150 dark:border-slate-800/80 pt-2">
+                    <p class="text-center text-[8.5px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">
                         Akses Cepat Login (Demo)
                     </p>
-                    <div class="grid grid-cols-2 gap-1 text-[9.5px]">
+                    <div class="grid grid-cols-2 gap-1 text-[9px]">
                         <button type="button" onclick="quickLogin('superadmin@gmail.com', 'password')" class="flex items-center justify-center gap-1 py-1 px-1.5 bg-red-50 hover:bg-red-100 border border-red-100 text-red-600 rounded-xl font-bold transition-all">
                             👑 Super Admin
                         </button>

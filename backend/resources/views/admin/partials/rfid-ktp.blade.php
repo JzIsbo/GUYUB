@@ -310,9 +310,6 @@
         }
 
         if (btn) btn.disabled = true;
-        const panelDetected = document.getElementById('panel-detected');
-
-        if (btn) btn.disabled = true;
         if (btnText) btnText.textContent = 'Menyiapkan sesi...';
 
         try {

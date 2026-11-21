@@ -37,11 +37,33 @@
             box-sizing: border-box;
         }
 
-        body {
-            min-height: 100vh;
-            overflow-y: auto;
+        html, body {
+            height: 100vh;
+            overflow: hidden;
             background-color: #F1F5F9;
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .right-section {
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .right-section::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .right-section::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .right-section::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.35);
+            border-radius: 10px;
+        }
+
+        .right-section::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.6);
         }
 
         /* Dark Mode */

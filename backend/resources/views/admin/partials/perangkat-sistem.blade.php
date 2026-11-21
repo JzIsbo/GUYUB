@@ -5,7 +5,7 @@
         if(!isset($summary[$jenis])) {
             $summary[$jenis] = 0;
         }
-        $summary[$jenis] += $item->jumlah;
+        $summary[$jenis] += ($item->jumlah ?? 1);
     }
     $isOfficer = in_array(Auth::user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'Bendahara RW', 'RT', 'Sekretaris RT', 'Bendahara RT']);
 @endphp
@@ -176,7 +176,7 @@
                             <tr class="hover:bg-gray-50/50 transition">
                                 <td class="py-4 px-6 font-bold text-gray-800">{{ $item->nama_perangkat }}</td>
                                 <td class="py-4 px-6"><span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-bold">{{ $item->jenis_perangkat }}</span></td>
-                                <td class="py-4 px-6 font-black text-slate-800">{{ $item->jumlah }} Unit</td>
+                                <td class="py-4 px-6 font-black text-slate-800">{{ $item->jumlah ?? 1 }} Unit</td>
                                 <td class="py-4 px-6"><span class="px-3 py-1 rounded-full text-[10px] font-bold {{ $item->badge_class ?? 'bg-gray-50 text-gray-600' }}">{{ $item->kondisi }}</span></td>
                                 <td class="py-4 px-6 text-right space-x-2">
                                     <button onclick="bukaPinjamSpesifik('{{ addslashes($item->nama_perangkat) }}')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-xl font-bold text-[10px] shadow-sm hover:bg-emerald-700 transition">

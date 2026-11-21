@@ -119,7 +119,7 @@ html.dark .koperasi-sembako-card .harga-text {
                             </div>
                             <div class="absolute top-2.5 right-2.5">
                                 <span class="text-xs font-bold {{ $item->stok > 0 ? 'text-emerald-700 bg-emerald-100/90 border border-emerald-300/30' : 'text-red-700 bg-red-100/90 border border-red-300/30' }} backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm">
-                                    {{ $item->stok > 0 ? 'Stok: '.$item->stok.' '.$item->satuan : 'Stok Habis' }}
+                                    {{ $item->stok > 0 ? 'Stok: '.$item->stok.' '.($item->satuan ?? 'pcs') : 'Stok Habis' }}
                                 </span>
                             </div>
                         </div>
@@ -129,12 +129,12 @@ html.dark .koperasi-sembako-card .harga-text {
 
                     <div class="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
                         <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase">Harga Per {{ $item->satuan }}</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Harga Per {{ $item->satuan ?? 'Item' }}</p>
                             <p class="harga-text text-lg font-black text-blue-600">Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             @if(in_array(Auth::user()->role, ['Super Admin', 'RW', 'Sekretaris RW', 'Bendahara RW', 'RT', 'Sekretaris RT', 'Bendahara RT']))
-                            <button onclick="editSembako({{ $item->id }}, '{{ addslashes($item->nama_produk) }}', '{{ $item->kategori }}', {{ $item->harga }}, {{ $item->stok }}, '{{ addslashes($item->satuan) }}', '{{ addslashes($item->deskripsi ?? '') }}')" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition flex items-center justify-center" title="Edit">
+                            <button onclick="editSembako({{ $item->id }}, '{{ addslashes($item->nama_produk) }}', '{{ $item->kategori }}', {{ $item->harga }}, {{ $item->stok }}, '{{ addslashes($item->satuan ?? 'pcs') }}', '{{ addslashes($item->deskripsi ?? '') }}')" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition flex items-center justify-center" title="Edit">
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </button>
                             <button onclick="hapusGeneral('/koperasi/delete', {{ $item->id }}, 'Hapus produk sembako ini?')" class="w-8 h-8 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition flex items-center justify-center" title="Hapus">

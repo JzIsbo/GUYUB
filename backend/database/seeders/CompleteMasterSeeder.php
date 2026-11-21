@@ -269,10 +269,10 @@ class CompleteMasterSeeder extends Seeder
         // ========================================================
         echo "4️⃣  Mengisi Master Data Iuran Warga...\n";
         $iuranList = [
-            ['nama_iuran' => 'Iuran Keamanan & Satpam', 'nominal' => 35000, 'sifat' => 'Wajib', 'deskripsi' => 'Honor petugas jaga pos ronda dan pemeliharaan portal otomatis'],
-            ['nama_iuran' => 'Iuran Kebersihan & Sampah', 'nominal' => 25000, 'sifat' => 'Wajib', 'deskripsi' => 'Pengangkutan sampah rumah tangga 3x seminggu ke TPA'],
-            ['nama_iuran' => 'Iuran Kas Rutin RT', 'nominal' => 20000, 'sifat' => 'Wajib', 'deskripsi' => 'Kas operasional kegiatan warga, rapat bulanan, dan perawatan fasum'],
-            ['nama_iuran' => 'Dana Sosial & Kematian (Rukem)', 'nominal' => 10000, 'sifat' => 'Sukarela', 'deskripsi' => 'Santunan duka cita, perlengkapan jenazah, dan santunan warga sakit'],
+            ['nama_iuran' => 'Iuran Keamanan & Satpam', 'periode_penagihan' => 'Bulanan', 'nominal' => 35000, 'sifat' => 'Wajib', 'deskripsi' => 'Honor petugas jaga pos ronda dan pemeliharaan portal otomatis'],
+            ['nama_iuran' => 'Iuran Kebersihan & Sampah', 'periode_penagihan' => 'Bulanan', 'nominal' => 25000, 'sifat' => 'Wajib', 'deskripsi' => 'Pengangkutan sampah rumah tangga 3x seminggu ke TPA'],
+            ['nama_iuran' => 'Iuran Kas Rutin RT', 'periode_penagihan' => 'Bulanan', 'nominal' => 20000, 'sifat' => 'Wajib', 'deskripsi' => 'Kas operasional kegiatan warga, rapat bulanan, dan perawatan fasum'],
+            ['nama_iuran' => 'Dana Sosial & Kematian (Rukem)', 'periode_penagihan' => 'Bulanan', 'nominal' => 10000, 'sifat' => 'Sukarela', 'deskripsi' => 'Santunan duka cita, perlengkapan jenazah, dan santunan warga sakit'],
         ];
 
         foreach ($iuranList as $iuran) {
@@ -305,12 +305,12 @@ class CompleteMasterSeeder extends Seeder
                 $w = $wargaList[$idx] ?? $wargaKetua;
                 if ($w) {
                     DB::table('officers')->insert([
-                        'warga_id'     => $w->id,
-                        'jabatan'      => $jabatan,
-                        'status_aktif' => 'Aktif',
-                        'periode'      => '2024 - 2027',
-                        'created_at'   => $now,
-                        'updated_at'   => $now,
+                        'warga_id'      => $w->id,
+                        'jabatan'       => $jabatan,
+                        'tanggal_mulai' => '2024-01-01',
+                        'status_aktif'  => 'Aktif',
+                        'created_at'    => $now,
+                        'updated_at'    => $now,
                     ]);
                 }
             }
@@ -322,12 +322,12 @@ class CompleteMasterSeeder extends Seeder
         echo "6️⃣  Mengisi Inventaris & Perangkat RT...\n";
         if (DB::table('devices')->count() == 0) {
             $devices = [
-                ['nama_perangkat' => 'Tenda Pesta Lipat Ukuran 3x6 Meter', 'nomor_seri' => 'INV-TND-01', 'kondisi' => 'Baik', 'lokasi' => 'Gudang Balai RT', 'keterangan' => 'Lengkap dengan terpal atap dan dinding penutup samping'],
-                ['nama_perangkat' => 'Kursi Lipat Chitose Besi (Set 50 Pcs)', 'nomor_seri' => 'INV-KRS-01', 'kondisi' => 'Baik', 'lokasi' => 'Gudang Balai RT', 'keterangan' => 'Kursi rapat warga dan hajatan lingkungan'],
-                ['nama_perangkat' => 'Sound System Portable Wireless 12 Inch', 'nomor_seri' => 'INV-SND-01', 'kondisi' => 'Baik', 'lokasi' => 'Rumah Ketua RT', 'keterangan' => 'Lengkap dengan 2 Mic Wireless dan kabel charger'],
-                ['nama_perangkat' => 'Mesin Pemotong Rumput Dorong Honda', 'nomor_seri' => 'INV-MPT-01', 'kondisi' => 'Baik', 'lokasi' => 'Pos Ronda Utama', 'keterangan' => 'Digunakan saat kerja bakti membersihkan lapangan fasum'],
-                ['nama_perangkat' => 'Handy Talkie (HT) Baofeng UV-5R (4 Unit)', 'nomor_seri' => 'INV-HT-01', 'kondisi' => 'Baik', 'lokasi' => 'Pos Ronda Utama', 'keterangan' => 'Komunikasi petugas keamanan ronda malam warga'],
-                ['nama_perangkat' => 'Portal Gerbang Otomatis RFID / ESP32', 'nomor_seri' => 'PORTAL-RFID-01', 'kondisi' => 'Baik', 'lokasi' => 'Pintu Gerbang Masuk Utama', 'keterangan' => 'Terhubung dengan sistem akses kartu e-KTP GUYUB'],
+                ['nama_perangkat' => 'Tenda Pesta Lipat Ukuran 3x6 Meter', 'jenis_perangkat' => 'Tenda & Terpal', 'nomor_serial' => 'INV-TND-01', 'kondisi' => 'Baik', 'keterangan' => 'Lengkap dengan terpal atap dan dinding penutup samping (Lokasi: Gudang Balai RT)'],
+                ['nama_perangkat' => 'Kursi Lipat Chitose Besi (Set 50 Pcs)', 'jenis_perangkat' => 'Mebel & Kursi', 'nomor_serial' => 'INV-KRS-01', 'kondisi' => 'Baik', 'keterangan' => 'Kursi rapat warga dan hajatan lingkungan (Lokasi: Gudang Balai RT)'],
+                ['nama_perangkat' => 'Sound System Portable Wireless 12 Inch', 'jenis_perangkat' => 'Audio Elektronik', 'nomor_serial' => 'INV-SND-01', 'kondisi' => 'Baik', 'keterangan' => 'Lengkap dengan 2 Mic Wireless dan kabel charger (Lokasi: Rumah Ketua RT)'],
+                ['nama_perangkat' => 'Mesin Pemotong Rumput Dorong Honda', 'jenis_perangkat' => 'Alat Kebersihan', 'nomor_serial' => 'INV-MPT-01', 'kondisi' => 'Baik', 'keterangan' => 'Digunakan saat kerja bakti membersihkan lapangan fasum (Lokasi: Pos Ronda)'],
+                ['nama_perangkat' => 'Handy Talkie (HT) Baofeng UV-5R (4 Unit)', 'jenis_perangkat' => 'Komunikasi Keamanan', 'nomor_serial' => 'INV-HT-01', 'kondisi' => 'Baik', 'keterangan' => 'Komunikasi petugas keamanan ronda malam warga (Lokasi: Pos Ronda)'],
+                ['nama_perangkat' => 'Portal Gerbang Otomatis RFID / ESP32', 'jenis_perangkat' => 'Sistem Akses IoT', 'nomor_serial' => 'PORTAL-RFID-01', 'kondisi' => 'Baik', 'keterangan' => 'Terhubung dengan sistem akses kartu e-KTP GUYUB (Lokasi: Gerbang Masuk)'],
             ];
 
             foreach ($devices as $dev) {
@@ -344,12 +344,12 @@ class CompleteMasterSeeder extends Seeder
         echo "7️⃣  Mengisi Katalog Produk Sembako Koperasi...\n";
         if (DB::table('koperasi_items')->count() == 0) {
             $sembako = [
-                ['nama_produk' => 'Beras Rojolele Super Premium 5kg', 'kategori' => 'Sembako', 'harga' => 72000, 'stok' => 30, 'satuan' => 'Sak', 'deskripsi' => 'Beras putih pulen wangi kualitas super'],
-                ['nama_produk' => 'Minyak Goreng Tropical 2 Liter', 'kategori' => 'Sembako', 'harga' => 36500, 'stok' => 45, 'satuan' => 'Pouch', 'deskripsi' => 'Minyak goreng kelapa sawit 2x penyaringan'],
-                ['nama_produk' => 'Gula Pasir Gulaku Kuning Premium 1kg', 'kategori' => 'Sembako', 'harga' => 17500, 'stok' => 50, 'satuan' => 'Kg', 'deskripsi' => 'Gula tebu murni manis alami'],
-                ['nama_produk' => 'Telur Ayam Negeri Segar (Tray 30 Butir)', 'kategori' => 'Sembako', 'harga' => 52000, 'stok' => 15, 'satuan' => 'Tray', 'deskripsi' => 'Telur langsung dari peternak lokal segar'],
-                ['nama_produk' => 'Indomie Kuah Ayam Bawang (Dus 40 Pcs)', 'kategori' => 'Sembako', 'harga' => 115000, 'stok' => 20, 'satuan' => 'Dus', 'deskripsi' => 'Mie instan favorit keluarga Indonesia'],
-                ['nama_produk' => 'Sabun Cuci Piring Sunlight Jeruk Nipis 750ml', 'kategori' => 'Kebutuhan Rumah', 'harga' => 14000, 'stok' => 35, 'satuan' => 'Pouch', 'deskripsi' => 'Pembersih lemak ampuh dengan ekstrak jeruk nipis'],
+                ['nama_produk' => 'Beras Rojolele Super Premium 5kg', 'kategori' => 'Sembako', 'harga' => 72000, 'stok' => 30, 'penjual' => 'Koperasi RT'],
+                ['nama_produk' => 'Minyak Goreng Tropical 2 Liter', 'kategori' => 'Sembako', 'harga' => 36500, 'stok' => 45, 'penjual' => 'Koperasi RT'],
+                ['nama_produk' => 'Gula Pasir Gulaku Kuning Premium 1kg', 'kategori' => 'Sembako', 'harga' => 17500, 'stok' => 50, 'penjual' => 'Koperasi RT'],
+                ['nama_produk' => 'Telur Ayam Negeri Segar (Tray 30 Butir)', 'kategori' => 'Sembako', 'harga' => 52000, 'stok' => 15, 'penjual' => 'Koperasi RT'],
+                ['nama_produk' => 'Indomie Kuah Ayam Bawang (Dus 40 Pcs)', 'kategori' => 'Sembako', 'harga' => 115000, 'stok' => 20, 'penjual' => 'Koperasi RT'],
+                ['nama_produk' => 'Sabun Cuci Piring Sunlight Jeruk Nipis 750ml', 'kategori' => 'Sembako', 'harga' => 14000, 'stok' => 35, 'penjual' => 'Koperasi RT'],
             ];
 
             foreach ($sembako as $sb) {
@@ -410,22 +410,26 @@ class CompleteMasterSeeder extends Seeder
         if (DB::table('posyandus')->count() == 0) {
             $posyandus = [
                 [
-                    'nama_kegiatan' => 'Posyandu Balita Melati 05 (Imunisasi & Timbang)',
-                    'tanggal'       => '2026-11-28',
-                    'waktu'         => '08:30 - 11:30 WIB',
-                    'lokasi'        => 'Balai Warga RT 05',
-                    'keterangan'    => 'Penimbangan balita, pengukuran tinggi badan, pemberian vitamin A dan imunisasi polio oleh Bidan Puskesmas.',
-                    'created_at'    => $now,
-                    'updated_at'    => $now,
+                    'nama_kegiatan'  => 'Posyandu Balita Melati 05 (Imunisasi & Timbang)',
+                    'target_peserta' => 'Balita (0 - 5 Tahun)',
+                    'tanggal'        => '2026-11-28',
+                    'waktu_mulai'    => '08:30:00',
+                    'waktu_selesai'  => '11:30:00',
+                    'lokasi'         => 'Balai Warga RT 05',
+                    'keterangan'     => 'Penimbangan balita, pengukuran tinggi badan, pemberian vitamin A dan imunisasi polio oleh Bidan Puskesmas.',
+                    'created_at'     => $now,
+                    'updated_at'     => $now,
                 ],
                 [
-                    'nama_kegiatan' => 'Posyandu Lansia Sehat Bugar Bersama',
-                    'tanggal'       => '2026-12-05',
-                    'waktu'         => '09:00 - 12:00 WIB',
-                    'lokasi'        => 'Balai Warga RT 05',
-                    'keterangan'    => 'Pemeriksaan tensi darah gratis, cek gula darah, kolesterol, asam urat, serta konsultasi kesehatan dokter umum.',
-                    'created_at'    => $now,
-                    'updated_at'    => $now,
+                    'nama_kegiatan'  => 'Posyandu Lansia Sehat Bugar Bersama',
+                    'target_peserta' => 'Lansia (≥ 60 Tahun)',
+                    'tanggal'        => '2026-12-05',
+                    'waktu_mulai'    => '09:00:00',
+                    'waktu_selesai'  => '12:00:00',
+                    'lokasi'         => 'Balai Warga RT 05',
+                    'keterangan'     => 'Pemeriksaan tensi darah gratis, cek gula darah, kolesterol, asam urat, serta konsultasi kesehatan dokter umum.',
+                    'created_at'     => $now,
+                    'updated_at'     => $now,
                 ],
             ];
 
@@ -533,6 +537,59 @@ class CompleteMasterSeeder extends Seeder
 
             foreach ($kerjaBaktis as $kb) {
                 DB::table('kerja_baktis')->insert($kb);
+            }
+        }
+
+        // ========================================================
+        // 13. SEED RUKEM (SANTUNAN DUKA CITA & KEMATIAN)
+        // ========================================================
+        echo "1️⃣3️⃣ Mengisi Data Santunan Duka Cita (Rukem)...\n";
+        if (DB::table('rukems')->count() == 0) {
+            $rukems = [
+                [
+                    'nama_almarhum'       => 'Alm. Bapak Suparman',
+                    'keluarga_duka'       => 'Ibu Sri Wahyuni (Blok A2 No. 05)',
+                    'tanggal_duka'        => '2026-10-15',
+                    'santunan_diserahkan' => 1000000,
+                    'status_santunan'     => 'Tersalurkan',
+                    'created_at'          => $now,
+                    'updated_at'          => $now,
+                ],
+            ];
+
+            foreach ($rukems as $r) {
+                DB::table('rukems')->insert($r);
+            }
+        }
+
+        // ========================================================
+        // 14. SEED ASPIRASI WARGA
+        // ========================================================
+        echo "1️⃣4️⃣ Mengisi Aspirasi & Saran Warga...\n";
+        if (DB::table('aspirasis')->count() == 0) {
+            $aspirasis = [
+                [
+                    'nama_warga'   => 'Hendra Setiawan',
+                    'topik'        => 'Penerangan Jalan di Tikungan Blok C',
+                    'isi_aspirasi' => 'Mohon ditambah lampu jalan LED di tikungan Blok C2 karena saat malam cukup gelap dan rawan terserempet kendaraan.',
+                    'tanggapan_rt' => 'Terima kasih atas masukannya. Pengurus sudah menganggarkan pembelian lampu LED sorot untuk dipasang akhir pekan ini.',
+                    'status'       => 'Selesai',
+                    'created_at'   => $now,
+                    'updated_at'   => $now,
+                ],
+                [
+                    'nama_warga'   => 'Steve Marvin Politon',
+                    'topik'        => 'Penambahan Tempat Sampah Pilah Organik/Anorganik',
+                    'isi_aspirasi' => 'Usul agar di area taman bermain dan balai warga disediakan tempat sampah terpisah untuk plastik dan sisa makanan.',
+                    'tanggapan_rt' => 'Usulan sangat baik. Akan dikoordinasikan dengan tim Bank Sampah RT.',
+                    'status'       => 'Diproses',
+                    'created_at'   => $now,
+                    'updated_at'   => $now,
+                ]
+            ];
+
+            foreach ($aspirasis as $asp) {
+                DB::table('aspirasis')->insert($asp);
             }
         }
 

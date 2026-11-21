@@ -232,6 +232,104 @@ class CompleteMasterSeeder extends Seeder
             }
         }
 
+        // Pastikan akun demo 'Warga' (warga@gmail.com) memiliki data keluarga lengkap
+        $kkWarga = '3275990011223344';
+        if (!DB::table('wargas')->where('nama_lengkap', 'Warga')->exists()) {
+            DB::table('wargas')->insert([
+                [
+                    'nomor_kk'        => $kkWarga,
+                    'nik'             => '3275010101850001',
+                    'nama_lengkap'    => 'Warga',
+                    'jenis_kelamin'   => 'Laki-laki',
+                    'umur'            => 41,
+                    'agama'           => 'Islam',
+                    'no_telepon'      => '081234567800',
+                    'blok_rumah'      => 'Blok A1 No. 01',
+                    'status_keluarga' => 'Kepala Keluarga',
+                    'status_domisili' => 'Tetap',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ],
+                [
+                    'nomor_kk'        => $kkWarga,
+                    'nik'             => '3275010202880002',
+                    'nama_lengkap'    => 'Siti Rahayu',
+                    'jenis_kelamin'   => 'Perempuan',
+                    'umur'            => 38,
+                    'agama'           => 'Islam',
+                    'no_telepon'      => '081234567801',
+                    'blok_rumah'      => 'Blok A1 No. 01',
+                    'status_keluarga' => 'Istri',
+                    'status_domisili' => 'Tetap',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ],
+                [
+                    'nomor_kk'        => $kkWarga,
+                    'nik'             => '3275010303100003',
+                    'nama_lengkap'    => 'Rian Pratama',
+                    'jenis_kelamin'   => 'Laki-laki',
+                    'umur'            => 15,
+                    'agama'           => 'Islam',
+                    'no_telepon'      => null,
+                    'blok_rumah'      => 'Blok A1 No. 01',
+                    'status_keluarga' => 'Anak',
+                    'status_domisili' => 'Tetap',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ],
+                [
+                    'nomor_kk'        => $kkWarga,
+                    'nik'             => '3275010404160004',
+                    'nama_lengkap'    => 'Alya Putri',
+                    'jenis_kelamin'   => 'Perempuan',
+                    'umur'            => 9,
+                    'agama'           => 'Islam',
+                    'no_telepon'      => null,
+                    'blok_rumah'      => 'Blok A1 No. 01',
+                    'status_keluarga' => 'Anak',
+                    'status_domisili' => 'Tetap',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ]
+            ]);
+        }
+
+        // Pastikan akun Steve Marvin Politon memiliki data keluarga lengkap
+        $steve = DB::table('wargas')->where('nama_lengkap', 'Steve Marvin Politon')->first();
+        if ($steve && DB::table('wargas')->where('nomor_kk', $steve->nomor_kk)->count() == 1) {
+            DB::table('wargas')->insert([
+                [
+                    'nomor_kk'        => $steve->nomor_kk,
+                    'nik'             => '3275636752765770',
+                    'nama_lengkap'    => 'Clara Politon',
+                    'jenis_kelamin'   => 'Perempuan',
+                    'umur'            => 24,
+                    'agama'           => 'Kristen',
+                    'no_telepon'      => '082199887766',
+                    'blok_rumah'      => $steve->blok_rumah,
+                    'status_keluarga' => 'Istri',
+                    'status_domisili' => 'Tetap',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ],
+                [
+                    'nomor_kk'        => $steve->nomor_kk,
+                    'nik'             => '3275636752765771',
+                    'nama_lengkap'    => 'Baby Marvin Politon',
+                    'jenis_kelamin'   => 'Laki-laki',
+                    'umur'            => 2,
+                    'agama'           => 'Kristen',
+                    'no_telepon'      => null,
+                    'blok_rumah'      => $steve->blok_rumah,
+                    'status_keluarga' => 'Anak',
+                    'status_domisili' => 'Tetap',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ]
+            ]);
+        }
+
         // ========================================================
         // 3. SEED TRANSAKSI KAS RT (PEMASUKAN & PENGELUARAN REALISTIS)
         // ========================================================

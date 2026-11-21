@@ -81,7 +81,7 @@
 </div>
 
 {{-- ════════════════════════════════════════════════════════════════════ --}}
-{{-- 🎴 KARTU KELUARGA SAYA (DIGITAL FAMILY CARD) --}}
+{{-- 🎴 KARTU KELUARGA USER (DIGITAL FAMILY CARD) --}}
 {{-- ════════════════════════════════════════════════════════════════════ --}}
 <div class="bg-white/85 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 shadow-[0_4px_30px_rgba(0,0,0,0.03)] rounded-[2.5rem] p-6 md:p-8 mb-8 relative overflow-hidden">
     <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-50/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
@@ -94,7 +94,7 @@
                 <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-indigo-50/60 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 text-[10px] font-extrabold uppercase tracking-widest mb-1 border border-indigo-100/50 dark:border-indigo-500/20">
                     <i class="fa-solid fa-house-chimney-user text-[9px]"></i> Data Anggota Keluarga
                 </div>
-                <h3 class="text-xl font-black text-slate-800 dark:text-white tracking-tight leading-none">Kartu Keluarga Saya</h3>
+                <h3 class="text-xl font-black text-slate-800 dark:text-white tracking-tight leading-none">Kartu Keluarga User</h3>
                 <p class="text-xs text-gray-400 font-bold mt-1.5">
                     No. KK: <span class="font-bold text-indigo-600 dark:text-indigo-400 font-mono tracking-wide">{{ $user_warga->nomor_kk ?? '-' }}</span>
                     @if($user_warga->blok_rumah ?? false) &bull; <span class="text-slate-600 dark:text-slate-400 font-bold">{{ $user_warga->blok_rumah }}</span> @endif

@@ -5,14 +5,37 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Warga;
-use Faker\Factory as Faker;
 
 class CompleteMasterSeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = Faker::create('id_ID');
         $now = now();
+
+        $randomElement = function(array $arr) {
+            return $arr[array_rand($arr)];
+        };
+
+        $maleNames = [
+            'Ahmad Fauzi', 'Budi Santoso', 'Chandra Wijaya', 'Dedi Kurniawan', 'Eko Prasetyo',
+            'Fajar Nugroho', 'Gunawan Wibowo', 'Hendra Setiawan', 'Indra Permana', 'Joko Susilo',
+            'Lukman Hakim', 'Maulana Malik', 'Rian Hidayat', 'Surya Saputra', 'Teguh Purnomo',
+            'Wahyu Ramadhan', 'Yudi Pratama', 'Zainal Abidin', 'Agus Supriyadi', 'Bambang Irawan'
+        ];
+
+        $femaleNames = [
+            'Ayu Lestari', 'Citra Dewi', 'Dewi Sartika', 'Endang Rahayu', 'Fitri Handayani',
+            'Gita Puspita', 'Hani Novitasari', 'Indah Permatasari', 'Lina Marlina', 'Maya Anggraini',
+            'Nita Yuliana', 'Putri Wulandari', 'Rina Marlina', 'Siti Maryam', 'Sri Wahyuni',
+            'Tri Astuti', 'Utami Ningsih', 'Wulan Dari', 'Yulia Safitri', 'Zahra Amalia'
+        ];
+
+        $childNames = [
+            'Aditya Pratama', 'Aldi Kurniawan', 'Alif Ramadhan', 'Anisa Rahmawati', 'Aqila Putri',
+            'Arya Sena', 'Bilal Haidar', 'Clarissa Aurelia', 'Danendra Farhan', 'Dhea Ananda',
+            'Farrel Abimanyu', 'Genta Buana', 'Haikal Rabbani', 'Keyla Az-Zahra', 'Kevin Sanjaya',
+            'Naura Salsabila', 'Raffi Ahmad', 'Rizky Billar', 'Siti Nurhaliza', 'Zidan Al-Ghifari'
+        ];
 
         echo "🚀 MEMULAI SEEDING MASTER DATA LENGKAP GUYUB...\n\n";
 
@@ -97,7 +120,7 @@ class CompleteMasterSeeder extends Seeder
 
             foreach ($familiesToSeed as $f) {
                 $nomor_kk = '3275' . str_pad(rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT);
-                $blok = $faker->randomElement($blok_list) . ' No. ' . rand(1, 30);
+                $blok = $randomElement($blok_list) . ' No. ' . rand(1, 30);
 
                 // Ayah
                 if (!DB::table('wargas')->where('nama_lengkap', $f['ayah']['nama'])->exists()) {
@@ -156,14 +179,14 @@ class CompleteMasterSeeder extends Seeder
             // Tambah keluarga acak sampai minimal 75 warga
             while (DB::table('wargas')->count() < 80) {
                 $nomor_kk = '3275' . str_pad(rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT);
-                $blok = $faker->randomElement($blok_list) . ' No. ' . rand(1, 35);
-                $domisili = $faker->randomElement(['Tetap', 'Tetap', 'Kontrak']);
+                $blok = $randomElement($blok_list) . ' No. ' . rand(1, 35);
+                $domisili = $randomElement(['Tetap', 'Tetap', 'Kontrak']);
 
                 // Kepala Keluarga
                 DB::table('wargas')->insert([
                     'nomor_kk'        => $nomor_kk,
                     'nik'             => '3275' . str_pad(rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT),
-                    'nama_lengkap'    => $faker->name('male'),
+                    'nama_lengkap'    => $randomElement($maleNames) . ' ' . rand(1, 99),
                     'umur'            => rand(28, 62),
                     'agama'           => 'Islam',
                     'no_telepon'      => '08' . rand(1111111111, 9999999999),
@@ -178,7 +201,7 @@ class CompleteMasterSeeder extends Seeder
                 DB::table('wargas')->insert([
                     'nomor_kk'        => $nomor_kk,
                     'nik'             => '3275' . str_pad(rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT),
-                    'nama_lengkap'    => $faker->name('female'),
+                    'nama_lengkap'    => $randomElement($femaleNames) . ' ' . rand(1, 99),
                     'umur'            => rand(25, 58),
                     'agama'           => 'Islam',
                     'no_telepon'      => '08' . rand(1111111111, 9999999999),
@@ -195,7 +218,7 @@ class CompleteMasterSeeder extends Seeder
                     DB::table('wargas')->insert([
                         'nomor_kk'        => $nomor_kk,
                         'nik'             => '3275' . str_pad(rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT),
-                        'nama_lengkap'    => $faker->name(),
+                        'nama_lengkap'    => $randomElement($childNames) . ' ' . rand(1, 99),
                         'umur'            => rand(3, 24),
                         'agama'           => 'Islam',
                         'no_telepon'      => rand(0, 1) ? '08' . rand(1111111111, 9999999999) : null,

@@ -68,6 +68,29 @@ class RfidController extends Controller
         }
 
         if ($session->status === 'completed') {
+            $uid = strtoupper(trim($session->scanned_uid));
+            $existing = User::where('rfid_uid', $uid)->first();
+
+            if ($existing) {
+                if ($existing->id === Auth::id()) {
+                    return response()->json([
+                        'status'         => 'already_registered',
+                        'is_self'        => true,
+                        'uid'            => $uid,
+                        'registered_to'  => $existing->name,
+                        'message'        => 'Kartu ini sudah terdaftar pada akun Anda sendiri.',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status'         => 'already_registered',
+                        'is_self'        => false,
+                        'uid'            => $uid,
+                        'registered_to'  => $existing->name,
+                        'message'        => "Kartu ini sudah terdaftar atas nama warga lain ({$existing->name}). Satu kartu e-KTP tidak dapat didaftarkan ke lebih dari satu akun.",
+                    ]);
+                }
+            }
+
             return response()->json([
                 'status' => 'completed',
                 'uid'    => $session->scanned_uid,
@@ -120,7 +143,7 @@ class RfidController extends Controller
             $session->delete();
             return response()->json([
                 'status'  => 'error',
-                'message' => 'UID kartu ini sudah terdaftar untuk akun lain. Hubungi pengurus RT.',
+                'message' => "UID kartu ini sudah terdaftar untuk akun {$existing->name}. Satu kartu e-KTP hanya dapat digunakan untuk 1 akun warga.",
             ], 409);
         }
 

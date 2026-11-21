@@ -106,25 +106,27 @@
         {{-- ===== PANEL 2: KARTU TERDETEKSI (DEFAULT: HIDDEN) ===== --}}
         <div id="panel-detected" class="hidden mt-6 border-t border-gray-100 dark:border-slate-700 pt-6">
             <div class="flex flex-col items-center text-center py-4">
-                <div class="w-16 h-16 rounded-full bg-green-50 dark:bg-green-950/60 border-2 border-green-500 flex items-center justify-center mb-3">
-                    <i class="fa-solid fa-check text-green-600 text-2xl"></i>
+                <div id="detected-icon-wrapper" class="w-16 h-16 rounded-full bg-green-50 dark:bg-green-950/60 border-2 border-green-500 flex items-center justify-center mb-3">
+                    <i id="detected-icon" class="fa-solid fa-check text-green-600 text-2xl"></i>
                 </div>
-                <p class="font-bold text-green-600 text-lg mb-1">e-KTP Terdeteksi!</p>
+                <p id="detected-title" class="font-bold text-green-600 text-lg mb-1">e-KTP Terdeteksi!</p>
                 <p class="text-xs text-gray-400 mb-2">UID Kartu:</p>
                 <div class="font-mono bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-white px-5 py-2 rounded-xl text-lg font-black tracking-widest mb-4 border border-gray-200 dark:border-slate-600" id="detected-uid-text">
                     XXXXXXXX
                 </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-5 max-w-sm">
+                <div id="detected-subtitle" class="text-xs text-gray-500 dark:text-gray-400 mb-5 max-w-sm">
                     Apakah Anda ingin mendaftarkan kartu ini untuk membuka portal perumahan?
-                </p>
-                <div class="flex gap-3">
+                </div>
+                <div class="flex items-center gap-3">
                     <button id="btn-confirm-assign"
                             onclick="confirmRfidAssign()"
                             class="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-green-700 transition cursor-pointer shadow-md shadow-green-600/20">
                         <i class="fa-solid fa-circle-check"></i>
                         <span>Ya, Daftarkan Sekarang!</span>
                     </button>
-                    <button onclick="cancelRfidScanning()" class="bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-200 transition cursor-pointer">
+                    <button id="btn-cancel-assign"
+                            onclick="cancelRfidScanning()"
+                            class="bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-200 transition cursor-pointer">
                         Batal
                     </button>
                 </div>
@@ -367,20 +369,93 @@
             const res = await fetch(`/rfid/session/${rfidSessionToken}`);
             const data = await res.json();
 
+            const panelScanning = document.getElementById('panel-scanning');
+            const panelDetected = document.getElementById('panel-detected');
+            const detectedUidText = document.getElementById('detected-uid-text');
+            const detectedIconWrapper = document.getElementById('detected-icon-wrapper');
+            const detectedIcon = document.getElementById('detected-icon');
+            const detectedTitle = document.getElementById('detected-title');
+            const detectedSubtitle = document.getElementById('detected-subtitle');
+            const btnConfirm = document.getElementById('btn-confirm-assign');
+            const btnCancel = document.getElementById('btn-cancel-assign');
+
             if (data.status === 'completed') {
-                // Kartu berhasil discan ESP32!
+                // Kartu valid & belum terdaftar
                 stopRfidPolling();
                 stopRfidCountdown();
 
                 rfidDetectedUid = data.uid;
 
-                const panelScanning = document.getElementById('panel-scanning');
-                const panelDetected = document.getElementById('panel-detected');
-                const detectedUidText = document.getElementById('detected-uid-text');
+                if (panelScanning) panelScanning.classList.add('hidden');
+                if (panelDetected) panelDetected.classList.remove('hidden');
+                if (detectedUidText) {
+                    detectedUidText.textContent = data.uid;
+                    detectedUidText.className = 'font-mono bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-white px-5 py-2 rounded-xl text-lg font-black tracking-widest mb-4 border border-gray-200 dark:border-slate-600';
+                }
+
+                if (detectedIconWrapper) detectedIconWrapper.className = 'w-16 h-16 rounded-full bg-green-50 dark:bg-green-950/60 border-2 border-green-500 flex items-center justify-center mb-3';
+                if (detectedIcon) detectedIcon.className = 'fa-solid fa-check text-green-600 text-2xl';
+                if (detectedTitle) {
+                    detectedTitle.className = 'font-bold text-green-600 text-lg mb-1';
+                    detectedTitle.textContent = 'e-KTP Terdeteksi!';
+                }
+                if (detectedSubtitle) {
+                    detectedSubtitle.className = 'text-xs text-gray-500 dark:text-gray-400 mb-5 max-w-sm';
+                    detectedSubtitle.innerHTML = 'Apakah Anda ingin mendaftarkan kartu ini untuk membuka portal perumahan?';
+                }
+                if (btnConfirm) btnConfirm.classList.remove('hidden');
+                if (btnCancel) {
+                    btnCancel.className = 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-200 transition cursor-pointer';
+                    btnCancel.textContent = 'Batal';
+                    btnCancel.onclick = cancelRfidScanning;
+                }
+
+            } else if (data.status === 'already_registered') {
+                // Kartu sudah terdaftar di akun lain atau akun sendiri
+                stopRfidPolling();
+                stopRfidCountdown();
+
+                rfidDetectedUid = data.uid;
 
                 if (panelScanning) panelScanning.classList.add('hidden');
                 if (panelDetected) panelDetected.classList.remove('hidden');
-                if (detectedUidText) detectedUidText.textContent = data.uid;
+                if (detectedUidText) {
+                    detectedUidText.textContent = data.uid;
+                    detectedUidText.className = 'font-mono bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 px-5 py-2 rounded-xl text-lg font-black tracking-widest mb-4 border border-red-200 dark:border-red-800';
+                }
+
+                if (detectedIconWrapper) detectedIconWrapper.className = 'w-16 h-16 rounded-full bg-red-50 dark:bg-red-950/60 border-2 border-red-500 flex items-center justify-center mb-3';
+                if (detectedIcon) detectedIcon.className = 'fa-solid fa-ban text-red-600 text-2xl';
+                if (detectedTitle) {
+                    detectedTitle.className = 'font-bold text-red-600 text-lg mb-1';
+                    detectedTitle.textContent = 'Kartu Sudah Terdaftar!';
+                }
+                if (detectedSubtitle) {
+                    detectedSubtitle.className = 'text-xs max-w-md mb-5';
+                    if (data.is_self) {
+                        detectedSubtitle.innerHTML = '<div class="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-xl text-amber-700 dark:text-amber-300 font-medium text-xs leading-relaxed text-left"><div class="flex items-start gap-2"><i class="fa-solid fa-circle-info text-amber-500 mt-0.5"></i><div>Kartu e-KTP ini <strong>sudah terdaftar</strong> pada akun Anda sendiri.</div></div></div>';
+                    } else {
+                        detectedSubtitle.innerHTML = `<div class="p-3.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-xl text-red-700 dark:text-red-300 font-medium text-xs leading-relaxed text-left">
+                            <div class="flex items-start gap-2">
+                                <i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5"></i>
+                                <div>
+                                    Kartu e-KTP ini <strong>sudah terdaftar</strong> atas nama warga lain: <strong>${data.registered_to}</strong>.<br>
+                                    <span class="text-[11px] text-red-500/80 mt-0.5 block">Satu fisik kartu e-KTP tidak dapat didaftarkan ke lebih dari 1 akun warga. Silakan gunakan kartu e-KTP Anda sendiri.</span>
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                }
+                // Sembunyikan tombol "Ya, Daftarkan Sekarang!"
+                if (btnConfirm) btnConfirm.classList.add('hidden');
+                if (btnCancel) {
+                    btnCancel.className = 'flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition cursor-pointer shadow-md shadow-blue-600/20';
+                    btnCancel.innerHTML = '<i class="fa-solid fa-rotate-left"></i><span>Scan Kartu Lain</span>';
+                    btnCancel.onclick = function() {
+                        cancelRfidScanning();
+                        startRfidRegistration();
+                    };
+                }
 
             } else if (data.status === 'expired') {
                 cancelRfidScanning();
@@ -432,11 +507,19 @@
         const panelDetected = document.getElementById('panel-detected');
         const btn = document.getElementById('btn-start-scan');
         const btnText = document.getElementById('btn-start-scan-text');
+        const btnConfirm = document.getElementById('btn-confirm-assign');
+        const btnCancel = document.getElementById('btn-cancel-assign');
 
         if (panelScanning) panelScanning.classList.add('hidden');
         if (panelDetected) panelDetected.classList.add('hidden');
         if (btn) btn.disabled = false;
         if (btnText) btnText.textContent = 'Daftarkan KTP';
+        if (btnConfirm) btnConfirm.classList.remove('hidden');
+        if (btnCancel) {
+            btnCancel.className = 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-200 transition cursor-pointer';
+            btnCancel.textContent = 'Batal';
+            btnCancel.onclick = cancelRfidScanning;
+        }
     };
 
     // 5. KONFIRMASI SIMPAN UID KE USER

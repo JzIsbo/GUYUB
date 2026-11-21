@@ -42,7 +42,7 @@
                     <h3 class="text-lg font-black text-gray-800 mb-1 leading-snug">{{ $item->nama_usaha }}</h3>
                     <p class="text-xs font-bold text-gray-400 mb-2 flex items-center gap-1.5 flex-wrap">
                         <span><i class="fa-solid fa-user-tie text-indigo-400"></i> Pemilik: {{ $item->pemilik }}</span>
-                        @if($item->lokasi)
+                        @if(!empty($item->lokasi))
                             <span class="text-gray-300">•</span>
                             <span class="text-indigo-600 font-semibold bg-indigo-50/80 px-2 py-0.5 rounded-lg border border-indigo-100/50"><i class="fa-solid fa-location-dot text-[10px]"></i> {{ $item->lokasi }}</span>
                         @endif

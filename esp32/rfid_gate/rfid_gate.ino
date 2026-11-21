@@ -43,7 +43,6 @@
 #include <HTTPClient.h>
 #include <SPI.h>
 #include <MFRC522.h>
-#include <ArduinoJson.h>
 
 // ============================================================
 // KONFIGURASI — SESUAIKAN DENGAN LINGKUNGAN ANDA
@@ -60,15 +59,24 @@ const char* DEVICE_KEY    = "GuyubRfid2026_SecretKey_ChangeMe";
 // ID unik perangkat ini (untuk log di server)
 const char* DEVICE_ID     = "gate-01";
 
-// Pin MFRC522
-#define SS_PIN    5
-#define RST_PIN   22
-
-// Pin relay & indikator
-#define RELAY_PIN   26
-#define LED_GREEN   32
-#define LED_RED     33
-#define BUZZER_PIN  25
+// ============================================================
+// PIN MFRC522 & RELAY (OTOMATIS NANO ESP32 vs ESP32 STANDARD)
+// ============================================================
+#if defined(ARDUINO_NANO_ESP32) || defined(ARDUINO_ARCH_ESP32) && defined(D10)
+  #define SS_PIN     D10
+  #define RST_PIN    D9
+  #define RELAY_PIN  D4
+  #define LED_GREEN  D5
+  #define LED_RED    D6
+  #define BUZZER_PIN D7
+#else
+  #define SS_PIN     5
+  #define RST_PIN    22
+  #define RELAY_PIN  26
+  #define LED_GREEN  32
+  #define LED_RED    33
+  #define BUZZER_PIN 25
+#endif
 
 // Relay aktif HIGH (1) atau aktif LOW (0)?
 // Kebanyakan modul relay murah: aktif LOW
@@ -206,13 +214,8 @@ void checkAccess(String uid) {
     http.addHeader("X-Device-Key", DEVICE_KEY);
     http.setTimeout(10000); // 10 detik timeout
 
-    // Build JSON payload
-    StaticJsonDocument<256> doc;
-    doc["uid"]       = uid;
-    doc["device_id"] = DEVICE_ID;
-
-    String payload;
-    serializeJson(doc, payload);
+    // Build JSON payload natively without ArduinoJson
+    String payload = "{\"uid\":\"" + uid + "\",\"device_id\":\"" + String(DEVICE_ID) + "\"}";
 
     Serial.printf("[HTTP] Checking UID: %s\n", uid.c_str());
     int httpCode = http.POST(payload);
@@ -223,34 +226,38 @@ void checkAccess(String uid) {
         String response = http.getString();
         Serial.printf("[HTTP] Response: %s\n", response.c_str());
 
-        StaticJsonDocument<512> respDoc;
-        deserializeJson(respDoc, response);
-
-        bool access = respDoc["access"] | false;
+        bool access = (response.indexOf("\"access\":true") >= 0 || response.indexOf("\"access\": true") >= 0);
 
         if (access) {
-            const char* name            = respDoc["name"]              | "Pengguna";
-            const char* role            = respDoc["role"]              | "";
-            int         gateOpenSeconds = respDoc["gate_open_seconds"] | 5;
+            String name = "Pengguna";
+            int idxName = response.indexOf("\"name\":\"");
+            if (idxName >= 0) {
+                int start = idxName + 8;
+                int end = response.indexOf("\"", start);
+                if (end > start) name = response.substring(start, end);
+            }
 
-            Serial.printf("[ACCESS GRANTED] %s (%s) - Portal terbuka %d detik\n",
-                          name, role, gateOpenSeconds);
+            int gateOpenSeconds = 5;
+            int idxSec = response.indexOf("\"gate_open_seconds\":");
+            if (idxSec >= 0) {
+                int start = idxSec + 20;
+                gateOpenSeconds = response.substring(start).toInt();
+                if (gateOpenSeconds <= 0) gateOpenSeconds = 5;
+            }
+
+            Serial.printf("[ACCESS GRANTED] %s - Portal terbuka %d detik\n",
+                          name.c_str(), gateOpenSeconds);
 
             indicatorGrant(gateOpenSeconds);
         } else {
-            // Response 200 tapi access = false (tidak seharusnya terjadi tapi aman)
-            const char* message = respDoc["message"] | "Akses ditolak.";
-            Serial.printf("[ACCESS DENIED] %s\n", message);
+            Serial.println("[ACCESS DENIED] Akses ditolak oleh server.");
             indicatorDeny();
         }
 
     } else if (httpCode == 403) {
         // AKSES DITOLAK
         String response = http.getString();
-        StaticJsonDocument<256> respDoc;
-        deserializeJson(respDoc, response);
-        const char* message = respDoc["message"] | "KTP tidak terdaftar.";
-        Serial.printf("[ACCESS DENIED] %s\n", message);
+        Serial.printf("[ACCESS DENIED] %s\n", response.c_str());
         indicatorDeny();
 
     } else if (httpCode == 401) {

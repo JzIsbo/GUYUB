@@ -39,6 +39,11 @@ class SelfHealingDatabaseService
                     $table->string('status')->default('Aktif');
                 });
             }
+            if (!Schema::hasColumn('users', 'rfid_uid')) {
+                Schema::table('users', function ($table) {
+                    $table->string('rfid_uid', 50)->nullable()->unique();
+                });
+            }
         }
 
         // 1b. wargas table foto_ktp column check

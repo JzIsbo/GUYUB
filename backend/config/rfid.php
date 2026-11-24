@@ -8,7 +8,7 @@ return [
     | Key rahasia yang diprogram ke ESP32. Ganti di .env dengan nilai acak
     | yang panjang. Semua perangkat IoT wajib kirim key ini di setiap request.
     */
-    'device_key' => env('RFID_DEVICE_KEY', 'rfid-secret-key-change-in-production'),
+    'device_key' => env('RFID_DEVICE_KEY', 'smartrw-rfid-device'),
 
     /*
     |--------------------------------------------------------------------------

@@ -33,13 +33,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RfidController;
 
 // ========================================================
-// ESP32 IoT API — RFID/NFC Portal (No Auth, Device Key)
-// ========================================================
-Route::post('/api/rfid/scan', [RfidController::class, 'handleScan'])->middleware('rfid.device');
-Route::post('/api/rfid/gate-check', [RfidController::class, 'gateCheck'])->middleware('rfid.device');
-Route::post('/api/rfid/heartbeat', [RfidController::class, 'heartbeat'])->middleware('rfid.device');
-
-// ========================================================
 // 1. RUTE PUBLIK (Tidak Butuh Login)
 // ========================================================
 Route::get('/', function () {

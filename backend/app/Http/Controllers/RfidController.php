@@ -223,52 +223,109 @@ class RfidController extends Controller
     }
 
     // =========================================================================
-    // F. handleScan — API (rfid.device middleware)
-    //    ESP32 registration terminal kirim UID → assigned ke sesi aktif
+    // F. tap — API (rfid.device middleware)
+    //    Menerima data tap kartu RFID / e-KTP dari alat fisik ESP32
     // =========================================================================
-    public function handleScan(Request $request)
+    public function tap(Request $request)
     {
+        // 1. Validasi input
         $request->validate([
-            'uid'         => 'required|string|max:50',
-            'device_id'   => 'nullable|string|max:100',
-            'device_type' => 'nullable|string|max:50',
+            'uid'       => 'required|string',
+            'device_id' => 'nullable|string',
         ]);
 
-        $uid        = strtoupper(trim($request->uid));
-        $deviceType = $request->input('device_type', 'registration');
+        $uid      = strtoupper(trim($request->input('uid')));
+        $deviceId = $request->input('device_id', 'esp32-scanner-01');
 
-        // Jika device adalah gate, arahkan ke gateCheck
-        if ($deviceType === 'gate') {
-            return $this->gateCheck($request);
-        }
+        // Simpan denyut online alat di Cache Laravel setiap kali kartu di-tap
+        Cache::put('rfid_reader_online', true, 30);
+        Cache::put('rfid_scanner_last_seen', now()->timestamp, 30);
+        Cache::put('rfid_scanner_info', [
+            'device_id' => $deviceId,
+            'ip'        => $request->ip(),
+            'timestamp' => now()->toDateTimeString(),
+        ], 30);
 
-        // Cari sesi waiting paling lama (FIFO) yang belum expired
-        $session = RfidScanSession::where('status', 'waiting')
+        // 2. Hubungkan logika fitur:
+        // A. Cek apakah ada sesi pendaftaran KTP aktif di web
+        $activeSession = RfidScanSession::where('status', 'waiting')
             ->where('expires_at', '>', now())
             ->orderBy('created_at', 'asc')
             ->first();
 
-        if (!$session) {
-            return response()->json([
-                'status'  => 'no_session',
-                'message' => 'Tidak ada sesi registrasi aktif. Pastikan user sudah klik "Daftarkan KTP" di aplikasi.',
-                'uid'     => $uid,
+        if ($activeSession) {
+            $activeSession->update([
+                'scanned_uid' => $uid,
+                'status'      => 'completed',
             ]);
         }
 
-        // Assign UID ke sesi
-        $session->update([
-            'scanned_uid' => $uid,
-            'status'      => 'completed',
-        ]);
+        // B. Cari data warga / user berdasarkan nomor kartu (UID)
+        $user = User::where('rfid_uid', $uid)->first();
+        $wargaInfo = null;
 
+        if ($user) {
+            $wargaInfo = [
+                'type'   => 'user',
+                'name'   => $user->name,
+                'role'   => $user->role,
+                'status' => $user->status,
+            ];
+
+            // Catat log akses portal
+            try {
+                PortalAccessLog::create([
+                    'user_id'   => $user->id,
+                    'rfid_uid'  => $uid,
+                    'status'    => ($user->status === 'Aktif') ? 'granted' : 'denied',
+                    'device_id' => $deviceId,
+                    'message'   => ($user->status === 'Aktif')
+                        ? "Akses diberikan untuk {$user->name} ({$user->role})"
+                        : "Kartu terdaftar tapi akun nonaktif ({$user->name})",
+                ]);
+            } catch (\Throwable $e) {}
+        } else {
+            // Cek di tabel wargas berdasarkan NIK jika UID identik dengan NIK
+            $warga = DB::table('wargas')->where('nik', $uid)->first();
+            if ($warga) {
+                $wargaInfo = [
+                    'type'       => 'warga',
+                    'name'       => $warga->nama_lengkap,
+                    'nik'        => $warga->nik,
+                    'blok_rumah' => $warga->blok_rumah,
+                ];
+            }
+
+            try {
+                PortalAccessLog::create([
+                    'user_id'   => null,
+                    'rfid_uid'  => $uid,
+                    'status'    => $activeSession ? 'registration' : 'scan',
+                    'device_id' => $deviceId,
+                    'message'   => $activeSession
+                        ? "UID {$uid} terbaca dalam proses pendaftaran KTP"
+                        : "Kartu belum terdaftar di-tap pada perangkat {$deviceId}",
+                ]);
+            } catch (\Throwable $e) {}
+        }
+
+        // 3. Kembalikan response JSON HTTP 200 agar buzzer ESP32 berbunyi sukses
         return response()->json([
-            'status'   => 'success',
-            'assigned' => true,
-            'uid'      => $uid,
-            'user_id'  => $session->user_id,
-            'message'  => "UID {$uid} berhasil di-scan. Menunggu konfirmasi user di aplikasi.",
-        ]);
+            'success'   => true,
+            'message'   => 'Kartu berhasil dibaca',
+            'uid'       => $uid,
+            'device_id' => $deviceId,
+            'warga'     => $wargaInfo,
+            'registered'=> ($user !== null || $wargaInfo !== null),
+        ], 200);
+    }
+
+    // =========================================================================
+    // F2. handleScan — Alias kompatibel untuk /api/rfid/scan
+    // =========================================================================
+    public function handleScan(Request $request)
+    {
+        return $this->tap($request);
     }
 
     // =========================================================================
@@ -332,13 +389,15 @@ class RfidController extends Controller
 
     // =========================================================================
     // H. heartbeat — API (rfid.device middleware)
-    //    ESP32 mengirim ping setiap 5 detik agar web tahu statusnya ONLINE
+    //    ESP32 mengirim ping setiap 2-3 detik agar sistem tahu alat ONLINE
     // =========================================================================
     public function heartbeat(Request $request)
     {
-        $deviceId = $request->input('device_id', 'esp32-scanner');
+        $deviceId = $request->input('device_id', 'esp32-scanner-01');
         $ip       = $request->input('ip', $request->ip());
 
+        // Simpan status online alat di Cache Laravel (durasi 30 detik)
+        Cache::put('rfid_reader_online', true, 30);
         Cache::put('rfid_scanner_last_seen', now()->timestamp, 30);
         Cache::put('rfid_scanner_info', [
             'device_id' => $deviceId,
@@ -347,9 +406,8 @@ class RfidController extends Controller
         ], 30);
 
         return response()->json([
-            'status' => 'ok',
-            'time'   => now()->toDateTimeString()
-        ]);
+            'status' => 'online',
+        ], 200);
     }
 
     // =========================================================================

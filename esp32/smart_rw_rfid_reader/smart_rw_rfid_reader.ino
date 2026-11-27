@@ -9,20 +9,29 @@
  *   4. Fabian : https://e-warga.unique-monsters.my.id/
  *   5. Custom / Bebas
  *
+ * Panduan Catu Daya Adaptor + Modul HW-131:
+ *   - Gunakan Adaptor DC 9V / 12V (1A - 2A) dicolokkan ke Jack DC modul HW-131.
+ *   - Atur Jumper HW-131 Rel A: 5V (untuk VCC Servo SG90 & VCC LCD 16x2 I2C).
+ *   - Atur Jumper HW-131 Rel B: 3.3V atau 5V untuk ESP32 VIN.
+ *   - WAJIB COMMON GROUND: Hubungkan GND HW-131 dengan GND ESP32, GND Servo,
+ *     GND RC522, dan GND LCD agar seluruh modul memiliki referensi ground sama
+ *     dan ESP32 tidak restart saat servo bergerak.
+ *   - RC522 VCC wajib di 3.3V (Pin 3V3 ESP32 atau Rel 3.3V HW-131, BUKAN 5V).
+ *
  * Fitur Hardware Lengkap (Auto-Detect LCD & Safe Pin):
- *   - RC522 RFID Reader (SPI)     : SS=D5, SCK=D18, MOSI=D23, MISO=D19, RST=D27 (fallback D22 jika tanpa LCD)
+ *   - RC522 RFID Reader (SPI)     : SS=D5, SCK=D18, MOSI=D23, MISO=D19, RST=D27 (3.3V only)
  *   - Buzzer Aktif                : (+) ke D25, (-) ke GND
- *   - 1x LED Indikator            : (+) ke D26 (lewat resistor 220-330 ohm jika LED polos), (-) ke GND
+ *   - 1x LED Indikator            : (+) ke D26 (resistor 220-330 ohm), (-) ke GND
  *                                   (ikut dicerminkan ke LED biru built-in board GPIO 2)
- *   - Servo SG90 (Palang)         : Signal ke D13, VCC ke 5V HW-131, GND ke GND
- *   - LCD 16x2 I2C (PCF8574T)     : SDA=D21, SCL=D22, VCC=5V HW-131, GND=GND
+ *   - Servo SG90 (Palang)         : Signal (Oranye/Kuning) ke D13, VCC ke Rel 5V HW-131, GND ke GND
+ *   - LCD 16x2 I2C (PCF8574T)     : SDA=D21, SCL=D22, VCC ke Rel 5V HW-131, GND ke GND
  *                                   (Jika LCD belum dipasang, program tetap jalan normal)
  *
  * Web Portal Konfigurasi via HP:
  *   - Hotspot AP : ESP32_1_JDIF
  *   - Password   : 876543210
  *   - IP Portal  : http://192.168.4.1
- *   - Pemicu     : Tahan tombol BOOT (GPIO 0) 3 detik, atau otomatis terbuka jika WiFi gagal.
+ *   - Pemicu     : Tahan tombol BOOT (GPIO 0) 2 detik, atau otomatis terbuka jika WiFi gagal.
  * ============================================================
  */
 
@@ -409,6 +418,9 @@ void connectWiFi() {
     WiFi.setSleep(false);
     WiFi.setAutoReconnect(true);
 
+    // Set daya pancar RF WiFi ESP32 ke level maksimal (19.5 dBm) agar sinyal kuat
+    WiFi.setTxPower(WIFI_POWER_19_5dBm);
+
     Serial.printf("[WIFI] Menghubungkan ke: %s ...\n", cfg_wifi_ssid.c_str());
     lcdShow("Konek WiFi...", cfg_wifi_ssid);
     WiFi.begin(cfg_wifi_ssid.c_str(), cfg_wifi_pass.c_str());
@@ -467,18 +479,28 @@ void connectWiFi() {
 void startConfigPortal() {
     inPortalMode = true;
     WiFi.disconnect(true);
-    delay(100);
-    WiFi.mode(WIFI_AP);
     delay(150);
+    WiFi.mode(WIFI_AP);
+    delay(100);
 
+    // Konfigurasi IP SoftAP harus dipanggil sebelum softAP dijalankan
     IPAddress apIP(192, 168, 4, 1);
     IPAddress netMsk(255, 255, 255, 0);
-    bool apStarted = WiFi.softAP(AP_SSID, AP_PASS);
-    delay(150);
     WiFi.softAPConfig(apIP, apIP, netMsk);
-    Serial.printf("[PORTAL] SoftAP: %s | IP: %s\n", apStarted ? "AKTIF" : "GAGAL", WiFi.softAPIP().toString().c_str());
 
-    lcdShow("Mode Portal HP", "192.168.4.1");
+    // Jalankan SoftAP di Channel 1, Broadcast SSID terlihat, maksimal 4 perangkat
+    bool apStarted = WiFi.softAP(AP_SSID, AP_PASS, 1, 0, 4);
+    delay(100);
+
+    // Maksimalkan daya transmisi radio SoftAP agar sinyal Hotspot mudah dideteksi HP
+    WiFi.setTxPower(WIFI_POWER_19_5dBm);
+
+    Serial.printf("[PORTAL] SoftAP: %s | IP: %s | SSID: %s\n", 
+                  apStarted ? "AKTIF" : "GAGAL", 
+                  WiFi.softAPIP().toString().c_str(),
+                  AP_SSID);
+
+    lcdShow("Hotspot: ESP32", "192.168.4.1");
 
     Serial.println();
     Serial.println(F("=================================================="));

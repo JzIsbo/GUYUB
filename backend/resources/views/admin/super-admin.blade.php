@@ -532,7 +532,7 @@
                 'dashboard', 'pemasukan', 'pengeluaran', 'transaksi', 'kategori',
                 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'pengguna', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan', 'backup-restore', 'aktivitas-pengguna',
-                'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
+                'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va', 'pembayaran-menu',
                 'surat-online', 'pengumuman',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
                 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
@@ -540,46 +540,48 @@
             'RW'            => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
-                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
+                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
                 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Sekretaris RW' => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga',
-                'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt',
-                'kegiatan', 'aspirasi', 'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
+                'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt',
+                'kegiatan', 'keamanan', 'posyandu', 'umkm', 'bank-sampah', 'koperasi', 'rukem', 'laporan-koperasi',
+                'aspirasi', 'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Bendahara RW'  => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
-                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan',
-                'koperasi', 'rfid-ktp', 'portal-akses'
+                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'export-laporan',
+                'data-keluarga', 'data-iuran', 'koperasi', 'rfid-ktp', 'portal-akses'
             ],
             'RT'            => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
-                'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
-                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
-                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
+                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
+                'surat-online', 'pengumuman', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'export-laporan', 'pengaturan',
+                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
+                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Sekretaris RT' => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
-                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'pengaturan',
-                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
+                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'pengaturan',
+                'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
+                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Bendahara RT'  => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
-                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'surat-online', 'pengumuman', 'data-keluarga', 'data-iuran',
-                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
+                'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'data-warga', 'data-keluarga', 'data-iuran',
+                'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'export-laporan',
+                'surat-online', 'pengumuman', 'pengaturan',
                 'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi',
                 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Warga'         => [
-                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online',
-                'surat-online', 'pengumuman', 'data-keluarga', 'data-pengurus-rt', 'pengaturan', 'perangkat-sistem',
+                'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'qris-va',
+                'surat-online', 'pengumuman', 'data-keluarga', 'data-pengurus-rt', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
+                'peraturan-sk', 'kerja-bakti', 'laporan-koperasi', 'rfid-ktp', 'portal-akses'
             ]
         ];
 
@@ -595,7 +597,7 @@
     <!-- Sidebar Backdrop Overlay -->
     <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"></div>
 
-    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static transition-all duration-300 ease-in-out sidebar-collapsed">
+    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static transition-all duration-300 ease-in-out">
         <!-- Close button inside sidebar -->
         <button onclick="toggleSidebar()" class="sidebar-close-btn md:hidden p-2 text-gray-400 hover:text-white rounded-lg absolute top-6 right-6 focus:outline-none transition-colors">
             <i class="fa-solid fa-xmark text-lg"></i>
@@ -633,7 +635,7 @@
             @if($can('tagihan-warga') || $can('pembayaran-online') || $can('riwayat-gateway') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori') || $can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
             {{-- 1. KATEGORI: KEUANGAN & LAPORAN --}}
             <div class="pt-8 pb-2 px-4">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Keuangan & Laporan</p>
+                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Keuangan & Laporan</p>
             </div>
 
             {{-- ===== DROPDOWN: Pembayaran ===== --}}
@@ -644,17 +646,17 @@
                     <span class="ml-3 font-semibold flex-1 text-left">Pembayaran</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="pembayaran-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="pembayaran-menu" class="submenu-container {{ in_array($page ?? '', ['tagihan-warga', 'qris-va']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @php
                         $role = Auth::check() ? Auth::user()->role : 'Warga';
                         $labelTagihan = ($role == 'Warga') ? 'Tagihan Saya' : (($role == 'RT') ? 'Daftar Tagihan Warga' : 'Kelola Tagihan Warga');
                         $labelQris = ($role == 'Warga') ? 'Rekening & QRIS RT' : (($role == 'RT') ? 'Daftar Rekening & QRIS' : 'Kelola Rekening & QRIS');
                     @endphp
                     @if($can('tagihan-warga'))
-                    <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelTagihan }}</a>
+                    <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">{{ $labelTagihan }}</a>
                     @endif
                     @if($can('qris-va'))
-                    <a href="javascript:void(0)" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">{{ $labelQris }}</a>
+                    <a href="javascript:void(0)" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">{{ $labelQris }}</a>
                     @endif
                 </div>
             </div>
@@ -668,18 +670,18 @@
                     <span class="ml-3 font-semibold flex-1 text-left">Transaksi</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="transaksi-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="transaksi-menu" class="submenu-container {{ in_array($page ?? '', ['pemasukan', 'pengeluaran', 'transaksi', 'kategori']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @if($can('pemasukan'))
-                    <a href="javascript:void(0)" onclick="switchPage('pemasukan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pemasukan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pemasukan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pemasukan</a>
                     @endif
                     @if($can('pengeluaran'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengeluaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengeluaran</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengeluaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengeluaran</a>
                     @endif
                     @if($can('transaksi'))
-                    <a href="javascript:void(0)" onclick="switchPage('transaksi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Semua Transaksi</a>
+                    <a href="javascript:void(0)" onclick="switchPage('transaksi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Semua Transaksi</a>
                     @endif
                     @if($can('kategori'))
-                    <a href="javascript:void(0)" onclick="switchPage('kategori', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kategori</a>
+                    <a href="javascript:void(0)" onclick="switchPage('kategori', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Kategori</a>
                     @endif
                 </div>
             </div>
@@ -693,21 +695,21 @@
                     <span class="ml-3 font-semibold flex-1 text-left">Laporan</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="laporan-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="laporan-menu" class="submenu-container {{ in_array($page ?? '', ['laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'export-laporan']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @if($can('laporan-keuangan'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-keuangan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Keuangan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-keuangan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Keuangan</a>
                     @endif
                     @if($can('laporan-iuran'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Iuran</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Iuran</a>
                     @endif
                     @if($can('laporan-kas'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Kas</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Kas</a>
                     @endif
                     @if($can('laporan-koperasi'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Laporan Koperasi</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Koperasi</a>
                     @endif
                     @if($can('export-laporan'))
-                    <a href="javascript:void(0)" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Export Laporan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Export Laporan</a>
                     @endif
                 </div>
             </div>
@@ -843,6 +845,8 @@
                         // Expanded sidebar: normal inline toggle
                         closeFlyout();
                         menu.classList.toggle('hidden');
+                        const btnIcon = menu.closest('.dropdown-group')?.querySelector('i.fa-chevron-down');
+                        if (btnIcon) btnIcon.classList.toggle('rotate-180');
                     }
                 }
 
@@ -859,7 +863,7 @@
             {{-- 2. KATEGORI: LAYANAN & INTERAKSI --}}
             @if($can('surat-online') || $can('pengumuman') || $can('koperasi') || $can('bank-sampah') || $can('umkm') || $can('posyandu') || $can('keamanan') || $can('kegiatan') || $can('rukem') || $can('aspirasi'))
             <div class="pt-8 pb-2 px-4">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Layanan & Interaksi</p>
+                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Layanan & Interaksi</p>
             </div>
 
             {{-- ===== DROPDOWN: Interaksi Warga ===== --}}
@@ -870,15 +874,15 @@
                     <span class="ml-3 font-semibold flex-1 text-left">Interaksi Warga</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="administrasi-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="administrasi-menu" class="submenu-container {{ in_array($page ?? '', ['surat-online', 'pengumuman', 'aspirasi']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @if($can('surat-online'))
-                    <a href="javascript:void(0)" onclick="switchPage('surat-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Surat Online</a>
+                    <a href="javascript:void(0)" onclick="switchPage('surat-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Surat Online</a>
                     @endif
                     @if($can('pengumuman'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengumuman', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengumuman</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengumuman', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengumuman</a>
                     @endif
                     @if($can('aspirasi'))
-                    <a href="javascript:void(0)" onclick="switchPage('aspirasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aspirasi & Keluhan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('aspirasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Aspirasi & Keluhan</a>
                     @endif
                 </div>
             </div>
@@ -892,33 +896,33 @@
                     <span class="ml-3 font-semibold flex-1 text-left">Layanan Warga</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="layanan-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="layanan-menu" class="submenu-container {{ in_array($page ?? '', ['koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'peraturan-sk', 'kerja-bakti']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @if($can('koperasi'))
-                    <a href="javascript:void(0)" onclick="switchPage('koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Koperasi Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Koperasi Warga</a>
                     @endif
                     @if($can('bank-sampah'))
-                    <a href="javascript:void(0)" onclick="switchPage('bank-sampah', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Bank Sampah</a>
+                    <a href="javascript:void(0)" onclick="switchPage('bank-sampah', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Bank Sampah</a>
                     @endif
                     @if($can('umkm'))
-                    <a href="javascript:void(0)" onclick="switchPage('umkm', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">UMKM Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('umkm', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">UMKM Warga</a>
                     @endif
                     @if($can('posyandu'))
-                    <a href="javascript:void(0)" onclick="switchPage('posyandu', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Posyandu</a>
+                    <a href="javascript:void(0)" onclick="switchPage('posyandu', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Posyandu</a>
                     @endif
                     @if($can('keamanan'))
-                    <a href="javascript:void(0)" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Keamanan & Ronda</a>
+                    <a href="javascript:void(0)" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Keamanan & Ronda</a>
                     @endif
                     @if($can('kegiatan'))
-                    <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kegiatan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Kegiatan</a>
                     @endif
                     @if($can('rukem'))
-                    <a href="javascript:void(0)" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Rukem (Duka Cita)</a>
+                    <a href="javascript:void(0)" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Rukem (Duka Cita)</a>
                     @endif
                     @if($can('peraturan-sk'))
-                    <a href="javascript:void(0)" onclick="switchPage('peraturan-sk', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Peraturan & SK RT/RW</a>
+                    <a href="javascript:void(0)" onclick="switchPage('peraturan-sk', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Peraturan & SK RT/RW</a>
                     @endif
                     @if($can('kerja-bakti'))
-                    <a href="javascript:void(0)" onclick="switchPage('kerja-bakti', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Kerja Bakti</a>
+                    <a href="javascript:void(0)" onclick="switchPage('kerja-bakti', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Kerja Bakti</a>
                     @endif
                 </div>
             </div>
@@ -928,7 +932,7 @@
             {{-- 3. KATEGORI: DATA & ASET/INVENTARIS --}}
             @if($can('data-warga') || $can('data-keluarga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem'))
             <div class="pt-8 pb-2 px-4">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Data & Aset/Inventaris</p>
+                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Data & Aset/Inventaris</p>
             </div>
 
             {{-- ===== DROPDOWN: Data Master ===== --}}
@@ -938,30 +942,30 @@
                     <span class="ml-3 font-semibold flex-1 text-left">Data Master</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="data-master-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="data-master-menu" class="submenu-container {{ in_array($page ?? '', ['data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'pengguna', 'approval-warga', 'perangkat-sistem']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @if($can('data-warga'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Warga</a>
                     @endif
                     @if($can('data-keluarga'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-keluarga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Keluarga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-keluarga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Keluarga</a>
                     @endif
                     @if($can('data-iuran'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Iuran</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Iuran</a>
                     @endif
                     @if($can('data-pengurus-rt'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data Pengurus RT & RW</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Pengurus RT & RW</a>
                     @endif
                     @if($can('data-rt'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Data RT RW</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data RT RW</a>
                     @endif
                     @if($can('pengguna'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengguna</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengguna</a>
                     @endif
                     @if($can('approval-warga'))
-                    <a href="javascript:void(0)" onclick="switchPage('approval-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Persetujuan Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('approval-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Persetujuan Warga</a>
                     @endif
                     @if($can('perangkat-sistem'))
-                    <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aset/Inventaris</a>
+                    <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Aset/Inventaris</a>
                     @endif
                 </div>
             </div>
@@ -970,7 +974,7 @@
             {{-- 4. KATEGORI: PENGATURAN SISTEM --}}
             @if($can('pengaturan') || $can('backup-restore') || $can('aktivitas-pengguna'))
             <div class="pt-8 pb-2 px-4">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[2.5px]">Pengaturan</p>
+                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Pengaturan</p>
             </div>
 
             {{-- ===== DROPDOWN: Sistem ===== --}}
@@ -980,15 +984,15 @@
                     <span class="ml-3 font-semibold flex-1 text-left">Sistem</span>
                     <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="sistem-menu" class="submenu-container hidden pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="sistem-menu" class="submenu-container {{ in_array($page ?? '', ['pengaturan', 'backup-restore', 'aktivitas-pengguna']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
                     @if($can('pengaturan'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengaturan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Pengaturan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengaturan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengaturan</a>
                     @endif
                     @if($can('backup-restore'))
-                    <a href="javascript:void(0)" onclick="switchPage('backup-restore', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Backup & Restore</a>
+                    <a href="javascript:void(0)" onclick="switchPage('backup-restore', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Backup & Restore</a>
                     @endif
                     @if($can('aktivitas-pengguna'))
-                    <a href="javascript:void(0)" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-gray-500 hover:text-white transition-all rounded-xl">Aktivitas Pengguna</a>
+                    <a href="javascript:void(0)" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Aktivitas Pengguna</a>
                     @endif
                 </div>
             </div>
@@ -1727,9 +1731,7 @@
 
                 const sidebar = document.getElementById('sidebar');
                 if (sidebar) {
-                    if (window.innerWidth >= 768) {
-                        sidebar.classList.add('sidebar-collapsed');
-                    } else {
+                    if (window.innerWidth < 768) {
                         sidebar.classList.remove('translate-x-0');
                         sidebar.classList.add('-translate-x-full');
                         const backdrop = document.getElementById('sidebar-backdrop');

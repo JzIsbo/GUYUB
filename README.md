@@ -88,42 +88,111 @@ Aplikasi ini mendigitalisasi seluruh aspek kehidupan warga lingkungan: kependudu
 
 ## 👥 Matriks Hak Akses Peran (Role-Based Access Control)
 
-| Modul / Fitur Sistem | 👑 Super Admin | 🏢 Tingkat RW (Ketua/Sekr/Bend) | 🏡 Tingkat RT (Ketua/Sekr/Bend) | 👥 Warga |
-| :--- | :---: | :---: | :---: | :---: |
-| **Dashboard & Grafik Lingkungan** | ✅ Penuh | ✅ Penuh | ✅ Penuh | 👁️ Ringkasan |
-| **Persetujuan Akun Warga Baru** | ✅ Kelola | 👁️ Monitoring | ✅ Setujui / Tolak | ❌ Dibatasi |
-| **Registrasi Kartu e-KTP / RFID** | ✅ Kelola | 👁️ Monitoring | ✅ Kelola & Scan | 💳 Kartu Sendiri |
-| **Buku Kas & Transaksi Kas RT** | ✅ Penuh | 👁️ Monitoring | ✅ Kelola (Bendahara RT) | ❌ Dibatasi |
-| **Penerbitan Tagihan Iuran** | ✅ Penuh | 👁️ Monitoring | ✅ Buat & Tagih (Bendahara) | 💳 Bayar Mandiri |
-| **Inventaris & Peminjaman Aset** | ✅ Penuh | 👁️ Monitoring | ✅ Setujui Pinjam (RT) | 📝 Ajukan Pinjam |
-| **Koperasi Sembako & Simpan Pinjam** | ✅ Penuh | 👁️ Monitoring | ✅ Verifikasi & Transaksi | 🛒 Belanja & Menabung |
-| **Posyandu, UMKM, Bank Sampah** | ✅ Penuh | ✅ Monitoring & Kelola | ✅ Kelola Kegiatan | 👁️ Partisipasi |
-| **Surat Pengantar Online** | ✅ Penuh | ✅ Terbitkan (Sekr RW) | ✅ Terbitkan (Sekr/Ketua RT) | 📝 Buat Pengajuan |
-| **Aspirasi & Masukan Warga** | ✅ Penuh | 👁️ Monitoring | 💬 Tanggapi Aduan | 📝 Kirim Aspirasi |
-| **Backup Database & Audit Trail** | 🛠️ Backup/Restore | ❌ Dibatasi | ❌ Dibatasi | ❌ Dibatasi |
+Sistem GUYUB menerapkan kontrol akses berbasis peran (RBAC) granular untuk 8 tingkat hak akses pengguna:
+
+| Modul / Menu Sistem | 👑 Super Admin | 🏢 Ketua RW | 📜 Sekr. RW | 💵 Bend. RW | 🏡 Ketua RT | 📝 Sekr. RT | 💰 Bend. RT | 👥 Warga |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dashboard Lingkungan** | ✅ Penuh | ✅ Penuh | ✅ Penuh | ✅ Penuh | ✅ Penuh | ✅ Penuh | ✅ Penuh | 👁️ Ringkasan |
+| **Portal Akses (Smart Gate)** | ✅ Penuh | ✅ Monitoring | ✅ Monitoring | ✅ Monitoring | ✅ Kelola | ✅ Monitoring | ✅ Monitoring | 🚪 Akses Gate |
+| **Kartu e-KTP (RFID)** | ✅ Penuh | 👁️ Monitoring | 👁️ Monitoring | 👁️ Monitoring | ✅ Kelola | 👁️ Monitoring | 👁️ Monitoring | 💳 KTP Sendiri |
+| **Buku Kas & Transaksi** | ✅ Penuh | ❌ Dibatasi | ❌ Dibatasi | ✅ Kelola RW | ✅ Kelola RT | ❌ Dibatasi | ✅ Kelola RT | ❌ Dibatasi |
+| **Tagihan & Iuran Warga** | ✅ Penuh | 👁️ Rekap | 👁️ Rekap | ✅ Kelola RW | ✅ Kelola RT | 👁️ Laporan | ✅ Kelola RT | 💳 Tagihan Saya |
+| **Pembayaran Online & QRIS** | ✅ Penuh | 👁️ Monitoring | ❌ Dibatasi | ✅ Kelola RW | ✅ Kelola RT | ❌ Dibatasi | ✅ Kelola RT | 💳 Bayar Mandiri |
+| **Laporan Kas & Keuangan** | ✅ Penuh | ✅ Semua Lap. | 👁️ Laporan | ✅ Semua Lap. | ✅ Semua Lap. | 👁️ Laporan | ✅ Semua Lap. | 👁️ Lap. Koperasi |
+| **Persetujuan Akun Warga** | ✅ Kelola | ✅ Monitoring | ✅ Monitoring | ❌ Dibatasi | ✅ Setujui/Tolak | ✅ Setujui/Tolak | ❌ Dibatasi | ❌ Dibatasi |
+| **Data Warga & Keluarga** | ✅ Kelola | ✅ Monitoring | ✅ Monitoring | 👁️ Keluarga | ✅ Kelola RT | ✅ Kelola RT | ✅ Kelola RT | 👨‍👩‍👧‍👦 KK Saya |
+| **Aset / Inventaris RT** | ✅ Kelola | 👁️ Monitoring | ❌ Dibatasi | ❌ Dibatasi | ✅ Kelola | ✅ Kelola | ❌ Dibatasi | 📝 Ajukan Pinjam |
+| **Koperasi & Simpan Pinjam**| ✅ Kelola | ✅ Monitoring | ✅ Monitoring | ✅ Kelola Kas | ✅ Kelola | ✅ Catat | ✅ Kelola | 🛒 Belanja/Tabung |
+| **Bank Sampah & Posyandu** | ✅ Kelola | ✅ Monitoring | ✅ Monitoring | ❌ Dibatasi | ✅ Kelola | ✅ Kelola | ✅ Kelola | 👁️ Partisipasi |
+| **Surat Pengantar Online** | ✅ Kelola | ❌ Dibatasi | ✅ Terbitkan | ❌ Dibatasi | ✅ Setujui | ✅ Terbitkan | ✅ Lihat | 📝 Buat Surat |
+| **Pengumuman & Aspirasi** | ✅ Kelola | ✅ Buat/Pantau | ✅ Buat/Pantau | ❌ Dibatasi | ✅ Buat/Pantau | ✅ Buat/Pantau | ✅ Buat/Pantau | 💬 Kirim Masukan |
+| **Keamanan, Ronda & Insiden**| ✅ Kelola | ✅ Monitoring | ✅ Monitoring | ❌ Dibatasi | ✅ Kelola | ✅ Kelola | ✅ Kelola | 🛡️ Jadwal Ronda |
+| **Peraturan SK & Kerja Bakti**| ✅ Kelola | ✅ Kelola | ✅ Kelola | ❌ Dibatasi | ✅ Kelola | ✅ Kelola | ✅ Kelola | 📜 Unduh SK & Hadir |
+| **Pengaturan & Profil Akun** | ✅ Kelola | ⚙️ Profil | ⚙️ Profil | ⚙️ Profil | ⚙️ Profil/RT | ⚙️ Profil | ⚙️ Profil | ⚙️ Profil Mandiri |
+| **Backup & Restore Database**| 🛠️ Penuh | ❌ Dibatasi | ❌ Dibatasi | ❌ Dibatasi | ❌ Dibatasi | ❌ Dibatasi | ❌ Dibatasi | ❌ Dibatasi |
 
 ---
 
 ## 📡 Integrasi IoT Portal Gerbang (ESP32 + RFID e-KTP)
 
-Source code firmware mikrokontroler tersedia di direktori [`esp32/rfid_gate/rfid_gate.ino`](esp32/rfid_gate/rfid_gate.ino).
+Sistem GUYUB dilengkapi integrasi perangkat keras portal perumahan otomatis berbasis IoT. Source code firmware ESP32 lengkap dan siap flash tersedia di direktori:
+👉 [`esp32/smart_rw_rfid_reader/smart_rw_rfid_reader.ino`](esp32/smart_rw_rfid_reader/smart_rw_rfid_reader.ino)
 
-### Skema Rangkaian Pin (Pinout):
-* **Sensor MFRC522 (SPI)**:
-  * `SDA / SS`: Pin `D10` (Arduino Nano ESP32) atau `GPIO 5` (ESP32 Wroom)
-  * `SCK`: Pin `D13` / `GPIO 18`
-  * `MOSI`: Pin `D11` / `GPIO 23`
-  * `MISO`: Pin `D12` / `GPIO 19`
-  * `RST`: Pin `D9` / `GPIO 22`
-  * `3.3V` & `GND`
-* **Relay Modul (Active LOW)**:
-  * `IN`: Pin `D4` (Arduino Nano ESP32) atau `GPIO 4` (ESP32 Wroom)
-  * `VCC`: `5V` & `GND`
+### 🔌 Panduan Catu Daya Adaptor Eksternal & Modul HW-131
+Untuk memastikan kinerja stabil tanpa terjadi *brownout* (ESP32 restart saat motor servo bergerak menarik arus beban tinggi), gunakan **Breadboard Power Supply Module HW-131** dengan adaptor eksternal:
 
-### Endpoint Komunikasi API:
-* `POST /api/rfid/heartbeat`: Mengirim status sinyal dan waktu respon alat ke dashboard.
-* `POST /api/rfid/gate-check`: Mengirim scan UID kartu e-KTP; backend memeriksa apakah kartu terdaftar dan akun berstatus **Aktif**. Jika valid, server menginstruksikan relay terbuka selama 3 detik.
-* `POST /api/rfid/scan`: Mengirim UID hasil tap saat mode pendaftaran kartu dibuka di antarmuka web.
+```text
+  [ Adaptor DC 9V/12V (1-2A) ]
+             │
+             ▼ (Jack DC)
+   ┌────────────────────────────────────────┐
+   │        Modul Power Supply HW-131       │
+   │  [Jumper A: 5V]      [Jumper B: 3.3V]  │
+   └───┬──────────┬───────────┬─────────┬───┘
+       │          │           │         │
+    +5V Rail     GND      +3.3V Rail   GND
+       │          │           │         │
+       ├──────────┼───────────┴─────────┼──► RC522 VCC (Wajib 3.3V)
+       │          ├─────────────────────┼──► RC522 GND
+       ├──────────┼─────────────────────┼──► Servo SG90 VCC (Merah, 5V)
+       │          ├─────────────────────┼──► Servo SG90 GND (Coklat)
+       ├──────────┼─────────────────────┼──► LCD 16x2 I2C VCC (5V)
+       │          ├─────────────────────┼──► LCD 16x2 I2C GND
+       │          └─────────────────────┼──► ESP32 GND (COMMON GROUND!)
+       └────────────────────────────────┴──► ESP32 VIN / 5V
+```
+
+> ⚠️ **PENTING — ATURAN COMMON GROUND**: Seluruh jalur Ground (`GND`) dari modul HW-131, ESP32, Servo SG90, sensor RC522, dan LCD 16x2 **WAJIB terhubung bersama ke satu jalur GND yang sama**. Tanpa common ground, sinyal data PWM dan I2C akan mengalami noise dan servo tidak berputar semestinya.
+>
+> ⚠️ **TEGANGAN SENSOR RC522**: Pin `3.3V` sensor RC522 wajib mengambil tegangan 3.3V (dari pin `3V3` ESP32 atau rel 3.3V HW-131). **Jangan pernah menghubungkan RC522 ke tegangan 5V** karena dapat merusak IC RFID.
+
+### 📌 Skema Pinout Hardware (ESP32 DevKit 30-Pin):
+
+| Modul Hardware | Pin Komponen | Pin ESP32 | Keterangan & Fungsi |
+| :--- | :--- | :--- | :--- |
+| **RFID RC522 (SPI)** | SDA / SS | **GPIO 5 (D5)** | SPI Slave Select |
+| | SCK | **GPIO 18 (D18)** | SPI Serial Clock |
+| | MOSI | **GPIO 23 (D23)** | SPI Master Out Slave In |
+| | MISO | **GPIO 19 (D19)** | SPI Master In Slave Out |
+| | RST | **GPIO 27 (D27)** | Reset RC522 |
+| | 3.3V & GND | **3.3V & GND** | Wajib 3.3V regulasi stabil |
+| **LCD 16x2 I2C (PCF8574)** | SDA | **GPIO 21 (D21)** | Jalur Data I2C |
+| | SCL | **GPIO 22 (D22)** | Jalur Clock I2C |
+| | VCC & GND | **Rel 5V & GND HW-131** | Catu daya layar LCD |
+| **Servo SG90 (Palang)** | Signal / PWM | **GPIO 13 (D13)** | Kontrol sudut palang (0° tutup, 90° buka) |
+| | VCC (Merah) | **Rel 5V HW-131** | Catu daya motor servo |
+| | GND (Coklat) | **GND Bersama** | Ground motor servo |
+| **Buzzer Aktif/Pasif** | Pin (+) | **GPIO 25 (D25)** | Suara notifikasi gerbang & nada peringatan |
+| | Pin (-) | **GND Bersama** | Ground buzzer |
+| **LED Indikator** | Pin (+) | **GPIO 26 (D26)** | Resistor 220Ω (disinkronkan ke GPIO 2 internal) |
+| | Pin (-) | **GND Bersama** | Ground LED |
+| **Tombol BOOT** | Tombol Fisik | **GPIO 0 (BOOT)** | Tahan 2 detik untuk membuka Hotspot Portal |
+
+---
+
+### 📶 Konektivitas WiFi & Hotspot Web Captive Portal
+Firmware ESP32 GUYUB dilengkapi fitur **Auto-Fallback Captive Portal** dengan radio RF berdaya tinggi (`WiFi.setTxPower(WIFI_POWER_19_5dBm)`):
+
+1. **Mode Normal (Station / WiFi):**
+   - ESP32 otomatis mencoba terhubung ke WiFi/Hotspot yang tersimpan di memori NVS Flash (default: `POCOX3NFC` / `12345678`).
+   - Mengirim denyut status online (*heartbeat*) setiap 2-3 detik ke server GUYUB.
+   - Mengirim data kartu saat warga melakukan tap.
+2. **Mode Cadangan (SoftAP Hotspot HP):**
+   - Jika dalam 12 detik WiFi tidak ditemukan atau sinyal terputus, ESP32 **otomatis memancarkan sinyal WiFi hotspot sendiri**:
+     * **Nama Hotspot (SSID)**: `ESP32_1_JDIF`
+     * **Kata Sandi (Password)**: `876543210`
+     * **Alamat Web Portal**: `http://192.168.4.1`
+   - Buka browser HP ke `192.168.4.1`, pilih tombol pintasan **🔵 Julius (Guyub)**, masukkan nama WiFi dan password baru, lalu klik **Simpan & Reboot Alat**.
+
+---
+
+### 🚀 Endpoint API IoT Backend (Laravel):
+* `POST /api/rfid/tap`: Menerima scan kartu e-KTP / RFID dari ESP32.
+  * Jika kartu terdaftar & akun aktif: Mengembalikan HTTP 200 dengan payload `"status": "gate_opened"`, `"open_gate": true`, `"direction": "masuk"`, `"buzzer": "gate_in"`, `"user_name": "..."`. Layar LCD menampilkan nama warga, buzzer menyala, dan palang servo membuka 90°.
+  * Jika kartu belum terdaftar: Mengembalikan HTTP 403 dengan payload `"status": "unregistered"`, `"open_gate": false`, `"message": "Kartu belum terdaftar di sistem. Akses ditolak."`. LCD menampilkan *"Belum Terdaftar!"*, buzzer membunyikan nada error, dan palang gerbang tetap tertutup.
+* `POST /api/rfid/heartbeat`: Menerima denyut online ESP32 setiap 2 detik dan menyimpannya di Cache Laravel untuk memonitor ketersediaan alat di web.
+* `POST /rfid/manual-open`: Endpoint web terautentikasi untuk membuka palang portal secara manual dari tombol dashboard.
+* `GET /rfid/portal-live`: Endpoint polling AJAX realtime setiap 3.5 detik untuk memperbarui tabel aktivitas portal tanpa reload halaman.
 
 ---
 

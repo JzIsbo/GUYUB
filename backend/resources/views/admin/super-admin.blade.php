@@ -393,7 +393,9 @@
                 overflow-x: hidden !important;
                 overflow-y: auto !important;
             }
+            .sidebar-collapsed .sidebar-brand > div:last-child,
             .sidebar-collapsed .p-8 > div:last-child,
+            .sidebar-collapsed .sidebar-heading,
             .sidebar-collapsed .pt-8.pb-2.px-4,
             .sidebar-collapsed .menu-link span,
             .sidebar-collapsed .menu-link i.fa-chevron-down,
@@ -445,26 +447,30 @@
             background: rgba(255,255,255,0.08);
         }
         @media (min-width: 768px) {
+            .sidebar-collapsed .sidebar-brand,
             .sidebar-collapsed .p-8 {
-                padding: 1.5rem 0.75rem !important;
+                padding: 1.25rem 0.75rem !important;
                 justify-content: center !important;
             }
+            .sidebar-collapsed .sidebar-brand div:first-child,
             .sidebar-collapsed .p-8 div:first-child {
                 margin-right: 0 !important;
             }
-            .sidebar-collapsed nav.px-4 {
+            .sidebar-collapsed .sidebar-nav,
+            .sidebar-collapsed nav.px-4,
+            .sidebar-collapsed nav.px-3 {
                 padding-left: 0.5rem !important;
                 padding-right: 0.5rem !important;
             }
             .sidebar-collapsed .menu-link {
                 justify-content: center !important;
-                padding: 0.75rem 0 !important;
-                border-radius: 1rem !important;
+                padding: 0.65rem 0 !important;
+                border-radius: 0.75rem !important;
                 position: relative;
             }
             .sidebar-collapsed .menu-link i {
                 margin-right: 0 !important;
-                font-size: 1.15rem !important;
+                font-size: 1.1rem !important;
                 width: auto !important;
             }
         /* Global Tooltip container (rendered at body level to bypass overflow clipping) */
@@ -597,66 +603,66 @@
     <!-- Sidebar Backdrop Overlay -->
     <div id="sidebar-backdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"></div>
 
-    <aside id="sidebar" class="w-[300px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static transition-all duration-300 ease-in-out">
+    <aside id="sidebar" class="w-[235px] bg-[#0F172A] text-[#94A3B8] flex flex-col shrink-0 sidebar-scroll overflow-y-auto fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 md:static transition-all duration-300 ease-in-out">
         <!-- Close button inside sidebar -->
-        <button onclick="toggleSidebar()" class="sidebar-close-btn md:hidden p-2 text-gray-400 hover:text-white rounded-lg absolute top-6 right-6 focus:outline-none transition-colors">
-            <i class="fa-solid fa-xmark text-lg"></i>
+        <button onclick="toggleSidebar()" class="sidebar-close-btn md:hidden p-2 text-gray-400 hover:text-white rounded-lg absolute top-3.5 right-3.5 focus:outline-none transition-colors">
+            <i class="fa-solid fa-xmark text-base"></i>
         </button>
 
-        <a href="{{ route('welcome') }}" data-tooltip="Lihat Halaman Publik GUYUB" class="p-8 flex items-center shrink-0 hover:opacity-90 transition cursor-pointer group">
-            <div class="bg-white p-2.5 rounded-2xl mr-4 shadow-sm flex items-center justify-center group-hover:scale-105 transition-transform">
-                <i class="fa-solid fa-house-chimney-window text-[#0F172A] text-xl"></i>
+        <a href="{{ route('welcome') }}" data-tooltip="Lihat Halaman Publik GUYUB" class="sidebar-brand px-4 py-3.5 flex items-center shrink-0 hover:opacity-90 transition cursor-pointer group">
+            <div class="bg-white p-2 rounded-xl mr-2.5 shadow-sm flex items-center justify-center group-hover:scale-105 transition-transform">
+                <i class="fa-solid fa-house-chimney-window text-[#0F172A] text-sm"></i>
             </div>
             <div>
-                <h1 class="text-white font-extrabold text-xl leading-none italic uppercase tracking-tighter group-hover:text-blue-400 transition-colors">GUYUB</h1>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[2px] mt-1.5 text-nowrap">Super Admin Panel</p>
+                <h1 class="text-white font-extrabold text-sm leading-none italic uppercase tracking-tighter group-hover:text-blue-400 transition-colors">GUYUB</h1>
+                <p class="text-[8.5px] font-bold text-gray-400 uppercase tracking-wider mt-1 text-nowrap">Super Admin Panel</p>
             </div>
         </a>
 
-        <nav class="flex-1 px-4 space-y-1 mt-2 pb-10">
+        <nav class="sidebar-nav flex-1 px-3 space-y-0.5 mt-1 pb-8">
             @if($can('dashboard'))
-            <a href="javascript:void(0)" onclick="switchPage('dashboard', this)" class="menu-link {{ isset($page) && $page == 'dashboard' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Dashboard">
-                <i class="fa-solid fa-th-large w-6 text-lg"></i> <span class="ml-3 text-sm font-bold">Dashboard</span>
+            <a href="javascript:void(0)" onclick="switchPage('dashboard', this)" class="menu-link {{ isset($page) && $page == 'dashboard' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-3 py-2 text-xs rounded-xl transition-all font-semibold" data-tooltip="Dashboard">
+                <i class="fa-solid fa-th-large w-5 text-sm"></i> <span class="ml-2.5 text-xs font-semibold">Dashboard</span>
             </a>
             @endif
 
             @if($can('rfid-ktp'))
-            <a href="javascript:void(0)" onclick="switchPage('rfid-ktp', this)" class="menu-link {{ isset($page) && $page == 'rfid-ktp' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Kartu KTP (RFID)">
-                <i class="fa-solid fa-id-card w-6 text-lg text-emerald-400"></i> <span class="ml-3 text-sm font-bold">Kartu KTP (RFID)</span>
+            <a href="javascript:void(0)" onclick="switchPage('rfid-ktp', this)" class="menu-link {{ isset($page) && $page == 'rfid-ktp' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-3 py-2 text-xs rounded-xl transition-all font-semibold" data-tooltip="Kartu KTP (RFID)">
+                <i class="fa-solid fa-id-card w-5 text-sm text-emerald-400"></i> <span class="ml-2.5 text-xs font-semibold">Kartu KTP (RFID)</span>
             </a>
             @endif
 
             @if($can('portal-akses'))
-            <a href="javascript:void(0)" onclick="switchPage('portal-akses', this)" class="menu-link {{ isset($page) && $page == 'portal-akses' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Portal Akses Gerbang">
-                <i class="fa-solid fa-door-open w-6 text-lg text-cyan-400"></i> <span class="ml-3 text-sm font-bold">Portal Akses</span>
+            <a href="javascript:void(0)" onclick="switchPage('portal-akses', this)" class="menu-link {{ isset($page) && $page == 'portal-akses' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-3 py-2 text-xs rounded-xl transition-all font-semibold" data-tooltip="Portal Akses Gerbang">
+                <i class="fa-solid fa-door-open w-5 text-sm text-cyan-400"></i> <span class="ml-2.5 text-xs font-semibold">Portal Akses</span>
             </a>
             @endif
 
             @if($can('tagihan-warga') || $can('pembayaran-online') || $can('riwayat-gateway') || $can('qris-va') || $can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori') || $can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan'))
             {{-- 1. KATEGORI: KEUANGAN & LAPORAN --}}
-            <div class="pt-8 pb-2 px-4">
-                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Keuangan & Laporan</p>
+            <div class="sidebar-heading pt-3.5 pb-1 px-3">
+                <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">Keuangan & Laporan</p>
             </div>
 
             {{-- ===== DROPDOWN: Pembayaran ===== --}}
             @if($can('tagihan-warga') || $can('pembayaran-online') || $can('riwayat-gateway') || $can('qris-va'))
-            <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('pembayaran-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Pembayaran">
-                    <i class="fa-solid fa-wallet w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Pembayaran</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+            <div class="space-y-0.5 dropdown-group">
+                <button onclick="toggleDropdown('pembayaran-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-3 py-2 text-xs rounded-xl transition-all group" data-tooltip="Pembayaran">
+                    <i class="fa-solid fa-wallet w-5 text-sm opacity-60 group-hover:opacity-100"></i>
+                    <span class="ml-2.5 font-semibold text-xs flex-1 text-left">Pembayaran</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="pembayaran-menu" class="submenu-container {{ in_array($page ?? '', ['tagihan-warga', 'qris-va']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="pembayaran-menu" class="submenu-container {{ in_array($page ?? '', ['tagihan-warga', 'qris-va']) ? '' : 'hidden' }} pl-5 space-y-0.5 mt-0.5 border-l border-white/10 ml-3.5">
                     @php
                         $role = Auth::check() ? Auth::user()->role : 'Warga';
                         $labelTagihan = ($role == 'Warga') ? 'Tagihan Saya' : (($role == 'RT') ? 'Daftar Tagihan Warga' : 'Kelola Tagihan Warga');
                         $labelQris = ($role == 'Warga') ? 'Rekening & QRIS RT' : (($role == 'RT') ? 'Daftar Rekening & QRIS' : 'Kelola Rekening & QRIS');
                     @endphp
                     @if($can('tagihan-warga'))
-                    <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">{{ $labelTagihan }}</a>
+                    <a href="javascript:void(0)" onclick="switchPage('tagihan-warga', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">{{ $labelTagihan }}</a>
                     @endif
                     @if($can('qris-va'))
-                    <a href="javascript:void(0)" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">{{ $labelQris }}</a>
+                    <a href="javascript:void(0)" onclick="switchPage('qris-va', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">{{ $labelQris }}</a>
                     @endif
                 </div>
             </div>
@@ -664,24 +670,24 @@
 
             {{-- ===== DROPDOWN: Transaksi ===== --}}
             @if($can('pemasukan') || $can('pengeluaran') || $can('transaksi') || $can('kategori'))
-            <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('transaksi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Transaksi">
-                    <i class="fa-solid fa-shuffle w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Transaksi</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+            <div class="space-y-0.5 dropdown-group">
+                <button onclick="toggleDropdown('transaksi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-3 py-2 text-xs rounded-xl transition-all group" data-tooltip="Transaksi">
+                    <i class="fa-solid fa-shuffle w-5 text-sm opacity-60 group-hover:opacity-100"></i>
+                    <span class="ml-2.5 font-semibold text-xs flex-1 text-left">Transaksi</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="transaksi-menu" class="submenu-container {{ in_array($page ?? '', ['pemasukan', 'pengeluaran', 'transaksi', 'kategori']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="transaksi-menu" class="submenu-container {{ in_array($page ?? '', ['pemasukan', 'pengeluaran', 'transaksi', 'kategori']) ? '' : 'hidden' }} pl-5 space-y-0.5 mt-0.5 border-l border-white/10 ml-3.5">
                     @if($can('pemasukan'))
-                    <a href="javascript:void(0)" onclick="switchPage('pemasukan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pemasukan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pemasukan', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Pemasukan</a>
                     @endif
                     @if($can('pengeluaran'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengeluaran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengeluaran</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengeluaran', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Pengeluaran</a>
                     @endif
                     @if($can('transaksi'))
-                    <a href="javascript:void(0)" onclick="switchPage('transaksi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Semua Transaksi</a>
+                    <a href="javascript:void(0)" onclick="switchPage('transaksi', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Semua Transaksi</a>
                     @endif
                     @if($can('kategori'))
-                    <a href="javascript:void(0)" onclick="switchPage('kategori', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Kategori</a>
+                    <a href="javascript:void(0)" onclick="switchPage('kategori', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Kategori</a>
                     @endif
                 </div>
             </div>
@@ -689,27 +695,27 @@
 
             {{-- ===== DROPDOWN: Laporan ===== --}}
             @if($can('laporan-keuangan') || $can('laporan-iuran') || $can('laporan-kas') || $can('export-laporan') || $can('laporan-koperasi'))
-            <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('laporan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Laporan">
-                    <i class="fa-solid fa-chart-line w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Laporan</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+            <div class="space-y-0.5 dropdown-group">
+                <button onclick="toggleDropdown('laporan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-3 py-2 text-xs rounded-xl transition-all group" data-tooltip="Laporan">
+                    <i class="fa-solid fa-chart-line w-5 text-sm opacity-60 group-hover:opacity-100"></i>
+                    <span class="ml-2.5 font-semibold text-xs flex-1 text-left">Laporan</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="laporan-menu" class="submenu-container {{ in_array($page ?? '', ['laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'export-laporan']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="laporan-menu" class="submenu-container {{ in_array($page ?? '', ['laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'export-laporan']) ? '' : 'hidden' }} pl-5 space-y-0.5 mt-0.5 border-l border-white/10 ml-3.5">
                     @if($can('laporan-keuangan'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-keuangan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Keuangan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-keuangan', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Laporan Keuangan</a>
                     @endif
                     @if($can('laporan-iuran'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Iuran</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-iuran', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Laporan Iuran</a>
                     @endif
                     @if($can('laporan-kas'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Kas</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-kas', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Laporan Kas</a>
                     @endif
                     @if($can('laporan-koperasi'))
-                    <a href="javascript:void(0)" onclick="switchPage('laporan-koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Laporan Koperasi</a>
+                    <a href="javascript:void(0)" onclick="switchPage('laporan-koperasi', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Laporan Koperasi</a>
                     @endif
                     @if($can('export-laporan'))
-                    <a href="javascript:void(0)" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Export Laporan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('export-laporan', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Export Laporan</a>
                     @endif
                 </div>
             </div>
@@ -862,27 +868,27 @@
 
             {{-- 2. KATEGORI: LAYANAN & INTERAKSI --}}
             @if($can('surat-online') || $can('pengumuman') || $can('koperasi') || $can('bank-sampah') || $can('umkm') || $can('posyandu') || $can('keamanan') || $can('kegiatan') || $can('rukem') || $can('aspirasi'))
-            <div class="pt-8 pb-2 px-4">
-                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Layanan & Interaksi</p>
+            <div class="sidebar-heading pt-3.5 pb-1 px-3">
+                <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">Layanan & Interaksi</p>
             </div>
 
             {{-- ===== DROPDOWN: Interaksi Warga ===== --}}
             @if($can('surat-online') || $can('pengumuman') || $can('aspirasi'))
-            <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('administrasi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Interaksi Warga">
-                    <i class="fa-solid fa-envelope-open-text w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Interaksi Warga</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+            <div class="space-y-0.5 dropdown-group">
+                <button onclick="toggleDropdown('administrasi-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-3 py-2 text-xs rounded-xl transition-all group" data-tooltip="Interaksi Warga">
+                    <i class="fa-solid fa-envelope-open-text w-5 text-sm opacity-60 group-hover:opacity-100"></i>
+                    <span class="ml-2.5 font-semibold text-xs flex-1 text-left">Interaksi Warga</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="administrasi-menu" class="submenu-container {{ in_array($page ?? '', ['surat-online', 'pengumuman', 'aspirasi']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="administrasi-menu" class="submenu-container {{ in_array($page ?? '', ['surat-online', 'pengumuman', 'aspirasi']) ? '' : 'hidden' }} pl-5 space-y-0.5 mt-0.5 border-l border-white/10 ml-3.5">
                     @if($can('surat-online'))
-                    <a href="javascript:void(0)" onclick="switchPage('surat-online', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Surat Online</a>
+                    <a href="javascript:void(0)" onclick="switchPage('surat-online', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Surat Online</a>
                     @endif
                     @if($can('pengumuman'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengumuman', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengumuman</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengumuman', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Pengumuman</a>
                     @endif
                     @if($can('aspirasi'))
-                    <a href="javascript:void(0)" onclick="switchPage('aspirasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Aspirasi & Keluhan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('aspirasi', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Aspirasi & Keluhan</a>
                     @endif
                 </div>
             </div>
@@ -890,39 +896,39 @@
 
             {{-- ===== DROPDOWN: Layanan Warga ===== --}}
             @if($can('koperasi') || $can('bank-sampah') || $can('umkm') || $can('posyandu') || $can('keamanan') || $can('kegiatan') || $can('rukem'))
-            <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('layanan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Layanan Warga">
-                    <i class="fa-solid fa-hand-holding-heart w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Layanan Warga</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+            <div class="space-y-0.5 dropdown-group">
+                <button onclick="toggleDropdown('layanan-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-3 py-2 text-xs rounded-xl transition-all group" data-tooltip="Layanan Warga">
+                    <i class="fa-solid fa-hand-holding-heart w-5 text-sm opacity-60 group-hover:opacity-100"></i>
+                    <span class="ml-2.5 font-semibold text-xs flex-1 text-left">Layanan Warga</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="layanan-menu" class="submenu-container {{ in_array($page ?? '', ['koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'peraturan-sk', 'kerja-bakti']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="layanan-menu" class="submenu-container {{ in_array($page ?? '', ['koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'peraturan-sk', 'kerja-bakti']) ? '' : 'hidden' }} pl-5 space-y-0.5 mt-0.5 border-l border-white/10 ml-3.5">
                     @if($can('koperasi'))
-                    <a href="javascript:void(0)" onclick="switchPage('koperasi', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Koperasi Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('koperasi', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Koperasi Warga</a>
                     @endif
                     @if($can('bank-sampah'))
-                    <a href="javascript:void(0)" onclick="switchPage('bank-sampah', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Bank Sampah</a>
+                    <a href="javascript:void(0)" onclick="switchPage('bank-sampah', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Bank Sampah</a>
                     @endif
                     @if($can('umkm'))
-                    <a href="javascript:void(0)" onclick="switchPage('umkm', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">UMKM Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('umkm', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">UMKM Warga</a>
                     @endif
                     @if($can('posyandu'))
-                    <a href="javascript:void(0)" onclick="switchPage('posyandu', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Posyandu</a>
+                    <a href="javascript:void(0)" onclick="switchPage('posyandu', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Posyandu</a>
                     @endif
                     @if($can('keamanan'))
-                    <a href="javascript:void(0)" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Keamanan & Ronda</a>
+                    <a href="javascript:void(0)" onclick="switchPage('keamanan', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Keamanan & Ronda</a>
                     @endif
                     @if($can('kegiatan'))
-                    <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Kegiatan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('kegiatan', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Kegiatan</a>
                     @endif
                     @if($can('rukem'))
-                    <a href="javascript:void(0)" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Rukem (Duka Cita)</a>
+                    <a href="javascript:void(0)" onclick="switchPage('rukem', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Rukem (Duka Cita)</a>
                     @endif
                     @if($can('peraturan-sk'))
-                    <a href="javascript:void(0)" onclick="switchPage('peraturan-sk', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Peraturan & SK RT/RW</a>
+                    <a href="javascript:void(0)" onclick="switchPage('peraturan-sk', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Peraturan & SK RT/RW</a>
                     @endif
                     @if($can('kerja-bakti'))
-                    <a href="javascript:void(0)" onclick="switchPage('kerja-bakti', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Kerja Bakti</a>
+                    <a href="javascript:void(0)" onclick="switchPage('kerja-bakti', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Kerja Bakti</a>
                     @endif
                 </div>
             </div>
@@ -931,41 +937,41 @@
 
             {{-- 3. KATEGORI: DATA & ASET/INVENTARIS --}}
             @if($can('data-warga') || $can('data-keluarga') || $can('data-iuran') || $can('data-pengurus-rt') || $can('data-rt') || $can('pengguna') || $can('perangkat-sistem'))
-            <div class="pt-8 pb-2 px-4">
-                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Data & Aset/Inventaris</p>
+            <div class="sidebar-heading pt-3.5 pb-1 px-3">
+                <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">Data & Aset/Inventaris</p>
             </div>
 
             {{-- ===== DROPDOWN: Data Master ===== --}}
-            <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('data-master-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Data Master">
-                    <i class="fa-solid fa-database w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Data Master</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+            <div class="space-y-0.5 dropdown-group">
+                <button onclick="toggleDropdown('data-master-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-3 py-2 text-xs rounded-xl transition-all group" data-tooltip="Data Master">
+                    <i class="fa-solid fa-database w-5 text-sm opacity-60 group-hover:opacity-100"></i>
+                    <span class="ml-2.5 font-semibold text-xs flex-1 text-left">Data Master</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="data-master-menu" class="submenu-container {{ in_array($page ?? '', ['data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'pengguna', 'approval-warga', 'perangkat-sistem']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="data-master-menu" class="submenu-container {{ in_array($page ?? '', ['data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'pengguna', 'approval-warga', 'perangkat-sistem']) ? '' : 'hidden' }} pl-5 space-y-0.5 mt-0.5 border-l border-white/10 ml-3.5">
                     @if($can('data-warga'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-warga', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Data Warga</a>
                     @endif
                     @if($can('data-keluarga'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-keluarga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Keluarga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-keluarga', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Data Keluarga</a>
                     @endif
                     @if($can('data-iuran'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Iuran</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-iuran', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Data Iuran</a>
                     @endif
                     @if($can('data-pengurus-rt'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data Pengurus RT & RW</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-pengurus-rt', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Data Pengurus RT & RW</a>
                     @endif
                     @if($can('data-rt'))
-                    <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Data RT RW</a>
+                    <a href="javascript:void(0)" onclick="switchPage('data-rt', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Data RT RW</a>
                     @endif
                     @if($can('pengguna'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengguna</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengguna', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Pengguna</a>
                     @endif
                     @if($can('approval-warga'))
-                    <a href="javascript:void(0)" onclick="switchPage('approval-warga', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Persetujuan Warga</a>
+                    <a href="javascript:void(0)" onclick="switchPage('approval-warga', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Persetujuan Warga</a>
                     @endif
                     @if($can('perangkat-sistem'))
-                    <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Aset/Inventaris</a>
+                    <a href="javascript:void(0)" onclick="switchPage('perangkat-sistem', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Aset/Inventaris</a>
                     @endif
                 </div>
             </div>
@@ -973,38 +979,38 @@
 
             {{-- 4. KATEGORI: PENGATURAN SISTEM --}}
             @if($can('pengaturan') || $can('backup-restore') || $can('aktivitas-pengguna'))
-            <div class="pt-8 pb-2 px-4">
-                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-[2px]">Pengaturan</p>
+            <div class="sidebar-heading pt-3.5 pb-1 px-3">
+                <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">Pengaturan</p>
             </div>
 
             {{-- ===== DROPDOWN: Sistem ===== --}}
-            <div class="space-y-1 dropdown-group">
-                <button onclick="toggleDropdown('sistem-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-4 py-3 text-sm rounded-2xl transition-all group" data-tooltip="Sistem">
-                    <i class="fa-solid fa-gears w-6 opacity-50 group-hover:opacity-100"></i>
-                    <span class="ml-3 font-semibold flex-1 text-left">Sistem</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] opacity-50 transition-transform duration-200"></i>
+            <div class="space-y-0.5 dropdown-group">
+                <button onclick="toggleDropdown('sistem-menu')" class="menu-link hover:bg-white/5 hover:text-white flex items-center w-full px-3 py-2 text-xs rounded-xl transition-all group" data-tooltip="Sistem">
+                    <i class="fa-solid fa-gears w-5 text-sm opacity-60 group-hover:opacity-100"></i>
+                    <span class="ml-2.5 font-semibold text-xs flex-1 text-left">Sistem</span>
+                    <i class="fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200"></i>
                 </button>
-                <div id="sistem-menu" class="submenu-container {{ in_array($page ?? '', ['pengaturan', 'backup-restore', 'aktivitas-pengguna']) ? '' : 'hidden' }} pl-10 space-y-1 mt-1 border-l border-white/10 ml-6">
+                <div id="sistem-menu" class="submenu-container {{ in_array($page ?? '', ['pengaturan', 'backup-restore', 'aktivitas-pengguna']) ? '' : 'hidden' }} pl-5 space-y-0.5 mt-0.5 border-l border-white/10 ml-3.5">
                     @if($can('pengaturan'))
-                    <a href="javascript:void(0)" onclick="switchPage('pengaturan', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Pengaturan</a>
+                    <a href="javascript:void(0)" onclick="switchPage('pengaturan', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Pengaturan</a>
                     @endif
                     @if($can('backup-restore'))
-                    <a href="javascript:void(0)" onclick="switchPage('backup-restore', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Backup & Restore</a>
+                    <a href="javascript:void(0)" onclick="switchPage('backup-restore', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Backup & Restore</a>
                     @endif
                     @if($can('aktivitas-pengguna'))
-                    <a href="javascript:void(0)" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link flex items-center px-4 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 font-semibold transition-all rounded-xl">Aktivitas Pengguna</a>
+                    <a href="javascript:void(0)" onclick="switchPage('aktivitas-pengguna', this)" class="menu-link flex items-center px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all rounded-lg">Aktivitas Pengguna</a>
                     @endif
                 </div>
             </div>
             @endif
         </nav>
 
-        <div class="p-6 border-t border-white/5 bg-[#0F172A] sticky bottom-0 shrink-0 flex flex-col gap-3">
+        <div class="p-3 border-t border-white/5 bg-[#0F172A] sticky bottom-0 shrink-0 flex flex-col gap-2">
             {{-- Tombol logout --}}
             <form id="logout-form" action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="flex items-center w-full px-5 py-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-[24px] transition-all font-bold text-sm group" data-tooltip="Keluar Akun">
-                    <i class="fa-solid fa-power-off mr-3 group-hover:rotate-90 transition-transform duration-300"></i>
+                <button type="submit" class="flex items-center justify-center w-full px-3 py-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all font-semibold text-xs group" data-tooltip="Keluar Akun">
+                    <i class="fa-solid fa-power-off mr-2 text-xs group-hover:rotate-90 transition-transform duration-300"></i>
                     <span>Keluar Akun</span>
                 </button>
             </form>

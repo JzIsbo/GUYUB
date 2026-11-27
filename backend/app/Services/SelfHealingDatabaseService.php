@@ -87,8 +87,13 @@ class SelfHealingDatabaseService
                 $table->string('jenis_perangkat');
                 $table->string('nomor_serial')->nullable();
                 $table->string('kondisi')->default('Baik');
+                $table->integer('jumlah')->default(1);
                 $table->text('keterangan')->nullable();
                 $table->timestamps();
+            });
+        } elseif (!Schema::hasColumn('devices', 'jumlah')) {
+            Schema::table('devices', function ($table) {
+                $table->integer('jumlah')->default(1)->after('kondisi');
             });
         }
 
@@ -189,14 +194,28 @@ class SelfHealingDatabaseService
                 $table->string('kategori')->default('Sembako');
                 $table->decimal('harga', 15, 2);
                 $table->integer('stok')->default(0);
+                $table->string('satuan', 50)->default('pcs');
+                $table->text('deskripsi')->nullable();
                 $table->string('penjual')->default('Koperasi RT');
                 $table->string('foto')->nullable();
                 $table->timestamps();
             });
-        } elseif (!Schema::hasColumn('koperasi_items', 'foto')) {
-            Schema::table('koperasi_items', function ($table) {
-                $table->string('foto')->nullable()->after('penjual');
-            });
+        } else {
+            if (!Schema::hasColumn('koperasi_items', 'satuan')) {
+                Schema::table('koperasi_items', function ($table) {
+                    $table->string('satuan', 50)->default('pcs')->after('stok');
+                });
+            }
+            if (!Schema::hasColumn('koperasi_items', 'deskripsi')) {
+                Schema::table('koperasi_items', function ($table) {
+                    $table->text('deskripsi')->nullable()->after('satuan');
+                });
+            }
+            if (!Schema::hasColumn('koperasi_items', 'foto')) {
+                Schema::table('koperasi_items', function ($table) {
+                    $table->string('foto')->nullable()->after('penjual');
+                });
+            }
         }
 
         // 10. Bank Sampah table

@@ -346,7 +346,7 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Pilih Aset Yang Dipinjam</label>
                     <select name="nama_aset" id="loan-nama-aset" required class="w-full bg-gray-50 border border-gray-200 font-bold text-gray-700 py-3 px-4 rounded-2xl">
                         @foreach($list_perangkat ?? [] as $dev)
-                        <option value="{{ $dev->nama_perangkat }}">{{ $dev->nama_perangkat }} (Stok Available: {{ $dev->jumlah }} Unit)</option>
+                        <option value="{{ $dev->nama_perangkat }}">{{ $dev->nama_perangkat }} (Stok Available: {{ $dev->jumlah ?? 1 }} Unit)</option>
                         @endforeach
                     </select>
                 </div>

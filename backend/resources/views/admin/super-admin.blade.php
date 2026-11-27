@@ -535,51 +535,51 @@
                 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'surat-online', 'pengumuman',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'RW'            => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Sekretaris RW' => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt',
-                'kegiatan', 'aspirasi', 'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'kegiatan', 'aspirasi', 'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Bendahara RW'  => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan',
-                'koperasi', 'rfid-ktp'
+                'koperasi', 'rfid-ktp', 'portal-akses'
             ],
             'RT'            => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'qris-va',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-iuran', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Sekretaris RT' => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga',
                 'surat-online', 'pengumuman', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Bendahara RT'  => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'surat-online', 'pengumuman', 'data-keluarga', 'data-iuran',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'export-laporan', 'pengaturan',
                 'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Warga'         => [
                 'dashboard', 'pembayaran-menu', 'tagihan-warga', 'pembayaran-online',
                 'surat-online', 'pengumuman', 'data-keluarga', 'data-pengurus-rt', 'pengaturan', 'perangkat-sistem',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ]
         ];
 
@@ -621,6 +621,12 @@
             @if($can('rfid-ktp'))
             <a href="javascript:void(0)" onclick="switchPage('rfid-ktp', this)" class="menu-link {{ isset($page) && $page == 'rfid-ktp' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Kartu KTP (RFID)">
                 <i class="fa-solid fa-id-card w-6 text-lg text-emerald-400"></i> <span class="ml-3 text-sm font-bold">Kartu KTP (RFID)</span>
+            </a>
+            @endif
+
+            @if($can('portal-akses'))
+            <a href="javascript:void(0)" onclick="switchPage('portal-akses', this)" class="menu-link {{ isset($page) && $page == 'portal-akses' ? 'menu-active text-white' : 'hover:bg-white/5 hover:text-white' }} flex items-center px-4 py-3.5 rounded-2xl transition-all" data-tooltip="Portal Akses Gerbang">
+                <i class="fa-solid fa-door-open w-6 text-lg text-cyan-400"></i> <span class="ml-3 text-sm font-bold">Portal Akses</span>
             </a>
             @endif
 
@@ -1318,6 +1324,12 @@
                         <button onclick="switchPage('rfid-ktp'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-emerald-50 rounded-xl transition gap-1.5 min-w-0">
                             <i class="fa-solid fa-id-card text-emerald-600 text-base"></i>
                             <span class="text-[9px] font-bold text-gray-700 truncate w-full">Kartu KTP</span>
+                        </button>
+                        @endif
+                        @if($can('portal-akses'))
+                        <button onclick="switchPage('portal-akses'); toggleMobileMenuSheet(false);" class="flex flex-col items-center text-center p-2.5 bg-gray-50 hover:bg-cyan-50 rounded-xl transition gap-1.5 min-w-0">
+                            <i class="fa-solid fa-door-open text-cyan-600 text-base"></i>
+                            <span class="text-[9px] font-bold text-gray-700 truncate w-full">Portal Akses</span>
                         </button>
                         @endif
                         @if($can('perangkat-sistem'))

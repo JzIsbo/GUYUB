@@ -45,7 +45,7 @@ class AdminController extends Controller
             'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
             'surat-online', 'pengumuman',
             'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi', 'approval-warga',
-            'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+            'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
         ];
 
         $aksesHalaman = [
@@ -53,28 +53,28 @@ class AdminController extends Controller
             'RW'            => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'peraturan-sk', 'kerja-bakti',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'pengumuman', 'aspirasi', 'keamanan', 'kegiatan',
-                'posyandu', 'umkm', 'bank-sampah', 'koperasi', 'rukem', 'approval-warga', 'rfid-ktp'
+                'posyandu', 'umkm', 'bank-sampah', 'koperasi', 'rukem', 'approval-warga', 'rfid-ktp', 'portal-akses'
             ],
             'Sekretaris RW' => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'peraturan-sk', 'kerja-bakti',
-                'surat-online', 'pengumuman', 'aspirasi', 'approval-warga', 'kegiatan', 'laporan-koperasi', 'rfid-ktp'
+                'surat-online', 'pengumuman', 'aspirasi', 'approval-warga', 'kegiatan', 'laporan-koperasi', 'rfid-ktp', 'portal-akses'
             ],
             'Bendahara RW'  => [
                 'dashboard', 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'laporan-keuangan', 'laporan-iuran',
-                'laporan-kas', 'export-laporan', 'laporan-koperasi', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va', 'koperasi', 'rfid-ktp'
+                'laporan-kas', 'export-laporan', 'laporan-koperasi', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va', 'koperasi', 'rfid-ktp', 'portal-akses'
             ],
             'RT'            => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'data-rt', 'perangkat-sistem',
                 'surat-online', 'pengumuman', 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Sekretaris RT' => [
                 'dashboard', 'data-warga', 'data-keluarga', 'data-pengurus-rt', 'perangkat-sistem',
                 'surat-online', 'pengumuman', 'tagihan-warga', 'laporan-keuangan', 'laporan-iuran', 'laporan-kas', 'laporan-koperasi', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'approval-warga', 'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Bendahara RT'  => [
                 'dashboard', 'pemasukan', 'pengeluaran', 'transaksi', 'kategori', 'data-keluarga', 'data-iuran',
@@ -82,13 +82,13 @@ class AdminController extends Controller
                 'tagihan-warga', 'pembayaran-online', 'riwayat-gateway', 'qris-va',
                 'surat-online', 'pengumuman', 'pengaturan',
                 'koperasi', 'bank-sampah', 'rukem', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'rfid-ktp', 'portal-akses'
             ],
             'Warga'         => [
                 'dashboard', 'data-keluarga', 'data-pengurus-rt', 'surat-online', 'pengumuman',
                 'tagihan-warga', 'pembayaran-online', 'pengaturan',
                 'koperasi', 'bank-sampah', 'umkm', 'posyandu', 'keamanan', 'kegiatan', 'rukem', 'aspirasi',
-                'peraturan-sk', 'kerja-bakti', 'laporan-koperasi', 'rfid-ktp'
+                'peraturan-sk', 'kerja-bakti', 'laporan-koperasi', 'rfid-ktp', 'portal-akses'
             ]
         ];
 
@@ -457,6 +457,41 @@ class AdminController extends Controller
                 $data['list_peraturan'] = DB::table('peraturan_sks')->orderBy('created_at', 'desc')->get();
             } elseif ($page == 'kerja-bakti') {
                 $data['list_kerja_bakti'] = DB::table('kerja_baktis')->orderBy('tanggal', 'asc')->get();
+            } elseif ($page == 'portal-akses') {
+                $today = now()->toDateString();
+                $data['portal_logs'] = DB::table('portal_access_logs')
+                    ->leftJoin('users', 'portal_access_logs.user_id', '=', 'users.id')
+                    ->leftJoin('wargas', function($join) {
+                        $join->on('users.name', '=', 'wargas.nama_lengkap');
+                    })
+                    ->select(
+                        'portal_access_logs.id',
+                        'portal_access_logs.rfid_uid',
+                        'portal_access_logs.status',
+                        'portal_access_logs.device_id',
+                        'portal_access_logs.message',
+                        'portal_access_logs.created_at',
+                        'users.name as user_name',
+                        'users.role as user_role',
+                        'users.photo as user_photo',
+                        'users.status as user_status',
+                        'wargas.blok_rumah',
+                        'wargas.nik'
+                    )
+                    ->orderBy('portal_access_logs.created_at', 'desc')
+                    ->limit(50)
+                    ->get();
+
+                $data['stats_today']           = DB::table('portal_access_logs')->whereDate('created_at', $today)->count();
+                $data['stats_granted']         = DB::table('portal_access_logs')->whereDate('created_at', $today)->where('status', 'granted')->count();
+                $data['stats_denied']          = DB::table('portal_access_logs')->whereDate('created_at', $today)->where('status', 'denied')->count();
+                $data['stats_registered_rfid'] = DB::table('users')->whereNotNull('rfid_uid')->count();
+
+                $lastSeen = \Illuminate\Support\Facades\Cache::get('rfid_scanner_last_seen');
+                $diff = $lastSeen ? (now()->timestamp - $lastSeen) : null;
+                $data['scanner_online'] = ($diff !== null && $diff <= 15);
+                $data['scanner_info']   = \Illuminate\Support\Facades\Cache::get('rfid_scanner_info');
+                $data['scanner_diff']   = $diff;
             } elseif ($page == 'backup-restore') {
                 return view('admin.partials.backup-restore', $data);
             } elseif ($page == 'edit-warga') {

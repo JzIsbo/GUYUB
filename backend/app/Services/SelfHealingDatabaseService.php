@@ -55,6 +55,30 @@ class SelfHealingDatabaseService
             }
         }
 
+        // 1c. portal_access_logs & rfid_scan_sessions tables check
+        if (!Schema::hasTable('portal_access_logs')) {
+            Schema::create('portal_access_logs', function ($table) {
+                $table->id();
+                $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+                $table->string('rfid_uid', 50)->nullable();
+                $table->string('status', 30)->default('denied');
+                $table->string('device_id', 100)->nullable();
+                $table->string('message')->nullable();
+                $table->timestamps();
+            });
+        }
+        if (!Schema::hasTable('rfid_scan_sessions')) {
+            Schema::create('rfid_scan_sessions', function ($table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->string('token', 64)->unique();
+                $table->string('scanned_uid', 50)->nullable();
+                $table->string('status', 20)->default('waiting');
+                $table->timestamp('expires_at');
+                $table->timestamps();
+            });
+        }
+
         // 2. devices (Aset & Perangkat) table
         if (!Schema::hasTable('devices')) {
             Schema::create('devices', function ($table) {

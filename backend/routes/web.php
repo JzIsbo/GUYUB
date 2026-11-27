@@ -305,6 +305,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/rfid/unregister',         [RfidController::class, 'unregisterUid']);
     Route::get('/rfid/logs',                [RfidController::class, 'getLogs']);
     Route::get('/rfid/device-status',       [RfidController::class, 'getDeviceStatus']);
+    Route::post('/rfid/manual-open',        [RfidController::class, 'manualOpenGate']);
+    Route::get('/rfid/portal-live',         [RfidController::class, 'getPortalLive']);
 
     // --- M. RUTE DINAMIS SPA (Wajib diletakkan paling bawah dalam grup ini) ---
     Route::get('/api/auth/user', function() {

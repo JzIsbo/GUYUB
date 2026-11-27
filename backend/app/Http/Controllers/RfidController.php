@@ -258,36 +258,41 @@ class RfidController extends Controller
                 'scanned_uid' => $uid,
                 'status'      => 'completed',
             ]);
+
+            try {
+                PortalAccessLog::create([
+                    'user_id'   => $activeSession->user_id,
+                    'rfid_uid'  => $uid,
+                    'status'    => 'granted',
+                    'device_id' => $deviceId,
+                    'message'   => "UID {$uid} berhasil dipindai untuk pendaftaran e-KTP",
+                ]);
+            } catch (\Throwable $e) {}
+
+            return response()->json([
+                'success'           => true,
+                'status'            => 'registered',
+                'feedback'          => 'success',
+                'user_name'         => 'Pendaftaran KTP',
+                'direction'         => '',
+                'buzzer'            => 'success',
+                'open_gate'         => false,
+                'message'           => 'Kartu berhasil dibaca untuk pendaftaran!',
+                'uid'               => $uid,
+                'device_id'         => $deviceId,
+                'registered'        => true,
+            ], 200);
         }
 
         // B. Cari data warga / user berdasarkan nomor kartu (UID)
         $user = User::where('rfid_uid', $uid)->first();
         $wargaInfo = null;
 
-        if ($user) {
-            $wargaInfo = [
-                'type'   => 'user',
-                'name'   => $user->name,
-                'role'   => $user->role,
-                'status' => $user->status,
-            ];
-
-            // Catat log akses portal
-            try {
-                PortalAccessLog::create([
-                    'user_id'   => $user->id,
-                    'rfid_uid'  => $uid,
-                    'status'    => ($user->status === 'Aktif') ? 'granted' : 'denied',
-                    'device_id' => $deviceId,
-                    'message'   => ($user->status === 'Aktif')
-                        ? "Akses diberikan untuk {$user->name} ({$user->role})"
-                        : "Kartu terdaftar tapi akun nonaktif ({$user->name})",
-                ]);
-            } catch (\Throwable $e) {}
-        } else {
+        if (!$user) {
             // Cek di tabel wargas berdasarkan NIK jika UID identik dengan NIK
             $warga = DB::table('wargas')->where('nik', $uid)->first();
             if ($warga) {
+                $user = User::where('name', $warga->nama_lengkap)->first();
                 $wargaInfo = [
                     'type'       => 'warga',
                     'name'       => $warga->nama_lengkap,
@@ -295,29 +300,99 @@ class RfidController extends Controller
                     'blok_rumah' => $warga->blok_rumah,
                 ];
             }
-
-            try {
-                PortalAccessLog::create([
-                    'user_id'   => null,
-                    'rfid_uid'  => $uid,
-                    'status'    => $activeSession ? 'registration' : 'scan',
-                    'device_id' => $deviceId,
-                    'message'   => $activeSession
-                        ? "UID {$uid} terbaca dalam proses pendaftaran KTP"
-                        : "Kartu belum terdaftar di-tap pada perangkat {$deviceId}",
-                ]);
-            } catch (\Throwable $e) {}
         }
 
-        // 3. Kembalikan response JSON HTTP 200 agar buzzer ESP32 berbunyi sukses
+        if ($user) {
+            if (!$wargaInfo) {
+                $wargaData = DB::table('wargas')->where('nama_lengkap', $user->name)->first();
+                $wargaInfo = [
+                    'type'       => 'user',
+                    'name'       => $user->name,
+                    'role'       => $user->role,
+                    'status'     => $user->status,
+                    'blok_rumah' => $wargaData->blok_rumah ?? '-',
+                    'nik'        => $wargaData->nik ?? '-',
+                ];
+            }
+
+            if ($user->status === 'Aktif') {
+                // Catat log akses portal: DIIZINKAN (GRANTED)
+                try {
+                    PortalAccessLog::create([
+                        'user_id'   => $user->id,
+                        'rfid_uid'  => $uid,
+                        'status'    => 'granted',
+                        'device_id' => $deviceId,
+                        'message'   => "Akses gerbang dibuka untuk {$user->name} ({$user->role})",
+                    ]);
+                } catch (\Throwable $e) {}
+
+                // Response HTTP 200 lengkap sesuai format smart_rw_rfid_reader.ino
+                // LCD akan menampilkan:
+                // Baris 1: MASUK: [Nama Warga]
+                // Baris 2: Gerbang Terbuka
+                // Buzzer membunyikan beepGateIn(), Servo berputar membuka palang gerbang
+                return response()->json([
+                    'success'           => true,
+                    'status'            => 'gate_opened',
+                    'open_gate'         => true,
+                    'direction'         => 'masuk',
+                    'buzzer'            => 'gate_in',
+                    'gate_open_seconds' => config('rfid.gate_open_seconds', 5),
+                    'user_name'         => $user->name,
+                    'message'           => "Akses gerbang dibuka untuk {$user->name}",
+                    'uid'               => $uid,
+                    'device_id'         => $deviceId,
+                    'warga'             => $wargaInfo,
+                    'registered'        => true,
+                ], 200);
+            } else {
+                // Catat log akses portal: DITOLAK (AKUN NONAKTIF)
+                try {
+                    PortalAccessLog::create([
+                        'user_id'   => $user->id,
+                        'rfid_uid'  => $uid,
+                        'status'    => 'denied',
+                        'device_id' => $deviceId,
+                        'message'   => "Akses ditolak: akun tidak aktif ({$user->name})",
+                    ]);
+                } catch (\Throwable $e) {}
+
+                return response()->json([
+                    'success'   => false,
+                    'status'    => 'inactive',
+                    'open_gate' => false,
+                    'buzzer'    => 'error',
+                    'user_name' => $user->name,
+                    'message'   => "Akun tidak aktif ({$user->name}). Hubungi pengurus RT.",
+                    'uid'       => $uid,
+                    'device_id' => $deviceId,
+                    'registered'=> true,
+                ], 403);
+            }
+        }
+
+        // C. Kartu Belum Terdaftar (UNREGISTERED)
+        try {
+            PortalAccessLog::create([
+                'user_id'   => null,
+                'rfid_uid'  => $uid,
+                'status'    => 'denied',
+                'device_id' => $deviceId,
+                'message'   => "Kartu belum terdaftar di-tap pada perangkat {$deviceId}",
+            ]);
+        } catch (\Throwable $e) {}
+
         return response()->json([
-            'success'   => true,
-            'message'   => 'Kartu berhasil dibaca',
+            'success'   => false,
+            'status'    => 'unregistered',
+            'open_gate' => false,
+            'buzzer'    => 'error',
+            'message'   => 'Kartu belum terdaftar di sistem. Akses ditolak.',
             'uid'       => $uid,
             'device_id' => $deviceId,
-            'warga'     => $wargaInfo,
-            'registered'=> ($user !== null || $wargaInfo !== null),
-        ], 200);
+            'registered'=> false,
+        ], 403);
     }
 
     // =========================================================================
@@ -436,6 +511,95 @@ class RfidController extends Controller
             'seconds_ago' => $diff,
             'message'     => $isOnline ? 'ESP32 Scanner Online & Siap Digunakan' : "ESP32 Offline (terakhir terlihat {$diff} detik lalu)",
             'info'        => $info,
+        ]);
+    }
+
+    // =========================================================================
+    // J. manualOpenGate — Web (auth)
+    //    Admin / Warga membuka palang gerbang secara manual melalui sistem Web
+    // =========================================================================
+    public function manualOpenGate(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 401);
+        }
+
+        try {
+            PortalAccessLog::create([
+                'user_id'   => $user->id,
+                'rfid_uid'  => $user->rfid_uid ?? 'MANUAL_WEB',
+                'status'    => 'granted',
+                'device_id' => 'web-manual',
+                'message'   => "Gerbang dibuka secara manual via Web oleh {$user->name} ({$user->role})",
+            ]);
+        } catch (\Throwable $e) {}
+
+        Cache::put('manual_open_gate_trigger', [
+            'triggered_by' => $user->name,
+            'role'         => $user->role,
+            'at'           => now()->toDateTimeString(),
+        ], 10);
+
+        self::logActivity(
+            'BUKA PORTAL MANUAL',
+            "Pengguna {$user->name} ({$user->role}) membuka palang pintu portal gerbang secara manual via antarmuka Web."
+        );
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => "Perintah buka portal manual berhasil dieksekusi oleh {$user->name}!",
+        ]);
+    }
+
+    // =========================================================================
+    // K. getPortalLive — Web (auth)
+    //    Polling data realtime untuk live log portal akses
+    // =========================================================================
+    public function getPortalLive(Request $request)
+    {
+        $today = now()->toDateString();
+
+        $logs = DB::table('portal_access_logs')
+            ->leftJoin('users', 'portal_access_logs.user_id', '=', 'users.id')
+            ->leftJoin('wargas', function($join) {
+                $join->on('users.name', '=', 'wargas.nama_lengkap');
+            })
+            ->select(
+                'portal_access_logs.id',
+                'portal_access_logs.rfid_uid',
+                'portal_access_logs.status',
+                'portal_access_logs.device_id',
+                'portal_access_logs.message',
+                'portal_access_logs.created_at',
+                'users.name as user_name',
+                'users.role as user_role',
+                'users.photo as user_photo',
+                'users.status as user_status',
+                'wargas.blok_rumah',
+                'wargas.nik'
+            )
+            ->orderBy('portal_access_logs.created_at', 'desc')
+            ->limit(30)
+            ->get();
+
+        $lastSeen = Cache::get('rfid_scanner_last_seen');
+        $diff = $lastSeen ? (now()->timestamp - $lastSeen) : null;
+        $isOnline = ($diff !== null && $diff <= 15);
+        $scannerInfo = Cache::get('rfid_scanner_info');
+
+        return response()->json([
+            'status' => 'success',
+            'online' => $isOnline,
+            'diff'   => $diff,
+            'scanner_info' => $scannerInfo,
+            'stats' => [
+                'today'           => DB::table('portal_access_logs')->whereDate('created_at', $today)->count(),
+                'granted'         => DB::table('portal_access_logs')->whereDate('created_at', $today)->where('status', 'granted')->count(),
+                'denied'          => DB::table('portal_access_logs')->whereDate('created_at', $today)->where('status', 'denied')->count(),
+                'registered_rfid' => DB::table('users')->whereNotNull('rfid_uid')->count(),
+            ],
+            'logs'   => $logs,
         ]);
     }
 }
